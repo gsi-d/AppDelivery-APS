@@ -1,10 +1,16 @@
 using AppAPS.Components;
 using AppAPS.Components.Account;
 using AppAPS.Data;
+using AppAPS.Interfaces;
+using AppAPS.Services;
+using AppAPS.Services.Model;
+using AutoMapper;
+using Azure;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +18,24 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddFluentUIComponents();
+
+builder.Services.AddScoped<SessaoUsuario>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IUploadService, UploadService>();
+
+var assembly = Assembly.Load("AppAPS");
+var classesMapeamento = assembly.GetTypes().Where(tipo => typeof(Profile).IsAssignableFrom(tipo) && !tipo.IsAbstract && tipo.IsPublic);
+var mappingConfig = new MapperConfiguration(mc =>
+{
+    // Adicione seus perfis de mapeamento aqui
+    foreach (var mapeamento in classesMapeamento)
+    {
+        mc.AddProfile(mapeamento);
+    }
+});
+
+IMapper mapper = mappingConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();

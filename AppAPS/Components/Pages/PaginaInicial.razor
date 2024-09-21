@@ -1,0 +1,67 @@
+﻿@page "/"
+@using AppAPS.DTOs
+@using AppAPS.Entities
+@using AppAPS.Interfaces
+@using AutoMapper
+
+<style>
+    .fluent-label {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .fluent-label-nome {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<PageTitle>Página inicial</PageTitle>
+
+
+<FluentStack Style="display: flex; flex-wrap: wrap; gap: 20px;">
+    @{
+        foreach (ProdutoItemDTO produtoItem in produtosItem)
+        {
+            <FluentCard Width="30%" Height="50%">
+                <FluentCard Style="padding: 0;" Width="100%" Height="60%">
+                    <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 30vh; width: 100%" />
+                </FluentCard>
+                <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
+                    <FluentLabel Typo="Typography.Subject" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
+                    <FluentStack Style="padding-top: 10px" VerticalAlignment="VerticalAlignment.Bottom">
+                        <FluentButton IconStart="@(new Icons.Regular.Size20.AppsListDetail())" Appearance="Appearance.Accent" BackgroundColor="purple">Detalhes</FluentButton>
+                        <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
+                            <FluentNumberField @bind-Value="@produtoItem.Quantidade" Size="1" Min="0"></FluentNumberField>
+                            <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Appearance="Appearance.Accent">
+                            </FluentButton>
+                        </FluentStack>
+                    </FluentStack>
+                </FluentCard>
+        }
+    }
+</FluentStack>
+
+
+
+@code {
+    [Inject] private IProdutoService produtoService { get; set; }
+    [Inject] private IMapper mapper { get; set; }
+    public List<Produto>? produtos;
+    public IQueryable<ProdutoItemDTO>? produtosItem;
+    public decimal Numero { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        produtos = produtoService.GetAllProdutos();
+        var produtosMapeados = mapper.Map<List<ProdutoItemDTO>>(produtos);
+        produtosItem = produtosMapeados.AsQueryable();
+        return Task.CompletedTask;
+    }
+}

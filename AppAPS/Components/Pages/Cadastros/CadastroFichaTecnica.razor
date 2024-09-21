@@ -1,0 +1,64 @@
+﻿@page "/cadastroFichaTecnica"
+@using AppAPS.Entities
+@rendermode RenderMode.InteractiveServer
+
+<style>
+    .text-field {
+        width: 100%;
+    }
+
+    .width-maximo {
+        width: 100%;
+    }
+</style>
+
+<PageTitle>Cadastro de Produtos</PageTitle>
+
+<FluentStack Style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
+    <h1>Cadastro de Produtos</h1>
+    <FluentGrid Justify="@JustifyContent.Center">
+        <FluentGridItem>
+            <FluentCard>
+                <EditForm Model="@ProdutoModel" OnValidSubmit="@HandleValidSubmit" FormName="ProdutoModel_fluent_entry" novalidate>
+                    <DataAnnotationsValidator />
+                    <FluentValidationSummary />
+
+
+                    <FluentStack Style="width: 30vw; " VerticalGap="25" Orientation="Orientation.Vertical">
+                        <div class="width-maximo">
+                            <FluentTextField Appearance="FluentInputAppearance.Filled" Class="text-field" Name="Nome do Produto" @bind-Value="ProdutoModel.Nome" Label="Nome do Produto" Required />
+                             <FluentValidationMessage For="@(() => ProdutoModel.Nome)" />
+                         </div>
+                         <div class="width-maximo">
+                             <FluentTextArea Appearance="FluentInputAppearance.Filled" Class="width-maximo" Name="Descricao" Rows=5 @bind-Value="ProdutoModel.Descricao" Label="Descrição do Produto" Required />
+                             <FluentValidationMessage For="@(() => ProdutoModel.Descricao)" />
+                         </div>
+                         <div>
+                             <FluentNumberField Appearance="FluentInputAppearance.Filled" Placeholder="R$" Class="text-field" Name="Preço" @bind-Value="ProdutoModel.Preco" Label="Preço" HideStep=true Required />
+                             <FluentValidationMessage For="@(() => ProdutoModel.Preco)" />
+                         </div>
+                         <div>
+                             <FluentCheckbox Name="Ingrediente" Style="margin-left: 2px" @bind-Value="ProdutoModel.Ingrediente" Label="É um ingrediente" />
+                             <FluentValidationMessage For="@(() => ProdutoModel.Ingrediente)" />
+                         </div>
+                         <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Salvar</FluentButton>
+                     </FluentStack>
+                 </EditForm>
+             </FluentCard>
+         </FluentGridItem>
+     </FluentGrid>
+ </FluentStack>
+ @code {
+
+    [SupplyParameterFromForm]
+    private Produto ProdutoModel { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+    }
+
+    private void HandleValidSubmit()
+    {
+
+    }
+}
