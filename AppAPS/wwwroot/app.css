@@ -19,8 +19,7 @@ body {
 }
 
 .body-content {
-    align-self: stretch;
-    height: calc(100dvh - 86px) !important;
+
     display: flex;
 }
 
@@ -34,7 +33,7 @@ body {
     width: 100dvw;
 }
 
-footer {
+/*footer {
     background: var(--neutral-layer-4);
     color: var(--neutral-foreground-rest);
     align-items: center;
@@ -53,7 +52,7 @@ footer {
 
         footer a:hover {
             text-decoration: underline;
-        }
+        }*/
 
 .alert {
     border: 1px dashed var(--accent-fill-rest);

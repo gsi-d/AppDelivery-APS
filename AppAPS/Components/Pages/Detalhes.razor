@@ -25,42 +25,45 @@
 <PageTitle>Página inicial</PageTitle>
 
 
-<FluentStack Style="display: flex; flex-wrap: wrap; gap: 20px;">
-    @{
-        foreach (ProdutoItemDTO produtoItem in produtosItem)
-        {
-            <FluentCard Width="30%" Height="50%">
-                <FluentCard Style="padding: 0;" Width="100%" Height="60%">
-                    <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 30vh; width: 100%" />
+<FluentStack Style="display: flex; align-items: center; justify-content: center">
+    <FluentCard Width="100%" Height="90%">
+        <FluentStack @* Style="background-color: blue" *@>
+            <FluentStack @* Style="background-color: red" *@>
+                <FluentCard Style="padding: 0;" Width="100%" Height="100%">
+                    <img src="@Produto.NomeArquivoUpload" style="object-fit: cover; height: 60vh; width: 100%" />
                 </FluentCard>
-                <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
-                    <FluentLabel Typo="Typography.Subject" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
-                    <FluentStack Style="padding-top: 10px" VerticalAlignment="VerticalAlignment.Bottom">
-                        <FluentButton IconStart="@(new Icons.Regular.Size20.AppsListDetail())" Appearance="Appearance.Accent" BackgroundColor="purple">Detalhes</FluentButton>
-                        <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
-                            <FluentNumberField @bind-Value="@produtoItem.Quantidade" Size="1" Min="0"></FluentNumberField>
-                            <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Appearance="Appearance.Accent">
-                            </FluentButton>
-                        </FluentStack>
-                    </FluentStack>
-                </FluentCard>
-        }
-    }
+            </FluentStack>
+            <FluentStack Style="@* background-color: green *@; display: flex; flex-direction: column; padding: 10px">
+                <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
+                    <FluentLabel Typo="Typography.H2">@Produto.Nome</FluentLabel>
+                </FluentStack>
+                <FluentLabel Typo="Typography.Subject">@Produto.Descricao</FluentLabel>
+                <FluentDivider/>
+                <FluentStack>
+                        <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Quantidade:</FluentLabel>
+                    <FluentNumberField @bind-Value="@Numero" Size="1" Min="0"></FluentNumberField>
+                    <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Appearance="Appearance.Accent"></FluentButton>
+                </FluentStack>
+            </FluentStack>
+        </FluentStack>
+    </FluentCard>
 </FluentStack>
+<FluentCard Style="margin-top: 20px">
+    <Produtos />
+</FluentCard>
 
-
-
-@code {
-    [Parameter] public int Id { get; set; }
+    @code {
+    [Parameter] public string Id { get; set; }
     [Inject] private IProdutoService produtoService { get; set; }
     [Inject] private IMapper mapper { get; set; }
     public Produto Produto;
-    public IQueryable<ProdutoItemDTO>? produtosItem;
     public decimal Numero { get; set; }
+    public int IdProduto { get; set; }
 
     protected override Task OnInitializedAsync()
     {
-        Produto = produtoService.GetByIdProdutos(Id);
+        IdProduto = Convert.ToInt32(Id);
+        Produto = produtoService.GetByIdProdutos(IdProduto);
         return Task.CompletedTask;
     }
 }

@@ -3,6 +3,7 @@
 @using AppAPS.Entities
 @using AppAPS.Interfaces
 @using AutoMapper
+@rendermode RenderMode.InteractiveServer
 
 <style>
     .fluent-label {
@@ -34,10 +35,11 @@
                     <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 30vh; width: 100%" />
                 </FluentCard>
                 <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
-                    <FluentLabel Typo="Typography.Subject" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
+                    <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
                     <FluentStack Style="padding-top: 10px" VerticalAlignment="VerticalAlignment.Bottom">
-                        <FluentButton IconStart="@(new Icons.Regular.Size20.AppsListDetail())" Appearance="Appearance.Accent" BackgroundColor="purple">Detalhes</FluentButton>
+                        <FluentButton IconStart="@(new Icons.Regular.Size20.AppsListDetail())" Appearance="Appearance.Accent" OnClick="async () => await InvokeDetalhes(produtoItem.Id)" BackgroundColor="purple">Detalhes</FluentButton>
                         <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
+                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
                             <FluentNumberField @bind-Value="@produtoItem.Quantidade" Size="1" Min="0"></FluentNumberField>
                             <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Appearance="Appearance.Accent">
                             </FluentButton>
@@ -48,7 +50,12 @@
     }
 </FluentStack>
 
-
+<FluentButton IconStart="@(new Icons.Regular.Size20.Cart())"
+              Appearance="Appearance.Accent"
+              BackgroundColor="green"
+              style="position: fixed; bottom: 20px; right: 20px;">
+    Finalizar pedido
+</FluentButton>
 
 @code {
     [Inject] private IProdutoService produtoService { get; set; }
@@ -63,5 +70,10 @@
         var produtosMapeados = mapper.Map<List<ProdutoItemDTO>>(produtos);
         produtosItem = produtosMapeados.AsQueryable();
         return Task.CompletedTask;
+    }
+
+    private async Task InvokeDetalhes(int id)
+    {
+        _navigationManager.NavigateTo($"/detalhes/{id}");
     }
 }
