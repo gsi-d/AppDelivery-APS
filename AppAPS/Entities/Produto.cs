@@ -13,5 +13,7 @@ namespace AppAPS.Entities
         public decimal Preco { get; set; }
         public bool Ingrediente { get; set; }
         public string NomeArquivoUpload { get; set; }
+        public int IdFichaTecnica { get; set; }
+        public virtual FichaTecnica FichaTecnica { get; set; }
     }
 }

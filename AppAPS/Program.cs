@@ -63,6 +63,21 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate(); // Aplica as migrations pendentes
+    }
+    catch (Exception ex)
+    {
+        // Log ou trate o erro conforme necessário
+        Console.WriteLine($"Erro ao aplicar as migrations: {ex.Message}");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -8,5 +8,13 @@ namespace AppAPS.Data
     {
         public DbSet<Produto> Produto { get; set; }
         public DbSet<FichaTecnica> FichaTecnica { get; set; }
+        public DbSet<Pedido> Pedido { get; set; }
+        public DbSet<PedidoItem> PedidoItem { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

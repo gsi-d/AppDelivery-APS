@@ -4,6 +4,7 @@ using AppAPS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppAPS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240921204147_AdicionandoProduto")]
+    partial class AdicionandoProduto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,77 +90,6 @@ namespace AppAPS.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("AppAPS.Entities.FichaTecnica", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("IdProduto")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IdProduto");
-
-                    b.ToTable("FichaTecnica");
-                });
-
-            modelBuilder.Entity("AppAPS.Entities.Pedido", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Bairro")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Cliente")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Rua")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Pedido");
-                });
-
-            modelBuilder.Entity("AppAPS.Entities.PedidoItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("PedidoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProdutoId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantidade")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PedidoId");
-
-                    b.HasIndex("ProdutoId");
-
-                    b.ToTable("PedidoItem");
-                });
-
             modelBuilder.Entity("AppAPS.Entities.Produto", b =>
                 {
                     b.Property<int>("Id")
@@ -170,12 +102,6 @@ namespace AppAPS.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar");
-
-                    b.Property<int?>("FichaTecnicaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdFichaTecnica")
-                        .HasColumnType("int");
 
                     b.Property<bool>("Ingrediente")
                         .HasColumnType("bit");
@@ -193,10 +119,6 @@ namespace AppAPS.Migrations
                         .HasColumnType("numeric(12,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FichaTecnicaId");
-
-                    b.HasIndex("IdFichaTecnica");
 
                     b.ToTable("Produto");
                 });
@@ -334,51 +256,6 @@ namespace AppAPS.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AppAPS.Entities.FichaTecnica", b =>
-                {
-                    b.HasOne("AppAPS.Entities.Produto", "Produto")
-                        .WithMany()
-                        .HasForeignKey("IdProduto")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Produto");
-                });
-
-            modelBuilder.Entity("AppAPS.Entities.PedidoItem", b =>
-                {
-                    b.HasOne("AppAPS.Entities.Pedido", "Pedido")
-                        .WithMany("Itens")
-                        .HasForeignKey("PedidoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AppAPS.Entities.Produto", "Produto")
-                        .WithMany()
-                        .HasForeignKey("ProdutoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pedido");
-
-                    b.Navigation("Produto");
-                });
-
-            modelBuilder.Entity("AppAPS.Entities.Produto", b =>
-                {
-                    b.HasOne("AppAPS.Entities.FichaTecnica", null)
-                        .WithMany("Ingredientes")
-                        .HasForeignKey("FichaTecnicaId");
-
-                    b.HasOne("AppAPS.Entities.FichaTecnica", "FichaTecnica")
-                        .WithMany()
-                        .HasForeignKey("IdFichaTecnica")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("FichaTecnica");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -428,16 +305,6 @@ namespace AppAPS.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("AppAPS.Entities.FichaTecnica", b =>
-                {
-                    b.Navigation("Ingredientes");
-                });
-
-            modelBuilder.Entity("AppAPS.Entities.Pedido", b =>
-                {
-                    b.Navigation("Itens");
                 });
 #pragma warning restore 612, 618
         }
