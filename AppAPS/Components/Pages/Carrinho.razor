@@ -1,0 +1,89 @@
+﻿@page "/carrinho/"
+@using AppAPS.DTOs
+@using AppAPS.Entities
+@using AppAPS.Interfaces
+@using AppAPS.Services.Model
+@using AutoMapper
+
+<style>
+    .fluent-label {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .fluent-label-nome {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<PageTitle>Página inicial</PageTitle>
+
+
+<FluentStack HorizontalAlignment="HorizontalAlignment.Center">
+    <FluentCard Width="80%" Height="100%" Style="display: flex; flex-wrap: wrap; gap: 10px">
+        @{
+            if (produtosItens != null && produtosItens.Any())
+            {
+                foreach (ProdutoItemDTO produtoItem in produtosItens)
+                {
+                    <FluentStack Style="display:flex; flex-direction: column">
+                        <FluentStack Width="80%" Style="height 10vh;">
+                            <FluentCard Style="padding: 0;" Width="40%" Height="100%">
+                                <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 20vh; width: 100%" />
+                            </FluentCard>
+                            <FluentStack Style="display:felx; flex-direction: column">
+                                <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
+                                    <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
+                                    <FluentStack>
+                                        <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
+                                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
+                                            <FluentNumberField Value="produtoItem.Quantidade" ValueChanged="@((int v) => OnQuantidadeChanged(v, produtoItem))" ValueChangedEvent="oninput" Size="1" Min="0"></FluentNumberField>
+                                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">X</FluentLabel>
+                                            <FluentLabel Typo="Typography.H4" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
+                                        </FluentStack>
+                                        <FluentStack Style="margin-top: 3px" HorizontalAlignment="HorizontalAlignment.Right">
+                                            <FluentLabel Typo="Typography.H5" >Total item:</FluentLabel>
+                                            <FluentLabel Typo="Typography.H5">R$ @produtoItem.ValorTotal</FluentLabel>
+                                        </FluentStack>
+                                    </FluentStack>
+                                </FluentStack>
+                            </FluentStack>
+                            <FluentDivider Style="background-color: black; width: 100%; height: 1.5px" />
+                    </FluentStack>
+                    
+                }
+            }
+            else
+            {
+                <FluentLabel Typo="Typography.H2">Não há registros cadastrados.</FluentLabel>
+            }
+        }
+    </FluentCard>
+</FluentStack>
+
+@code {
+    [Inject] private SessaoUsuario sessaoUsuario { get; set; }
+
+    public Produto Produto = new();
+    public List<ProdutoItemDTO> produtosItens = new();
+    public decimal Numero { get; set; }
+    public int IdProduto { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        produtosItens = sessaoUsuario.ProdutosItem;
+    }
+
+    private void OnQuantidadeChanged(int novaQuantidade, ProdutoItemDTO produtoItem)
+    {
+        produtoItem.Quantidade = novaQuantidade;
+        produtoItem.ValorTotal = novaQuantidade * produtoItem.Preco;
+    }
+}

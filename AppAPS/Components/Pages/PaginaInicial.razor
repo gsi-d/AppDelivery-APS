@@ -39,18 +39,20 @@
                     <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
                         <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
                         <FluentStack Style="padding-top: 10px" VerticalAlignment="VerticalAlignment.Bottom">
-                            <FluentButton IconStart="@(new Icons.Regular.Size20.AppsListDetail())" Appearance="Appearance.Accent" OnClick="async () => await InvokeDetalhes(produtoItem.Id)" BackgroundColor="purple">Detalhes</FluentButton>
-                            <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
+                            <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
                                 <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
                                 <FluentNumberField @bind-Value="@produtoItem.Quantidade" Size="1" Min="0"></FluentNumberField>
                                 <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Appearance="Appearance.Accent">
                                 </FluentButton>
+                                <FluentLabel Typo="Typography.H3" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
                             </FluentStack>
                         </FluentStack>
+                        <FluentButton Style="margin-top: 10px" IconStart="@(new Icons.Regular.Size20.AppsListDetail())" Appearance="Appearance.Accent" OnClick="async () => await InvokeDetalhes(produtoItem.Id)" BackgroundColor="purple">Detalhes</FluentButton>
                     </FluentCard>
             }
             <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())"
                           Appearance="Appearance.Accent"
+                          OnClick="InvokeCarrinho"
                           BackgroundColor="green"
                           style="position: fixed; bottom: 20px; right: 20px;">
                 Finalizar pedido
@@ -79,6 +81,11 @@
 
     private async Task InvokeDetalhes(int id)
     {
-        _navigationManager.NavigateTo($"/detalhes/{id}");
+        _navigationManager.NavigateTo($"/produtoDetalhes/{id}");
+    }
+
+    private async Task InvokeCarrinho()
+    {
+        _navigationManager.NavigateTo($"/carrinho/");
     }
 }
