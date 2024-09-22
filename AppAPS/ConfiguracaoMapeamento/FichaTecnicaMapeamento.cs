@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using AppAPS.Entities;
-using Microsoft.FluentUI.AspNetCore.Components.DesignTokens;
 
 namespace AppAPS.ConfiguracaoMapeamento
 {
@@ -9,21 +8,17 @@ namespace AppAPS.ConfiguracaoMapeamento
     {
         public void Configure(EntityTypeBuilder<FichaTecnica> builder)
         {
+            builder.ToTable("FichaTecnica");
             builder.HasKey(c => c.Id);
 
             builder.Property(c => c.Id)
-                .ValueGeneratedOnAdd() // O banco gerará o valor automaticamente
+                .ValueGeneratedOnAdd()
                 .HasColumnType("int");
 
-            builder.HasOne(p => p.Produto)
-              .WithMany()
-              .HasForeignKey(p => p.IdProduto)
-              .OnDelete(DeleteBehavior.NoAction);
-
-            builder.HasMany(f => f.Ingredientes)
-              .WithOne(p => p.FichaTecnica)
-              .HasForeignKey(p => p.IdFichaTecnica)
-              .OnDelete(DeleteBehavior.NoAction);
+            builder.HasData(new FichaTecnica
+            {
+                Id = 1
+            });
         }
     }
 }

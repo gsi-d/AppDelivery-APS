@@ -48,6 +48,8 @@
         </FluentStack>
     </FluentCard>
 </FluentStack>
+
+@* Precisa ser substituída pela listagem de fichas técnicas *@
 <FluentCard Style="margin-top: 20px">
     <Produtos />
 </FluentCard>
@@ -56,14 +58,13 @@
     [Parameter] public string Id { get; set; }
     [Inject] private IProdutoService produtoService { get; set; }
     [Inject] private IMapper mapper { get; set; }
-    public Produto Produto;
+    public Produto Produto = new();
     public decimal Numero { get; set; }
     public int IdProduto { get; set; }
 
-    protected override Task OnInitializedAsync()
+    protected async override Task OnInitializedAsync()
     {
         IdProduto = Convert.ToInt32(Id);
-        Produto = produtoService.GetByIdProdutos(IdProduto);
-        return Task.CompletedTask;
+        Produto = await produtoService.GetByIdProdutos(IdProduto);
     }
 }

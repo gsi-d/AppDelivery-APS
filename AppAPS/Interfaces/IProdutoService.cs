@@ -4,10 +4,10 @@ namespace AppAPS.Interfaces
 {
     public interface IProdutoService
     {
-        List<Produto> GetAllProdutos();
-        List<Produto> GetSomenteProdutos();
-        Produto GetByIdProdutos(int id);
-        Produto InserirProduto(Produto produto);
-        bool DeletarProdutos(List<Produto> produtos);
+        Task<List<Produto>> GetAllProdutos();
+        Task<List<Produto>> GetSomenteProdutos();
+        Task<Produto> GetByIdProdutos(int id);
+        Task<Produto> InserirProduto(Produto produto);
+        Task<bool> DeletarProdutos(List<Produto> produtos);
     }
 }

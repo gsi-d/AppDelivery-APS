@@ -2,6 +2,7 @@
 using AppAPS.Entities;
 using AppAPS.Interfaces;
 using AppAPS.Services.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppAPS.Services
 {
@@ -15,62 +16,33 @@ namespace AppAPS.Services
             _sessaoUsuario = sessaoUsuario;
         }
 
-        public List<Produto> GetAllProdutos()
+        public async Task<List<Produto>> GetAllProdutos()
         {
-            try
-            {
-                //return _context.Produto.ToList();
-                return _sessaoUsuario.Produtos;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            return await _context.Produto.Include(produto => produto.FichaTecnica).ToListAsync();
         }
 
-        public Produto GetByIdProdutos(int id)
+        public async Task<Produto> GetByIdProdutos(int id)
         {
-            return _sessaoUsuario.Produtos.FirstOrDefault(x => x.Id == id);
+            return await _context.Produto.Include(produto => produto.FichaTecnica).FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public List<Produto> GetSomenteProdutos()
+        public async Task<List<Produto>> GetSomenteProdutos()
         {
-            return _sessaoUsuario.Produtos.Where(produto => !produto.Ingrediente).ToList();
+            return await _context.Produto.Include(produto => produto.FichaTecnica).Where(produto => !produto.Ingrediente).ToListAsync();
         }
 
-        public Produto InserirProduto(Produto produto)
+        public async Task<Produto> InserirProduto(Produto produto)
         {
-            try
-            {
-                //var entityEntry = _context.Produto.Add(produto);
-                //Save();
-                //return entityEntry.Entity;
-                _sessaoUsuario.Produtos.Add(produto);
-                return produto;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            var entityEntry = await _context.Produto.AddAsync(produto);
+            Save();
+            return entityEntry.Entity;
         }
 
-        public bool DeletarProdutos(List<Produto> produtos)
+        public async Task<bool> DeletarProdutos(List<Produto> produtos)
         {
-            try
-            {
-                //var entityEntry = _context.Produto.Add(produto);
-                //Save();
-                //return entityEntry.Entity;
-                foreach (Produto produto in produtos)
-                {
-                    _sessaoUsuario.Produtos.Remove(produto);
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
+            _context.Produto.RemoveRange(produtos);
+            Save();
+            return true;
         }
 
         public void Save()

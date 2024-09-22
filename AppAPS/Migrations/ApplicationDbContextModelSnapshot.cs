@@ -4,7 +4,6 @@ using AppAPS.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,11 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppAPS.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240921211729_AdicionandoFichaTecnica")]
-    partial class AdicionandoFichaTecnica
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,14 +95,15 @@ namespace AppAPS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("IdProduto")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("IdProduto");
+                    b.ToTable("FichaTecnica", (string)null);
 
-                    b.ToTable("FichaTecnica");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1
+                        });
                 });
 
             modelBuilder.Entity("AppAPS.Entities.Pedido", b =>
@@ -121,18 +119,28 @@ namespace AppAPS.Migrations
 
                     b.Property<string>("Cliente")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("FormaPagamento")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Observacoes")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Rua")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
-                    b.Property<byte>("Status")
-                        .HasColumnType("tinyint");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pedido");
+                    b.ToTable("Pedidos", (string)null);
                 });
 
             modelBuilder.Entity("AppAPS.Entities.PedidoItem", b =>
@@ -158,7 +166,7 @@ namespace AppAPS.Migrations
 
                     b.HasIndex("ProdutoId");
 
-                    b.ToTable("PedidoItem");
+                    b.ToTable("PedidoItem", (string)null);
                 });
 
             modelBuilder.Entity("AppAPS.Entities.Produto", b =>
@@ -174,10 +182,10 @@ namespace AppAPS.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("varchar");
 
-                    b.Property<int?>("FichaTecnicaId")
+                    b.Property<int>("FichaTecnicaId")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdFichaTecnica")
+                    b.Property<int?>("FichaTecnicaId1")
                         .HasColumnType("int");
 
                     b.Property<bool>("Ingrediente")
@@ -185,6 +193,7 @@ namespace AppAPS.Migrations
 
                     b.Property<string>("Nome")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("varchar");
 
                     b.Property<string>("NomeArquivoUpload")
@@ -193,15 +202,167 @@ namespace AppAPS.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<decimal>("Preco")
-                        .HasColumnType("numeric(12,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FichaTecnicaId");
 
-                    b.HasIndex("IdFichaTecnica");
+                    b.HasIndex("FichaTecnicaId1");
 
-                    b.ToTable("Produto");
+                    b.ToTable("Produto", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Descricao = "Dois suculentos hambúrgueres de carne bovina grelhados, com queijo cheddar derretido, alface fresca, tomate maduro e molho especial. Tudo isso dentro de um pão macio com gergelim.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Cheeseburger Duplo",
+                            NomeArquivoUpload = "/uploads/cheeseburger_duplo.jpg",
+                            Preco = 17.50m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Descricao = "Batatas fritas crocantes e douradas por fora, macias por dentro, temperadas na medida certa. Acompanhamento perfeito para qualquer refeição.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Batata Frita Grande",
+                            NomeArquivoUpload = "/uploads/batata_frita_grande.jpeg",
+                            Preco = 8.99m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Descricao = "Peitos de frango suculentos e temperados, empanados em uma crosta crocante de ervas e especiarias. Perfeito para os amantes de frango frito.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Frango Empanado Crocante",
+                            NomeArquivoUpload = "/uploads/frango_empanado.jpg",
+                            Preco = 15.00m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Descricao = "Milkshake cremoso de chocolate, feito com sorvete artesanal de alta qualidade, servido com chantilly e cobertura de chocolate.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Milkshake de Chocolate",
+                            NomeArquivoUpload = "/uploads/milkshake_chocolate.jpg",
+                            Preco = 12.50m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Descricao = "Tortilla macia recheada com pedaços de frango grelhado, alface, tomate, queijo cheddar e molho ranch. Uma opção leve e deliciosa.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Wrap de Frango Grelhado",
+                            NomeArquivoUpload = "/uploads/wrap_frango_grelhado.jpg",
+                            Preco = 14.75m
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Descricao = "Hambúrguer com dois suculentos hambúrgueres de carne bovina, bacon crocante, queijo cheddar derretido, cebolas caramelizadas e molho especial. Acompanha batata frita e refrigerante.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Combo Bacon Duplo",
+                            NomeArquivoUpload = "/uploads/combo_bacon_duplo.jpg",
+                            Preco = 25.99m
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Descricao = "Pequenos pedaços de frango empanado, crocantes e suculentos, servidos com seu molho preferido. Ideal como lanche rápido ou acompanhamento.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Nuggets de Frango",
+                            NomeArquivoUpload = "/uploads/nuggets_frango.jpg",
+                            Preco = 10.99m
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Descricao = "Salada fresca de alface romana com frango grelhado, croutons crocantes e queijo parmesão ralado, tudo regado com molho Caesar cremoso.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Salada Caesar com Frango",
+                            NomeArquivoUpload = "/uploads/salada_caesar_frango.jpg",
+                            Preco = 18.00m
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Descricao = "Pizza individual com molho de tomate artesanal, fatias generosas de pepperoni, queijo mussarela derretido e massa fina e crocante.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Pizza Pepperoni Individual",
+                            NomeArquivoUpload = "/uploads/pizza_pepperoni.jpg",
+                            Preco = 22.99m
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Descricao = "Clássicas coxinhas recheadas com frango desfiado temperado e cremoso catupiry, envolvidas por uma massa dourada e crocante.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Coxinhas de Frango com Catupiry",
+                            NomeArquivoUpload = "/uploads/coxinhas_frango_catupiry.jpg",
+                            Preco = 9.50m
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Descricao = "Bebida refrescante feita com chá preto gelado, adoçado na medida certa e com um toque de limão fresco. Ideal para acompanhar seu lanche.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Chá Gelado de Limão",
+                            NomeArquivoUpload = "/uploads/cha_gelado_limao.jpg",
+                            Preco = 6.50m
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Descricao = "Sorvete cremoso de baunilha servido com uma deliciosa calda de caramelo, perfeito para os amantes de sobremesas doces e suaves.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Sorvete de Baunilha com Calda de Caramelo",
+                            NomeArquivoUpload = "/uploads/sorvete_baunilha_caramelo.jpg",
+                            Preco = 8.75m
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Descricao = "Hambúrguer 100% vegano, feito com proteína vegetal, alface, tomate, cebola roxa e maionese vegana, servido em pão integral.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Hambúrguer Vegano",
+                            NomeArquivoUpload = "/uploads/hamburguer_vegano.jpg",
+                            Preco = 19.99m
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Descricao = "Pastel frito recheado com carne moída temperada e azeitonas, envolto em uma massa crocante e dourada. Um lanche clássico e saboroso.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Pastel de Carne",
+                            NomeArquivoUpload = "/uploads/pastel_carne.jpg",
+                            Preco = 7.50m
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Descricao = "Pão de hot-dog macio com salsicha grelhada, coberta com molho de tomate caseiro, queijo cheddar derretido, batata palha e milho verde.",
+                            FichaTecnicaId = 1,
+                            Ingrediente = false,
+                            Nome = "Cachorro-Quente Especial",
+                            NomeArquivoUpload = "/uploads/cachorro_quente_especial.jpg",
+                            Preco = 13.99m
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -337,17 +498,6 @@ namespace AppAPS.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AppAPS.Entities.FichaTecnica", b =>
-                {
-                    b.HasOne("AppAPS.Entities.Produto", "Produto")
-                        .WithMany()
-                        .HasForeignKey("IdProduto")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Produto");
-                });
-
             modelBuilder.Entity("AppAPS.Entities.PedidoItem", b =>
                 {
                     b.HasOne("AppAPS.Entities.Pedido", "Pedido")
@@ -359,7 +509,7 @@ namespace AppAPS.Migrations
                     b.HasOne("AppAPS.Entities.Produto", "Produto")
                         .WithMany()
                         .HasForeignKey("ProdutoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Pedido");
@@ -369,15 +519,15 @@ namespace AppAPS.Migrations
 
             modelBuilder.Entity("AppAPS.Entities.Produto", b =>
                 {
-                    b.HasOne("AppAPS.Entities.FichaTecnica", null)
-                        .WithMany("Ingredientes")
-                        .HasForeignKey("FichaTecnicaId");
-
                     b.HasOne("AppAPS.Entities.FichaTecnica", "FichaTecnica")
                         .WithMany()
-                        .HasForeignKey("IdFichaTecnica")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .HasForeignKey("FichaTecnicaId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("AppAPS.Entities.FichaTecnica", null)
+                        .WithMany("Ingredientes")
+                        .HasForeignKey("FichaTecnicaId1");
 
                     b.Navigation("FichaTecnica");
                 });

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-
+﻿
 namespace AppAPS.Entities.Enum
 {
     using System.ComponentModel;
@@ -91,14 +90,37 @@ namespace AppAPS.Entities.Enum
         Zantão
     }
 
+    public enum FormaPagamento
+    {
+        [Description("Pagamento em Dinheiro")]
+        Dinheiro = 1,
 
+        [Description("Cartão de Crédito")]
+        CartaoCredito = 2,
+
+        [Description("Cartão de Débito")]
+        CartaoDebito = 3,
+
+        [Description("Pagamento via Pix")]
+        Pix = 4
+    }
 
     public enum StatusPedido : byte
     {
-        EmAberto,
-        Confirmado,
-        ProntoParaEntrega,
-        EmTransito,
-        Finalizado
+        [Description("Pedido em Aberto")]
+        EmAberto = 0,
+
+        [Description("Pedido Confirmado")]
+        Confirmado = 1,
+
+        [Description("Pronto para Entrega")]
+        ProntoParaEntrega = 2,
+
+        [Description("Pedido em Trânsito")]
+        EmTransito = 3,
+
+        [Description("Pedido Finalizado")]
+        Finalizado = 4
     }
+
 }

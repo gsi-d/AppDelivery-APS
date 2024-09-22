@@ -45,10 +45,10 @@
     public IEnumerable<Produto> SelectedItems = new List<Produto>();
     public IQueryable<Produto>? produtos;
 
-    protected override Task OnInitializedAsync()
+    protected async override Task OnInitializedAsync()
     {
-        produtos = produtoService.GetAllProdutos().AsQueryable();
-        return Task.CompletedTask;
+        var resultadoProdutos = await produtoService.GetAllProdutos();
+        produtos = resultadoProdutos.AsQueryable();
     }
 
     private async void InvokeTelaCadastro()
@@ -58,11 +58,12 @@
 
     private async void ExcluirProdutos()
     {
-        bool sucesso = produtoService.DeletarProdutos(SelectedItems.ToList());
+        bool sucesso = await produtoService.DeletarProdutos(SelectedItems.ToList());
         if (sucesso)
         {
             ToastService.ShowSuccess("Exclusão bem sucedida.");
-            produtos = produtoService.GetAllProdutos().AsQueryable();
+            var resultadoProdutos = await produtoService.GetAllProdutos();
+            produtos = resultadoProdutos.AsQueryable();
         }
     }
 }

@@ -28,34 +28,40 @@
 
 <FluentStack Style="display: flex; flex-wrap: wrap; gap: 20px;">
     @{
-        foreach (ProdutoItemDTO produtoItem in produtosItem)
+        if (produtosItem != null && produtos.Any())
         {
-            <FluentCard Width="30%" Height="50%">
-                <FluentCard Style="padding: 0;" Width="100%" Height="60%">
-                    <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 30vh; width: 100%" />
-                </FluentCard>
-                <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
-                    <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
-                    <FluentStack Style="padding-top: 10px" VerticalAlignment="VerticalAlignment.Bottom">
-                        <FluentButton IconStart="@(new Icons.Regular.Size20.AppsListDetail())" Appearance="Appearance.Accent" OnClick="async () => await InvokeDetalhes(produtoItem.Id)" BackgroundColor="purple">Detalhes</FluentButton>
-                        <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
-                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
-                            <FluentNumberField @bind-Value="@produtoItem.Quantidade" Size="1" Min="0"></FluentNumberField>
-                            <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Appearance="Appearance.Accent">
-                            </FluentButton>
+            foreach (ProdutoItemDTO produtoItem in produtosItem)
+            {
+                <FluentCard Width="30%" Height="50%">
+                    <FluentCard Style="padding: 0;" Width="100%" Height="60%">
+                        <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 30vh; width: 100%" />
+                    </FluentCard>
+                    <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
+                        <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
+                        <FluentStack Style="padding-top: 10px" VerticalAlignment="VerticalAlignment.Bottom">
+                            <FluentButton IconStart="@(new Icons.Regular.Size20.AppsListDetail())" Appearance="Appearance.Accent" OnClick="async () => await InvokeDetalhes(produtoItem.Id)" BackgroundColor="purple">Detalhes</FluentButton>
+                            <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
+                                <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
+                                <FluentNumberField @bind-Value="@produtoItem.Quantidade" Size="1" Min="0"></FluentNumberField>
+                                <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Appearance="Appearance.Accent">
+                                </FluentButton>
+                            </FluentStack>
                         </FluentStack>
-                    </FluentStack>
-                </FluentCard>
+                    </FluentCard>
+            }
+            <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())"
+                          Appearance="Appearance.Accent"
+                          BackgroundColor="green"
+                          style="position: fixed; bottom: 20px; right: 20px;">
+                Finalizar pedido
+            </FluentButton>
+        }
+        else
+        {
+            <FluentLabel Typo="Typography.H2">Não há registros cadastrados.</FluentLabel>
         }
     }
 </FluentStack>
-
-<FluentButton IconStart="@(new Icons.Regular.Size20.Cart())"
-              Appearance="Appearance.Accent"
-              BackgroundColor="green"
-              style="position: fixed; bottom: 20px; right: 20px;">
-    Finalizar pedido
-</FluentButton>
 
 @code {
     [Inject] private IProdutoService produtoService { get; set; }
@@ -64,12 +70,11 @@
     public IQueryable<ProdutoItemDTO>? produtosItem;
     public decimal Numero { get; set; }
 
-    protected override Task OnInitializedAsync()
+    protected async override Task OnInitializedAsync()
     {
-        produtos = produtoService.GetAllProdutos();
+        produtos = await produtoService.GetAllProdutos();
         var produtosMapeados = mapper.Map<List<ProdutoItemDTO>>(produtos);
         produtosItem = produtosMapeados.AsQueryable();
-        return Task.CompletedTask;
     }
 
     private async Task InvokeDetalhes(int id)

@@ -7,8 +7,10 @@ namespace AppAPS.Entities
         public int Id { get; set; }
         public string Cliente { get; set; }
         public string Rua { get; set; }
+        public FormaPagamento FormaPagamento { get; set; }
         public Bairro Bairro { get; set; }
-        public List<PedidoItem> Itens { get; set; }
         public StatusPedido Status { get; set; }
+        public string Observacoes { get; set; }
+        public List<PedidoItem> Itens { get; set; }
     }
 }
