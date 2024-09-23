@@ -5,7 +5,6 @@ using AppAPS.Interfaces;
 using AppAPS.Services;
 using AppAPS.Services.Model;
 using AutoMapper;
-using Azure;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -62,21 +61,6 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        context.Database.Migrate(); // Aplica as migrations pendentes
-    }
-    catch (Exception ex)
-    {
-        // Log ou trate o erro conforme necessário
-        Console.WriteLine($"Erro ao aplicar as migrations: {ex.Message}");
-    }
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

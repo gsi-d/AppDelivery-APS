@@ -1,7 +1,5 @@
-﻿using AppAPS.Components.Pages;
-using AppAPS.DTOs;
+﻿using AppAPS.DTOs;
 using AppAPS.Entities;
-using AppAPS.Interfaces;
 
 namespace AppAPS.Services.Model
 {
@@ -159,7 +157,7 @@ namespace AppAPS.Services.Model
                     Descricao = produto.Descricao,
                     Preco = produto.Preco,
                     NomeArquivoUpload = produto.NomeArquivoUpload,
-                    Quantidade = 0,
+                    Quantidade = 2,
                     Selecionado = false,
                     ValorTotal = 0m
                 });

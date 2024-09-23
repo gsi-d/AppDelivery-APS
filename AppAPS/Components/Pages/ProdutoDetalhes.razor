@@ -2,6 +2,7 @@
 @using AppAPS.DTOs
 @using AppAPS.Entities
 @using AppAPS.Interfaces
+@using AppAPS.Services.Model
 @using AutoMapper
 
 <style>
@@ -38,9 +39,9 @@
                     <FluentLabel Typo="Typography.H2">@Produto.Nome</FluentLabel>
                 </FluentStack>
                 <FluentLabel Typo="Typography.Subject">@Produto.Descricao</FluentLabel>
-                <FluentDivider/>
+                <FluentDivider />
                 <FluentStack>
-                        <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Quantidade:</FluentLabel>
+                    <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Quantidade:</FluentLabel>
                     <FluentNumberField @bind-Value="@Numero" Size="1" Min="0"></FluentNumberField>
                     <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Appearance="Appearance.Accent"></FluentButton>
                 </FluentStack>
@@ -54,9 +55,10 @@
     <Produtos />
 </FluentCard>
 
-    @code {
+@code {
     [Parameter] public string Id { get; set; }
     [Inject] private IProdutoService produtoService { get; set; }
+    [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     [Inject] private IMapper mapper { get; set; }
     public Produto Produto = new();
     public decimal Numero { get; set; }
@@ -65,6 +67,7 @@
     protected async override Task OnInitializedAsync()
     {
         IdProduto = Convert.ToInt32(Id);
-        Produto = await produtoService.GetByIdProdutos(IdProduto);
+        // Produto = await produtoService.GetByIdProdutos(IdProduto);
+        Produto = sessaoUsuario.Produtos.FirstOrDefault(produto => produto.Id == IdProduto);
     }
 }

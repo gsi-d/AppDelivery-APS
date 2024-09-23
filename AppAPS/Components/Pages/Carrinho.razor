@@ -25,48 +25,95 @@
 
 <PageTitle>Página inicial</PageTitle>
 
-
 <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
-    <FluentCard Width="80%" Height="100%" Style="display: flex; flex-wrap: wrap; gap: 10px">
-        @{
-            if (produtosItens != null && produtosItens.Any())
-            {
-                foreach (ProdutoItemDTO produtoItem in produtosItens)
-                {
-                    <FluentStack Style="display:flex; flex-direction: column">
-                        <FluentStack Width="80%" Style="height 10vh;">
-                            <FluentCard Style="padding: 0;" Width="40%" Height="100%">
-                                <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 20vh; width: 100%" />
-                            </FluentCard>
-                            <FluentStack Style="display:felx; flex-direction: column">
-                                <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
-                                    <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
-                                    <FluentStack>
-                                        <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
-                                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
-                                            <FluentNumberField Value="produtoItem.Quantidade" ValueChanged="@((int v) => OnQuantidadeChanged(v, produtoItem))" ValueChangedEvent="oninput" Size="1" Min="0"></FluentNumberField>
-                                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">X</FluentLabel>
-                                            <FluentLabel Typo="Typography.H4" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
+    <FluentCard Width="80%" Height="90%" Style="display: flex; flex-wrap: wrap; gap: 10px;">
+        <FluentTabs @bind-ActiveTabId="@activeid" Size="TabSize.Large" OnTabChange="HandleOnTabChange">
+            <FluentTab Label="Itens" Icon="@(new Icons.Regular.Size24.TrayItemAdd())" Id="tab-1">
+                <FluentStack HorizontalAlignment="HorizontalAlignment.Center" Style="max-height: 75vh; overflow-y: auto">
+                    <FluentStack Width="100%" Style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        @{
+                            if (produtosItens != null && produtosItens.Any())
+                            {
+                                foreach (ProdutoItemDTO produtoItem in produtosItens)
+                                {
+                                    <FluentStack Style="display:flex; flex-direction: column;">
+                                        <FluentStack Width="80%" Style="height 10vh;">
+                                            <FluentCard Style="padding: 0;" Width="40%" Height="100%">
+                                                <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 20vh; width: 100%" />
+                                            </FluentCard>
+                                            <FluentStack Style="display:flex; flex-direction: column">
+                                                <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
+                                                <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
+                                                <FluentStack>
+                                                    <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
+                                                        <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
+                                                        <FluentNumberField @bind-Value="produtoItem.Quantidade" @bind-Value:event="OnQuantidadeChanged" TValue="int" Size="1" Min="0"></FluentNumberField>
+                                                        <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">X</FluentLabel>
+                                                        <FluentLabel Typo="Typography.H4" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
+                                                    </FluentStack>
+                                                    <FluentStack Style="margin-top: 3px" HorizontalAlignment="HorizontalAlignment.Right">
+                                                        <FluentLabel Typo="Typography.H5">Total item:</FluentLabel>
+                                                        <FluentLabel Typo="Typography.H5">R$ @produtoItem.ValorTotal</FluentLabel>
+                                                    </FluentStack>
+                                                </FluentStack>
+                                            </FluentStack>
                                         </FluentStack>
-                                        <FluentStack Style="margin-top: 3px" HorizontalAlignment="HorizontalAlignment.Right">
-                                            <FluentLabel Typo="Typography.H5" >Total item:</FluentLabel>
-                                            <FluentLabel Typo="Typography.H5">R$ @produtoItem.ValorTotal</FluentLabel>
-                                        </FluentStack>
+                                        <FluentDivider Style="background-color: black; width: 100%; height: 1.5px" />
                                     </FluentStack>
-                                </FluentStack>
-                            </FluentStack>
-                            <FluentDivider Style="background-color: black; width: 100%; height: 1.5px" />
+                                }
+                            }
+                            else
+                            {
+                                <FluentLabel Typo="Typography.H2">Não há registros cadastrados.</FluentLabel>
+                            }
+                        }
                     </FluentStack>
-                    
+                </FluentStack>
+                <FluentStack Width="100%" Style="height: 10vh;">
+                    <FluentStack Style="margin-top: 3px" HorizontalAlignment="HorizontalAlignment.Left" VerticalAlignment="VerticalAlignment.Center">
+                        <FluentLabel Typo="Typography.H4">Total do pedido:</FluentLabel>
+                        <FluentLabel Typo="Typography.H3" Style="color: limegreen">R$ @TotalPedido</FluentLabel>
+                    </FluentStack>
+                </FluentStack>
+
+            </FluentTab>
+            <FluentTab Label="Endereço de entrega" Id="tab-2" DeferredLoading="@DeferredLoading">
+                <LoadingContent>
+                    <FluentProgressRing />
+                </LoadingContent>
+                <Content>
+                    @{
+                        if (DeferredLoading)
+                        {
+                            Thread.Sleep(1000);
+                        }
+                    }
+                    Tab two content. This is for testing.
+                </Content>
+            </FluentTab>
+            <FluentTab Label="Forma de pagamento" Id="tab-3" DeferredLoading="@DeferredLoading">
+                @{
+                    if (DeferredLoading)
+                    {
+                        Thread.Sleep(1000);
+                    }
                 }
-            }
-            else
-            {
-                <FluentLabel Typo="Typography.H2">Não há registros cadastrados.</FluentLabel>
-            }
-        }
+                Tab three content. This is for testing.
+            </FluentTab>
+
+        </FluentTabs>
     </FluentCard>
 </FluentStack>
+
+<FluentButton IconStart="@(new Icons.Regular.Size20.NextFrame())"
+              Appearance="Appearance.Accent"
+              OnClick="ProximoPasso"
+              BackgroundColor="green"
+              style="position: fixed; bottom: 20px; right: 20px;">
+    Próximo
+</FluentButton>
+
+
 
 @code {
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
@@ -75,15 +122,35 @@
     public List<ProdutoItemDTO> produtosItens = new();
     public decimal Numero { get; set; }
     public int IdProduto { get; set; }
+    public decimal TotalPedido { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
         produtosItens = sessaoUsuario.ProdutosItem;
+        produtosItens.ToList().ForEach(item => TotalPedido += item.Quantidade * item.Preco);
     }
 
-    private void OnQuantidadeChanged(int novaQuantidade, ProdutoItemDTO produtoItem)
+    private void OnQuantidadeChanged()
     {
-        produtoItem.Quantidade = novaQuantidade;
-        produtoItem.ValorTotal = novaQuantidade * produtoItem.Preco;
+        foreach (var produtoItem in produtosItens)
+        {
+            produtoItem.ValorTotal = produtoItem.Quantidade * produtoItem.Preco;
+        }
+    }
+
+    bool DeferredLoading = false;
+
+    string? activeid = "tab-1";
+    FluentTab? changedto;
+
+    private void HandleOnTabChange(FluentTab tab)
+    {
+        changedto = tab;
+    }
+
+    private async Task ProximoPasso()
+    {
+        int numeroProximaTab = Convert.ToInt32(activeid.Split("-")[1]);
+        activeid = "tab-" + numeroProximaTab;
     }
 }
