@@ -4,6 +4,7 @@
 @using AppAPS.Interfaces
 @using AppAPS.Services.Model
 @using AutoMapper
+@rendermode RenderMode.InteractiveServer
 
 <style>
     .fluent-label {
@@ -28,7 +29,7 @@
 <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
     <FluentCard Width="80%" Height="90%" Style="display: flex; flex-wrap: wrap; gap: 10px;">
         <FluentTabs @bind-ActiveTabId="@activeid" Size="TabSize.Large" OnTabChange="HandleOnTabChange">
-            <FluentTab Label="Itens" Icon="@(new Icons.Regular.Size24.TrayItemAdd())" Id="tab-1">
+            <FluentTab Label="Itens" Disabled="@(DesabilitaTab("tab-1"))" Icon="@(new Icons.Regular.Size24.TrayItemAdd())" Id="tab-1">
                 <FluentStack HorizontalAlignment="HorizontalAlignment.Center" Style="max-height: 75vh; overflow-y: auto">
                     <FluentStack Width="100%" Style="display: flex; flex-wrap: wrap; gap: 10px;">
                         @{
@@ -47,7 +48,7 @@
                                                 <FluentStack>
                                                     <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
                                                         <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
-                                                        <FluentNumberField @bind-Value="produtoItem.Quantidade" @bind-Value:event="OnQuantidadeChanged" TValue="int" Size="1" Min="0"></FluentNumberField>
+                                                        <FluentNumberField Value="produtoItem.Quantidade" ValueChanged="@(v => OnQuantidadeChanged(v, produtoItem))" TValue="int" Size="1" Min="0"></FluentNumberField>
                                                         <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">X</FluentLabel>
                                                         <FluentLabel Typo="Typography.H4" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
                                                     </FluentStack>
@@ -69,15 +70,26 @@
                         }
                     </FluentStack>
                 </FluentStack>
-                <FluentStack Width="100%" Style="height: 10vh;">
-                    <FluentStack Style="margin-top: 3px" HorizontalAlignment="HorizontalAlignment.Left" VerticalAlignment="VerticalAlignment.Center">
-                        <FluentLabel Typo="Typography.H4">Total do pedido:</FluentLabel>
-                        <FluentLabel Typo="Typography.H3" Style="color: limegreen">R$ @TotalPedido</FluentLabel>
+                <FluentDivider Style="background-color: black; width: 100%; height: 2px" />
+                <FluentStack Width="100%" Style="height: 8vh;" VerticalAlignment="VerticalAlignment.Center">
+                    <FluentStack Style="margin-top: 10px; display:flex; flex-direction: column" HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
+                        <FluentStack HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
+                            <FluentLabel Typo="Typography.H4">Total do pedido:</FluentLabel>
+                            <FluentLabel Typo="Typography.H3" Style="color: limegreen">R$ @TotalPedido</FluentLabel>
+                        </FluentStack>
+                        <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
+                            <FluentButton IconStart="@(new Icons.Regular.Size20.NextFrame())"
+                                          Appearance="Appearance.Accent"
+                                          OnClick="ProximoPasso"
+                                          BackgroundColor="green">
+                                Avançar
+                            </FluentButton>
+                        </FluentStack>
                     </FluentStack>
                 </FluentStack>
 
             </FluentTab>
-            <FluentTab Label="Endereço de entrega" Id="tab-2" DeferredLoading="@DeferredLoading">
+            <FluentTab Label="Endereço de entrega" Disabled="@(DesabilitaTab("tab-2"))" Id="tab-2" DeferredLoading="@DeferredLoading">
                 <LoadingContent>
                     <FluentProgressRing />
                 </LoadingContent>
@@ -91,7 +103,7 @@
                     Tab two content. This is for testing.
                 </Content>
             </FluentTab>
-            <FluentTab Label="Forma de pagamento" Id="tab-3" DeferredLoading="@DeferredLoading">
+            <FluentTab Label="Forma de pagamento" Disabled="@(DesabilitaTab("tab-3"))" Id="tab-3" DeferredLoading="@DeferredLoading">
                 @{
                     if (DeferredLoading)
                     {
@@ -104,15 +116,6 @@
         </FluentTabs>
     </FluentCard>
 </FluentStack>
-
-<FluentButton IconStart="@(new Icons.Regular.Size20.NextFrame())"
-              Appearance="Appearance.Accent"
-              OnClick="ProximoPasso"
-              BackgroundColor="green"
-              style="position: fixed; bottom: 20px; right: 20px;">
-    Próximo
-</FluentButton>
-
 
 
 @code {
@@ -130,12 +133,16 @@
         produtosItens.ToList().ForEach(item => TotalPedido += item.Quantidade * item.Preco);
     }
 
-    private void OnQuantidadeChanged()
+    private void OnQuantidadeChanged(int novaQuantidade, ProdutoItemDTO produtoItem)
     {
-        foreach (var produtoItem in produtosItens)
-        {
-            produtoItem.ValorTotal = produtoItem.Quantidade * produtoItem.Preco;
-        }
+        produtoItem.Quantidade = novaQuantidade;
+        produtoItem.ValorTotal = novaQuantidade * produtoItem.Preco;
+        AtualizaTotal();
+    }
+
+    private void AtualizaTotal()
+    {
+        produtosItens.ToList().ForEach(item => TotalPedido += item.ValorTotal);
     }
 
     bool DeferredLoading = false;
@@ -148,9 +155,14 @@
         changedto = tab;
     }
 
+    private bool DesabilitaTab(string idTab)
+    {
+        return idTab != activeid;
+    }
+
     private async Task ProximoPasso()
     {
-        int numeroProximaTab = Convert.ToInt32(activeid.Split("-")[1]);
+        int numeroProximaTab = Convert.ToInt32(activeid.Split("-")[1]) + 1;
         activeid = "tab-" + numeroProximaTab;
     }
 }

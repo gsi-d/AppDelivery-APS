@@ -157,7 +157,7 @@ namespace AppAPS.Services.Model
                     Descricao = produto.Descricao,
                     Preco = produto.Preco,
                     NomeArquivoUpload = produto.NomeArquivoUpload,
-                    Quantidade = 2,
+                    Quantidade = 0,
                     Selecionado = false,
                     ValorTotal = 0m
                 });
