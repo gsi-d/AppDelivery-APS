@@ -1,12 +1,13 @@
 ﻿
-namespace AppAPS.Entities.Enum
+namespace AppAPS.Entities
 {
     using System.ComponentModel;
+    using System.Reflection;
 
     public enum Bairro
     {
         [Description("Águas Claras")]
-        ÁguasClaras,
+        AguasClaras,
 
         [Description("Azambuja")]
         Azambuja,
@@ -50,8 +51,8 @@ namespace AppAPS.Entities.Enum
         [Description("Poço Fundo")]
         PoçoFundo,
 
-        [Description("Ponta Russas")]
-        PontaRussas,
+        [Description("Ponta Russa")]
+        PontaRussa,
 
         [Description("Primeiro de Maio")]
         PrimeiroDeMaio,
@@ -121,6 +122,39 @@ namespace AppAPS.Entities.Enum
 
         [Description("Pedido Finalizado")]
         Finalizado = 4
+    }
+
+    public class EnumItem<T>
+    {
+        public string Description { get; set; }
+        public T Value { get; set; }
+
+        public EnumItem(string description, T value)
+        {
+            Description = description;
+            Value = value;
+        }
+
+        public override string ToString() => Description;
+    }
+
+    public static class EnumHelper
+    {
+        public static List<EnumItem<T>> GetEnumItems<T>() where T : Enum
+        {
+            return typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static)
+                            .Select(f => new EnumItem<T>(
+                                f.GetCustomAttribute<DescriptionAttribute>()?.Description ?? f.Name,
+                                (T)f.GetValue(null)))
+                            .ToList();
+        }
+
+        public static string GetEnumDescription<T>(T value) where T : Enum
+        {
+            var fieldInfo = value.GetType().GetField(value.ToString());
+            var descriptionAttribute = fieldInfo?.GetCustomAttribute<DescriptionAttribute>();
+            return descriptionAttribute?.Description ?? value.ToString();
+        }
     }
 
 }

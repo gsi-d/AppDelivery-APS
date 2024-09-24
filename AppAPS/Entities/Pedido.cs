@@ -1,4 +1,4 @@
-﻿using AppAPS.Entities.Enum;
+﻿using AppAPS.Entities;
 
 namespace AppAPS.Entities
 {

@@ -4,6 +4,7 @@
 @using AppAPS.Interfaces
 @using AppAPS.Services.Model
 @using AutoMapper
+@inject IDialogService DialogService
 @rendermode RenderMode.InteractiveServer
 
 <style>
@@ -22,113 +23,124 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
+
+    .text-field {
+        width: 100%;
+    }
+
+    .width-maximo {
+        width: 100%;
+    }
+
 </style>
 
 <PageTitle>Página inicial</PageTitle>
 
+
+
 <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
-    <FluentCard Width="80%" Height="90%" Style="display: flex; flex-wrap: wrap; gap: 10px;">
-        <FluentTabs @bind-ActiveTabId="@activeid" Size="TabSize.Large" OnTabChange="HandleOnTabChange">
-            <FluentTab Label="Itens" Disabled="@(DesabilitaTab("tab-1"))" Icon="@(new Icons.Regular.Size24.TrayItemAdd())" Id="tab-1">
-                <FluentStack HorizontalAlignment="HorizontalAlignment.Center" Style="max-height: 75vh; overflow-y: auto">
-                    <FluentStack Width="100%" Style="display: flex; flex-wrap: wrap; gap: 10px;">
-                        @{
-                            if (produtosItens != null && produtosItens.Any())
-                            {
-                                foreach (ProdutoItemDTO produtoItem in produtosItens)
+    <FluentCard Width="80%" Height="92vh" Style="display: flex; flex-wrap: wrap; gap: 10px;">
+        <FluentWizard StepperPosition="@(StepperPosition.Top)"
+                      StepSequence="@StepSequence"
+                      DisplayStepNumber="@(WizardStepStatus.Current | WizardStepStatus.Next)"
+                      Border="WizardBorder.Outside"
+                      StepTitleHiddenWhen="@GridItemHidden.XsAndDown"
+                      Height="88vh"
+                      OnFinish="@OnFinishedAsync">
+            <Steps>
+                <FluentWizardStep Label="Confirmar itens"
+                                  OnChange="@OnStepChange">
+                    <FluentStack HorizontalAlignment="HorizontalAlignment.Center" Style="max-height: 60vh; overflow-y: auto">
+                        <FluentStack Width="100%" Style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            @{
+                                if (produtosItens != null && produtosItens.Any())
                                 {
-                                    <FluentStack Style="display:flex; flex-direction: column;">
-                                        <FluentStack Width="80%" Style="height 10vh;">
-                                            <FluentCard Style="padding: 0;" Width="40%" Height="100%">
-                                                <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 20vh; width: 100%" />
-                                            </FluentCard>
-                                            <FluentStack Style="display:flex; flex-direction: column">
-                                                <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
-                                                <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
-                                                <FluentStack>
-                                                    <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
-                                                        <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
-                                                        <FluentNumberField Value="produtoItem.Quantidade" ValueChanged="@(v => OnQuantidadeChanged(v, produtoItem))" TValue="int" Size="1" Min="0"></FluentNumberField>
-                                                        <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">X</FluentLabel>
-                                                        <FluentLabel Typo="Typography.H4" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
-                                                    </FluentStack>
-                                                    <FluentStack Style="margin-top: 3px" HorizontalAlignment="HorizontalAlignment.Right">
-                                                        <FluentLabel Typo="Typography.H5">Total item:</FluentLabel>
-                                                        <FluentLabel Typo="Typography.H5">R$ @produtoItem.ValorTotal</FluentLabel>
+                                    foreach (ProdutoItemDTO produtoItem in produtosItens)
+                                    {
+                                        <FluentStack Style="display:flex; flex-direction: column;">
+                                            <FluentStack Width="80%" Style="height 10vh;">
+                                                <FluentCard Style="padding: 0;" Width="40%" Height="100%">
+                                                    <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 20vh; width: 100%" />
+                                                </FluentCard>
+                                                <FluentStack Style="display:flex; flex-direction: column">
+                                                    <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
+                                                        <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
+                                                        <FluentStack>
+                                                            <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
+                                                                <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
+                                                                <FluentNumberField Value="produtoItem.Quantidade" ValueChanged="@(v => OnQuantidadeChanged(v, produtoItem))" TValue="int" Size="1" Min="0"></FluentNumberField>
+                                                                <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">X</FluentLabel>
+                                                                <FluentLabel Typo="Typography.H4" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
+                                                            </FluentStack>
+                                                            <FluentStack Style="margin-top: 3px" HorizontalAlignment="HorizontalAlignment.Right">
+                                                                <FluentLabel Typo="Typography.H5">Total item:</FluentLabel>
+                                                                <FluentLabel Typo="Typography.H5">R$ @produtoItem.ValorTotal</FluentLabel>
+                                                            </FluentStack>
+                                                        </FluentStack>
                                                     </FluentStack>
                                                 </FluentStack>
+                                                <FluentDivider Style="background-color: black; width: 100%; height: 1.5px" />
                                             </FluentStack>
-                                        </FluentStack>
-                                        <FluentDivider Style="background-color: black; width: 100%; height: 1.5px" />
-                                    </FluentStack>
+                                    }
+                                }
+                                else
+                                {
+                                    <FluentLabel Typo="Typography.H2">Não há registros cadastrados.</FluentLabel>
                                 }
                             }
-                            else
+                        </FluentStack>
+                    </FluentStack>
+                    <FluentDivider Style="background-color: black; width: 100%; height: 2px" />
+                    <FluentStack Width="100%" Style="height: 8vh;" VerticalAlignment="VerticalAlignment.Center">
+                        <FluentStack Style="margin-top: 10px; display:flex; flex-direction: column" HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
+                            <FluentStack HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
+                                <FluentLabel Typo="Typography.H4">Total do pedido:</FluentLabel>
+                                <FluentLabel Typo="Typography.H3" Style="color: limegreen">R$ @TotalPedido</FluentLabel>
+                                </FluentStack>
+                            </FluentStack>
+                        </FluentStack>
+                    </FluentWizardStep>
+                    <FluentWizardStep Label="Endereço de entrega"
+                                      OnChange="@OnStepChange">
+
+                        <FluentStack Width="70%" Orientation="Orientation.Vertical">
+                            <FluentTextField Appearance="FluentInputAppearance.Filled" Class="text-field" Placeholder="Informe seu nome" Name="Nome" @bind-Value="Pedido.Cliente" Label="Nome" Required></FluentTextField>
+                         <FluentTextField Appearance="FluentInputAppearance.Filled" Class="text-field" Placeholder="Rua" Name="Rua" @bind-Value="Pedido.Rua" Label="Rua" Required></FluentTextField>
+                         <FluentCombobox TOption="string" Placeholder="Selecione o seu bairro..." Label="Bairro" Autofocus="true" Height="200px" @bind-Value="SelectedBairro" Required>
+                            @foreach (var item in BairroItems)
                             {
-                                <FluentLabel Typo="Typography.H2">Não há registros cadastrados.</FluentLabel>
+                                <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
                             }
-                        }
-                    </FluentStack>
-                </FluentStack>
-                <FluentDivider Style="background-color: black; width: 100%; height: 2px" />
-                <FluentStack Width="100%" Style="height: 8vh;" VerticalAlignment="VerticalAlignment.Center">
-                    <FluentStack Style="margin-top: 10px; display:flex; flex-direction: column" HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
-                        <FluentStack HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
-                            <FluentLabel Typo="Typography.H4">Total do pedido:</FluentLabel>
-                            <FluentLabel Typo="Typography.H3" Style="color: limegreen">R$ @TotalPedido</FluentLabel>
-                        </FluentStack>
-                        <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
-                            <FluentButton IconStart="@(new Icons.Regular.Size20.NextFrame())"
-                                          Appearance="Appearance.Accent"
-                                          OnClick="ProximoPasso"
-                                          BackgroundColor="green">
-                                Avançar
-                            </FluentButton>
-                        </FluentStack>
-                    </FluentStack>
-                </FluentStack>
-
-            </FluentTab>
-            <FluentTab Label="Endereço de entrega" Disabled="@(DesabilitaTab("tab-2"))" Id="tab-2" DeferredLoading="@DeferredLoading">
-                <LoadingContent>
-                    <FluentProgressRing />
-                </LoadingContent>
-                <Content>
-                    @{
-                        if (DeferredLoading)
-                        {
-                            Thread.Sleep(1000);
-                        }
-                    }
-                    Tab two content. This is for testing.
-                </Content>
-            </FluentTab>
-            <FluentTab Label="Forma de pagamento" Disabled="@(DesabilitaTab("tab-3"))" Id="tab-3" DeferredLoading="@DeferredLoading">
-                @{
-                    if (DeferredLoading)
-                    {
-                        Thread.Sleep(1000);
-                    }
-                }
-                Tab three content. This is for testing.
-            </FluentTab>
-
-        </FluentTabs>
-    </FluentCard>
-</FluentStack>
+                        </FluentCombobox>
+                        <FluentTextArea Appearance="FluentInputAppearance.Filled" Class="width-maximo" Placeholder="Observações..." Name="Observações" Rows=5 @bind-Value="Pedido.Observacoes" Label="Observações" Required></FluentTextArea>
+                     </FluentStack>
+                 </FluentWizardStep>
+                 <FluentWizardStep Label="Forma de pagamento"
+                                   OnChange="@OnStepChange">
+                 </FluentWizardStep>
+             </Steps>
+             <FluentButton Disabled="@IsPreviousDisabled" @onclick="GoToPrevious">Previous</FluentButton>
+             <FluentButton Disabled="@IsNextDisabled" @onclick="GoToNext">Next</FluentButton>
+         </FluentWizard>
+     </FluentCard>
+ </FluentStack>
 
 
-@code {
+ @code {
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
 
     public Produto Produto = new();
+    public Pedido Pedido = new();
     public List<ProdutoItemDTO> produtosItens = new();
     public decimal Numero { get; set; }
     public int IdProduto { get; set; }
     public decimal TotalPedido { get; set; }
+    private List<EnumItem<Bairro>> BairroItems;
+    private string SelectedBairro;
 
     protected async override Task OnInitializedAsync()
     {
+        BairroItems = EnumHelper.GetEnumItems<Bairro>();
         produtosItens = sessaoUsuario.ProdutosItem;
         produtosItens.ToList().ForEach(item => TotalPedido += item.Quantidade * item.Preco);
     }
@@ -143,6 +155,12 @@
     private void AtualizaTotal()
     {
         produtosItens.ToList().ForEach(item => TotalPedido += item.ValorTotal);
+    }
+
+    private void OnBairroChanged(ChangeEventArgs e)
+    {
+        // Converter a string de volta para o enum Bairro
+        Pedido.Bairro = BairroItems.FirstOrDefault(item => item.Description == SelectedBairro)?.Value ?? Pedido.Bairro;
     }
 
     bool DeferredLoading = false;
@@ -164,5 +182,16 @@
     {
         int numeroProximaTab = Convert.ToInt32(activeid.Split("-")[1]) + 1;
         activeid = "tab-" + numeroProximaTab;
+    }
+
+    WizardStepSequence StepSequence = WizardStepSequence.Linear;
+
+    void OnStepChange(FluentWizardStepChangeEventArgs e)
+    {
+    }
+
+    async Task OnFinishedAsync()
+    {
+        await DialogService.ShowSuccessAsync("O número do seu pedido é 54765.", "Seu pedido foi finalizado.");
     }
 }
