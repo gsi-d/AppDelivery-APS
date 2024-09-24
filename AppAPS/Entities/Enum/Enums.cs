@@ -7,7 +7,7 @@ namespace AppAPS.Entities
     public enum Bairro
     {
         [Description("Águas Claras")]
-        AguasClaras,
+        AguasClaras = 1,
 
         [Description("Azambuja")]
         Azambuja,
@@ -97,31 +97,41 @@ namespace AppAPS.Entities
         Dinheiro = 1,
 
         [Description("Cartão de Crédito")]
-        CartaoCredito = 2,
+        CartaoCredito,
 
         [Description("Cartão de Débito")]
-        CartaoDebito = 3,
+        CartaoDebito,
 
         [Description("Pagamento via Pix")]
-        Pix = 4
+        Pix
     }
 
     public enum StatusPedido : byte
     {
-        [Description("Pedido em Aberto")]
-        EmAberto = 0,
 
         [Description("Pedido Confirmado")]
-        Confirmado = 1,
+        Confirmado = 0,
+
+        [Description("Pedido em Preparo")]
+        EmPreparo,
 
         [Description("Pronto para Entrega")]
-        ProntoParaEntrega = 2,
+        ProntoParaEntrega,
 
         [Description("Pedido em Trânsito")]
-        EmTransito = 3,
+        EmTransito,
 
         [Description("Pedido Finalizado")]
-        Finalizado = 4
+        Finalizado
+    }
+
+    public enum FormaEntrega : byte
+    {
+        [Description("Retirar no local")]
+        Retirada = 1,
+
+        [Description("Entrega à domicílio")]
+        Entrega = 2,
     }
 
     public class EnumItem<T>

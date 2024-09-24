@@ -1,10 +1,13 @@
 using AppAPS.Components;
 using AppAPS.Components.Account;
 using AppAPS.Data;
+using AppAPS.Entities;
 using AppAPS.Interfaces;
 using AppAPS.Services;
 using AppAPS.Services.Model;
+using AppAPS.Validators;
 using AutoMapper;
+using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +62,7 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+builder.Services.AddTransient<IValidator<Pedido>, PedidoValidator>();
 
 var app = builder.Build();
 

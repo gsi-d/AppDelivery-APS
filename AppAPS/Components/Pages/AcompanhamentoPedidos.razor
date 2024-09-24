@@ -38,66 +38,78 @@
 
 </style>
 
-<PageTitle>Página inicial</PageTitle>
-
-
+<PageTitle>Acompanhamento pedidos</PageTitle>
 
 <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
     <FluentCard Width="80%" Height="90%" Style="display: flex; flex-wrap: wrap; gap: 10px;">
         <FluentStack HorizontalAlignment="HorizontalAlignment.Center" Style="max-height: 85vh; overflow-y: auto">
             <FluentStack Width="100%" Style="display: flex; flex-wrap: wrap; gap: 10px;">
                 @{
-                    if (produtosItens != null && produtosItens.Any())
+                    if (Pedidos != null && Pedidos.Any())
                     {
-                        foreach (ProdutoItemDTO produtoItem in produtosItens)
+                        foreach (Pedido pedido in Pedidos)
                         {
                             <FluentStack Style="display:flex; flex-direction: row;">
                                 <FluentStack Width="100%" Style="height 10vh;">
-                                    <FluentStack Style="display:flex; flex-direction: column">
-                                        <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
-                                            <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
-                                        </FluentStack>
-                                        <FluentStack>
-                                            <FluentWizard StepperPosition="@(StepperPosition.Top)"
-                                                          StepSequence="@StepSequence"
-                                                          DisplayStepNumber="@(WizardStepStatus.Current | WizardStepStatus.Next)"
-                                                          Border="WizardBorder.All"
-                                                          StepTitleHiddenWhen="@GridItemHidden.XsAndDown"
-                                                          OnFinish="@OnFinishedAsync" Height="10%">
-                                                <Steps>
-                                                    <FluentWizardStep Label="Confirmado" Summary="Pedido aberto às 22:34."
-                                                                      IconPrevious="@(new Icons.Filled.Size24.ApprovalsApp())"
-                                                                      IconCurrent="@(new Icons.Filled.Size24.ApprovalsApp())"
-                                                                      IconNext="@(new Icons.Regular.Size24.ApprovalsApp())"
-                                                                      DisplayStepNumber="false">
-                                                    </FluentWizardStep>
-                                                    <FluentWizardStep Label="Em preparo"
-                                                                      IconPrevious="@(new Icons.Filled.Size24.Star())"
-                                                                      IconCurrent="@(new Icons.Filled.Size24.StarEmphasis())"
-                                                                      IconNext="@(new Icons.Regular.Size24.Star())"
-                                                                      DisplayStepNumber="false">
-                                                    </FluentWizardStep>
-                                                    <FluentWizardStep Label="Pronto para entrega"
-                                                                      IconPrevious="@(new Icons.Filled.Size24.Star())"
-                                                                      IconCurrent="@(new Icons.Filled.Size24.StarEmphasis())"
-                                                                      IconNext="@(new Icons.Regular.Size24.Star())"
-                                                                      DisplayStepNumber="false">
-                                                    </FluentWizardStep>
-                                                    <FluentWizardStep Label="Em Trânsito" IconPrevious="@(new Icons.Filled.Size24.Star())"
-                                                                      IconCurrent="@(new Icons.Filled.Size24.StarEmphasis())"
-                                                                      IconNext="@(new Icons.Regular.Size24.Star())"
-                                                                      DisplayStepNumber="false">
-                                                    </FluentWizardStep>
-                                                    <FluentWizardStep Label="Finalizado" IconPrevious="@(new Icons.Filled.Size24.Star())"
-                                                                      IconCurrent="@(new Icons.Filled.Size24.StarEmphasis())"
-                                                                      IconNext="@(new Icons.Regular.Size24.Star())"
-                                                                      DisplayStepNumber="false">
-                                                    </FluentWizardStep>
-                                                </Steps>
-                                            </FluentWizard>
-                                        </FluentStack>
+                                    <FluentStack Style="display:flex; flex-direction: column; gap: 2; max-width: 15vw">
+                                        <FluentLabel Typo="Typography.H2" Color="Color.Accent" Class="fluent-label-nome">Cód: @pedido.Id</FluentLabel>
+                                        <FluentLabel Typo="Typography.H3" Class="fluent-label-nome">@pedido.Cliente</FluentLabel>
+                                        <FluentButton Appearance="Appearance.Accent" Color="white" BackgroundColor="@DefineCorStatus(pedido.Status)" Stye="pointer-events: none;">
+                                            <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">@EnumHelper.GetEnumDescription(pedido.Status)</FluentLabel>
+                                        </FluentButton>
+                                        <FluentLabel Typo="Typography.Body" Class="fluent-label">@pedido.DataAbertura.ToString("dd/MM HH:mm")</FluentLabel>
+                                    </FluentStack>
+
+                                    <FluentStack Style="display:flex; flex-direction: column; gap: 1; max-width: 15vw">
+                                        <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">@pedido.Rua</FluentLabel>
+                                        <FluentLabel Typo="Typography.Body" Class="fluent-label-nome">@EnumHelper.GetEnumDescription(pedido.Bairro)</FluentLabel>
+                                        <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">@EnumHelper.GetEnumDescription(pedido.FormaEntrega)</FluentLabel>
+                                        <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">@EnumHelper.GetEnumDescription(pedido.FormaPagamento)</FluentLabel>
+                                    </FluentStack>
+                                    <FluentStack>
+                                        <FluentWizard StepperPosition="@(StepperPosition.Top)"
+                                                      StepSequence="@StepSequence"
+                                                      DisplayStepNumber="@(WizardStepStatus.Current | WizardStepStatus.Next)"
+                                                      Border="WizardBorder.All"
+                                                      StepTitleHiddenWhen="@GridItemHidden.XsAndDown"
+                                                      OnFinish="@OnFinishedAsync" Height="10%"
+                                                      Value="@(pedido.StatusInt)"
+                                                      ValueChanged="@(newValue => OnChangedStep(pedido, newValue))">
+                                            <Steps>
+                                                <FluentWizardStep Label="Confirmado" Summary=@($"Pedido aberto às {pedido.DataAbertura:HH:mm}.")
+                                                                  IconPrevious="@(new Icons.Filled.Size24.AlertOn())"
+                                                                  IconCurrent="@(new Icons.Filled.Size24.AlertOn())"
+                                                                  IconNext="@(new Icons.Regular.Size24.AlertOn())"
+                                                                  DisplayStepNumber="false">
+                                                </FluentWizardStep>
+                                                <FluentWizardStep Label="Em preparo"
+                                                                  IconPrevious="@(new Icons.Filled.Size24.ClockPause())"
+                                                                  IconCurrent="@(new Icons.Filled.Size24.Clock())"
+                                                                  IconNext="@(new Icons.Regular.Size24.FoodPizza())"
+                                                                  DisplayStepNumber="false">
+                                                </FluentWizardStep>
+                                                <FluentWizardStep Label="Pronto para entrega"
+                                                                  IconPrevious="@(new Icons.Filled.Size24.ClockPause())"
+                                                                  IconCurrent="@(new Icons.Filled.Size20.RadarCheckmark())"
+                                                                  IconNext="@(new Icons.Regular.Size24.Checkmark())"
+                                                                  DisplayStepNumber="false">
+                                                </FluentWizardStep>
+                                                <FluentWizardStep Label="Em Trânsito" IconPrevious="@(new Icons.Filled.Size24.ClockPause())"
+                                                                  IconCurrent="@(new Icons.Filled.Size24.VehicleCarProfileLtrClock())"
+                                                                  IconNext="@(new Icons.Regular.Size24.CheckmarkCircle())"
+                                                                  DisplayStepNumber="false">
+                                                </FluentWizardStep>
+                                                <FluentWizardStep Label="Finalizado" IconPrevious="@(new Icons.Filled.Size24.ClockPause())"
+                                                                  IconCurrent="@(new Icons.Filled.Size24.Checkmark())"
+                                                                  IconNext="@(new Icons.Regular.Size24.Checkmark())"
+                                                                  DisplayStepNumber="false">
+                                                </FluentWizardStep>
+                                            </Steps>
+                                        </FluentWizard>
                                     </FluentStack>
                                 </FluentStack>
+                            </FluentStack>
+                            <FluentDivider Style="background-color: black; width: 100%; height: 2px" />
                         }
                     }
                     else
@@ -107,28 +119,23 @@
                 }
             </FluentStack>
         </FluentStack>
-        <FluentDivider Style="background-color: black; width: 100%; height: 2px" />
     </FluentCard>
 </FluentStack>
 
 
 @code {
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
-
-    public Produto Produto = new();
-    public Pedido Pedido = new();
+    public List<Pedido> Pedidos = new();
     public List<ProdutoItemDTO> produtosItens = new();
     public decimal Numero { get; set; }
     public int IdProduto { get; set; }
     public decimal TotalPedido { get; set; }
-    private List<EnumItem<Bairro>> BairroItems;
-    private string SelectedBairro;
+    private int pedidoStatusInt;
+    WizardStepSequence StepSequence = WizardStepSequence.Any;
 
     protected async override Task OnInitializedAsync()
     {
-        BairroItems = EnumHelper.GetEnumItems<Bairro>();
-        produtosItens = sessaoUsuario.ProdutosItem;
-        produtosItens.ToList().ForEach(item => TotalPedido += item.Quantidade * item.Preco);
+        Pedidos = sessaoUsuario.Pedidos;
     }
 
     private void OnQuantidadeChanged(int novaQuantidade, ProdutoItemDTO produtoItem)
@@ -138,46 +145,39 @@
         AtualizaTotal();
     }
 
+    public string DefineCorStatus(StatusPedido status)
+    {
+        switch (status)
+        {
+            case StatusPedido.Confirmado:
+                return "palevioletred";
+            case StatusPedido.EmPreparo:
+                return "coral";
+            case StatusPedido.ProntoParaEntrega:
+                return "lightyellow";
+            case StatusPedido.EmTransito:
+                return "lightblue";
+            case StatusPedido.Finalizado:
+                return "lightgreen";
+            default:
+                return "";
+        }
+    }
+
     private void AtualizaTotal()
     {
         produtosItens.ToList().ForEach(item => TotalPedido += item.ValorTotal);
     }
 
-    private void OnBairroChanged(ChangeEventArgs e)
+    private Task OnChangedStep(Pedido pedido, int selectedValue)
     {
-        // Converter a string de volta para o enum Bairro
-        Pedido.Bairro = BairroItems.FirstOrDefault(item => item.Description == SelectedBairro)?.Value ?? Pedido.Bairro;
+        pedido.Status = (StatusPedido)selectedValue;
+        return Task.CompletedTask;
     }
 
-    bool DeferredLoading = false;
-
-    string? activeid = "tab-1";
-    FluentTab? changedto;
-
-    private void HandleOnTabChange(FluentTab tab)
-    {
-        changedto = tab;
-    }
-
-    private bool DesabilitaTab(string idTab)
-    {
-        return idTab != activeid;
-    }
-
-    private async Task ProximoPasso()
-    {
-        int numeroProximaTab = Convert.ToInt32(activeid.Split("-")[1]) + 1;
-        activeid = "tab-" + numeroProximaTab;
-    }
-
-    WizardStepSequence StepSequence = WizardStepSequence.Any;
-
-    void OnStepChange(FluentWizardStepChangeEventArgs e)
-    {
-    }
 
     async Task OnFinishedAsync()
     {
-        await DialogService.ShowSuccessAsync("O número do seu pedido é 54765.", "Seu pedido foi finalizado.");
+        await DialogService.ShowSuccessAsync("O pedido {numeroPedido} foi finalizado", "Pedido finalizado.");
     }
 }

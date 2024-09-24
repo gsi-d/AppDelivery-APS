@@ -8,6 +8,7 @@ namespace AppAPS.Services.Model
         public int UsuarioId { get; set; }
         public List<Produto> Produtos { get; set; } = new List<Produto>();
         public List<ProdutoItemDTO> ProdutosItem { get; set; } = new List<ProdutoItemDTO>();
+        public List<Pedido> Pedidos { get; set; } = new List<Pedido>();
         public List<FichaTecnica> FichasTecnicas { get; set; } = new List<FichaTecnica>();
 
         public SessaoUsuario()
@@ -148,20 +149,44 @@ namespace AppAPS.Services.Model
                 NomeArquivoUpload = "/uploads/cachorro_quente_especial.jpg"
             });
 
-            foreach (var produto in Produtos)
+            Pedidos.Add(new Pedido
             {
-                ProdutosItem.Add(new ProdutoItemDTO
-                {
-                    Id = produto.Id,
-                    Nome = produto.Nome,
-                    Descricao = produto.Descricao,
-                    Preco = produto.Preco,
-                    NomeArquivoUpload = produto.NomeArquivoUpload,
-                    Quantidade = 0,
-                    Selecionado = false,
-                    ValorTotal = 0m
-                });
-            }
+                Id = 1,
+                Cliente = "Guilherme Felipe",
+                Rua = "Pão de hot-dog macio com salsicha grelhada, coberta com molho de tomate caseiro",
+                Bairro = Bairro.Azambuja,
+                FormaEntrega = FormaEntrega.Retirada,
+                FormaPagamento = FormaPagamento.Dinheiro,
+                Status = StatusPedido.Confirmado,
+                DataAbertura = DateTime.Now
+            });
+
+            Pedidos.Add(new Pedido
+            {
+                Id = 2,
+                Cliente = "Alberto Ipanema",
+                Rua = "Rua dos bobos, número 0",
+                Bairro = Bairro.PontaRussa,
+                FormaEntrega = FormaEntrega.Entrega,
+                FormaPagamento = FormaPagamento.Pix,
+                Status = StatusPedido.EmTransito,
+                DataAbertura = DateTime.Now
+            });
+
+            //foreach (var produto in Produtos)
+            //{
+            //    ProdutosItem.Add(new ProdutoItemDTO
+            //    {
+            //        Id = produto.Id,
+            //        Nome = produto.Nome,
+            //        Descricao = produto.Descricao,
+            //        Preco = produto.Preco,
+            //        NomeArquivoUpload = produto.NomeArquivoUpload,
+            //        Quantidade = 0,
+            //        Selecionado = false,
+            //        ValorTotal = 0m
+            //    });
+            //}
         }
 
     }
