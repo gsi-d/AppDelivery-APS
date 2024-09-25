@@ -114,9 +114,9 @@
                         <DataAnnotationsValidator />
                         <FluentStack Style="margin-top: 5vh" HorizontalAlignment="HorizontalAlignment.Center">
                             <FluentStack Width="70%" Orientation="Orientation.Vertical">
-                                <FluentTextField Appearance="FluentInputAppearance.Filled" Class="text-field" Immediate Placeholder="Informe seu nome" Name="Nome" @bind-Value="Pedido.Cliente" Label="Nome" Required></FluentTextField>
+                                <FluentTextField Appearance="FluentInputAppearance.Outline" Class="text-field" Immediate Placeholder="Informe seu nome" Name="Nome" @bind-Value="Pedido.Cliente" Label="Nome" Required></FluentTextField>
                                 <ValidationMessage For="@(() => Pedido.Cliente)" />
-                                <FluentTextField Appearance="FluentInputAppearance.Filled" Class="text-field" Immediate Placeholder="Rua" Name="Rua" @bind-Value="Pedido.Rua" Label="Rua" Required></FluentTextField>
+                                <FluentTextField Appearance="FluentInputAppearance.Outline" Class="text-field" Immediate Placeholder="Rua" Name="Rua" @bind-Value="Pedido.Rua" Label="Rua" Required></FluentTextField>
                                 <ValidationMessage For="@(() => Pedido.Rua)" />
                                 <FluentCombobox TOption="string" Placeholder="Selecione o seu bairro..." ValueChanged="@(e => OnBairroChanged(e))" Label="Bairro" Autofocus="true" Height="200px" Required>
                                     @foreach (var item in BairroItems)
@@ -132,7 +132,7 @@
                                     }
                                 </FluentCombobox>
                                 <ValidationMessage For="@(() => Pedido.FormaEntrega)" />
-                                <FluentTextArea Appearance="FluentInputAppearance.Filled" Class="width-maximo" Placeholder="Observações..." Name="Observações" Rows=5 @bind-Value="Pedido.Observacoes" Label="Observações"></FluentTextArea>
+                                <FluentTextArea Appearance="FluentInputAppearance.Outline" Class="width-maximo" Placeholder="Observações..." Name="Observações" Rows=5 @bind-Value="Pedido.Observacoes" Label="Observações"></FluentTextArea>
                             </FluentStack>
                         </FluentStack>
                     </EditForm>
