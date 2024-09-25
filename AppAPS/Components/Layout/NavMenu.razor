@@ -4,10 +4,10 @@
 
 @inject NavigationManager NavigationManager
 
-<div class="navmenu">
+<div class="navmenu" style="margin-top: 35px;">
     <input type="checkbox" title="Menu expand/collapse toggle" id="navmenu-toggle" class="navmenu-icon" />
     <label for="navmenu-toggle" class="navmenu-icon"><FluentIcon Value="@(new Icons.Regular.Size20.Navigation())" Color="Color.Fill" /></label>
-    <nav class="sitenav"  aria-labelledby="main-menu">
+    <nav class="sitenav" aria-labelledby="main-menu">
         <FluentNavMenu Id="main-menu" Collapsible="true" Width="250" Title="Navigation menu" @bind-Expanded="expanded" CustomToggle="true">
             <FluentNavLink Style="width: 100%" Href="/" Match="NavLinkMatch.All" Icon="@(new Icons.Regular.Size20.Home())" IconColor="Color.Accent">Página inicial</FluentNavLink>
             <FluentNavLink Href="produtos" Icon="@(new Icons.Regular.Size20.Food())" IconColor="Color.Accent">Listagem de Produtos</FluentNavLink>

@@ -106,20 +106,11 @@ namespace AppAPS.Services.Model
 
             Produtos.Add(new Produto
             {
-                Id = 11,
-                Nome = "Chá Gelado de Limão",
-                Descricao = "Bebida refrescante feita com chá preto gelado, adoçado na medida certa e com um toque de limão fresco. Ideal para acompanhar seu lanche.",
-                Preco = 6.50m,
-                NomeArquivoUpload = "/uploads/cha_gelado_limao.jpg"
-            });
-
-            Produtos.Add(new Produto
-            {
                 Id = 12,
                 Nome = "Sorvete de Baunilha com Calda de Caramelo",
                 Descricao = "Sorvete cremoso de baunilha servido com uma deliciosa calda de caramelo, perfeito para os amantes de sobremesas doces e suaves.",
                 Preco = 8.75m,
-                NomeArquivoUpload = "/uploads/sorvete_baunilha_caramelo.jpg"
+                NomeArquivoUpload = "/uploads/sorvete_baunilha_caramelo.jpg",
             });
 
             Produtos.Add(new Produto
@@ -148,6 +139,67 @@ namespace AppAPS.Services.Model
                 Preco = 13.99m,
                 NomeArquivoUpload = "/uploads/cachorro_quente_especial.jpg"
             });
+
+            Produtos.Add(new Produto
+            {
+                Id = 15,
+                Nome = "Coca-Cola 2l",
+                Descricao = "Refrigerante gaseificado, sabor cola, servido gelado.",
+                Preco = 5.00m,
+                NomeArquivoUpload = "/uploads/coca_cola.jpg",
+                Bebida = true
+            });
+
+            Produtos.Add(new Produto
+            {
+                Id = 12,
+                Nome = "Guaraná Antarctica 2l",
+                Descricao = "Refrigerante sabor guaraná, tradicional e refrescante.",
+                Preco = 5.00m,
+                NomeArquivoUpload = "/uploads/guarana_antarctica.jpeg",
+                Bebida = true
+            });
+
+            Produtos.Add(new Produto
+            {
+                Id = 17,
+                Nome = "Fanta Laranja 2l",
+                Descricao = "Refrigerante gaseificado, sabor laranja, com alta refrescância.",
+                Preco = 5.00m,
+                NomeArquivoUpload = "/uploads/fanta_laranja.jpeg",
+                Bebida = true
+            });
+
+            Produtos.Add(new Produto
+            {
+                Id = 18,
+                Nome = "Sprite 2l",
+                Descricao = "Refrigerante sabor limão, leve e refrescante, servido gelado.",
+                Preco = 5.00m,
+                NomeArquivoUpload = "/uploads/sprite.jpeg",
+                Bebida = true
+            });
+
+            Produtos.Add(new Produto
+            {
+                Id = 20,
+                Nome = "Suco de Laranja",
+                Descricao = "Suco natural de laranja, sem açúcar, servido gelado.",
+                Preco = 7.00m,
+                NomeArquivoUpload = "/uploads/suco_laranja.jpg",
+                Bebida = true
+            });
+
+            Produtos.Add(new Produto
+            {
+                Id = 21,
+                Nome = "Água Mineral",
+                Descricao = "Água mineral natural, servida gelada ou em temperatura ambiente.",
+                Preco = 3.50m,
+                NomeArquivoUpload = "/uploads/agua_mineral.jpg",
+                Bebida = true
+            });
+
 
             Pedidos.Add(new Pedido
             {
