@@ -17,11 +17,6 @@ namespace AppAPS.Entities
         public Bairro Bairro { get; set; }
         public StatusPedido Status { get; set; }
         // Propriedade auxiliar para o binding com @bind-Value
-        public int StatusInt
-        {
-            get => (int)Status;
-            set => Status = (StatusPedido)value;
-        }
         public string? Observacoes { get; set; }
         public DateTime DataAbertura { get; set; }
         public DateTime? DataFinalizacao { get; set; }
