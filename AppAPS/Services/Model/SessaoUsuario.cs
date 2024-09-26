@@ -6,7 +6,7 @@ namespace AppAPS.Services.Model
     public class SessaoUsuario
     {
         public int UsuarioId { get; set; }
-        public TipoUsuario TipoUsuario { get; set; } = TipoUsuario.Cliente;
+        public TipoUsuario TipoUsuario { get; set; }
         public List<Produto> Produtos { get; set; } = new List<Produto>();
         public List<ProdutoItemDTO> ProdutosItem { get; set; } = new List<ProdutoItemDTO>();
         public List<Pedido> Pedidos { get; set; } = new List<Pedido>();

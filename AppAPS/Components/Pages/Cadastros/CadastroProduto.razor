@@ -58,8 +58,18 @@
          </FluentGridItem>
      </FluentGrid>
  </FluentStack>
-@code {
 
+<FluentStack Style="position: fixed; bottom: 20px; left: 10px">
+    <FluentCombobox Position="SelectPosition.Above" TOption="string" Placeholder="Modo de visualização" ValueChanged="@(e => OnTipoUsuarioChanged(e))" Autofocus="true" Height="200px" Required>
+        @foreach (var item in TiposUsuario)
+        {
+            <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
+        }
+    </FluentCombobox>
+</FluentStack>
+
+@code {
+    [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     [SupplyParameterFromForm]
     private Produto ProdutoModel { get; set; } = new();
 
@@ -74,6 +84,7 @@
 
     protected override void OnInitialized()
     {
+        TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();        
     }
 
     private void SelectFile(InputFileChangeEventArgs e)
@@ -122,5 +133,12 @@
             ToastService.ShowError("Falha ao inserir produto.");
             await Task.Delay(3000);
         }
+    }
+
+    private List<EnumItem<TipoUsuario>> TiposUsuario;
+
+    private void OnTipoUsuarioChanged(string selectedValue)
+    {
+        sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
     }
 }

@@ -1,4 +1,6 @@
-﻿@rendermode InteractiveServer
+﻿@using AppAPS.Entities
+@using AppAPS.Services.Model
+@rendermode RenderMode.InteractiveServer
 
 @implements IDisposable
 
@@ -10,31 +12,35 @@
     <nav class="sitenav" aria-labelledby="main-menu">
         <FluentNavMenu Id="main-menu" Collapsible="true" Width="250" Title="Navigation menu" @bind-Expanded="expanded" CustomToggle="true">
             <FluentNavLink Style="width: 100%" Href="/" Match="NavLinkMatch.All" Icon="@(new Icons.Regular.Size20.Home())" IconColor="Color.Accent">Página inicial</FluentNavLink>
-            <FluentNavLink Href="produtos" Icon="@(new Icons.Regular.Size20.Food())" IconColor="Color.Accent">Listagem de Produtos</FluentNavLink>
-            <FluentNavLink Href="cadastroProduto" Icon="@(new Icons.Regular.Size20.FoodToast())" IconColor="Color.Accent">Cadastro de Produto</FluentNavLink>
-            <FluentNavLink Href="cadastroFichaTecnica" Icon="@(new Icons.Regular.Size20.Document100())" IconColor="Color.Accent">Cadastro de Ficha Técnica</FluentNavLink>
-            <FluentNavLink Href="acompanhamentoPedidos" Icon="@(new Icons.Regular.Size20.ListBarTree())" IconColor="Color.Accent">Acompanhamento dos pedidos</FluentNavLink>
-            <FluentNavLink Href="metodoVisualizacao" Icon="@(new Icons.Regular.Size20.WindowFingerprint())" IconColor="Color.Accent">Alterar visualização</FluentNavLink>
+            <FluentNavLink Href="acompanhamentoPedidos" Icon="@(new Icons.Regular.Size20.TextBulletListSquare())" IconColor="Color.Accent">Acompanhamento dos pedidos</FluentNavLink>
+            @{
+                if (sessaoUsuario.TipoUsuario == TipoUsuario.Restaurante)
+                {
+                    <FluentNavLink Href="produtos" Icon="@(new Icons.Regular.Size20.Food())" IconColor="Color.Accent">Listagem de Produtos</FluentNavLink>
+                    <FluentNavLink Href="cadastroProduto" Icon="@(new Icons.Regular.Size20.FoodToast())" IconColor="Color.Accent">Cadastro de Produto</FluentNavLink>
+                }
+            }
             @* <FluentNavLink Href="auth" Icon="@(new Icons.Regular.Size20.LockClosedKey())" IconColor="Color.Accent">Auth Required</FluentNavLink>
             <AuthorizeView>
-                <Authorized>
-                    <FluentNavLink Href="Account/Manage">@context.User.Identity?.Name</FluentNavLink>
-                    <form action="Account/Logout" method="post">
-                        <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
-                        <FluentButton Type="ButtonType.Submit" Style="width: 100%;">Logout</FluentButton>
-                    </form>
-                </Authorized>
-                <NotAuthorized>
-                    <FluentNavLink Href="Account/Register">Register</FluentNavLink>
-                    <FluentNavLink Href="Account/Login">Login</FluentNavLink>
-                </NotAuthorized>
+            <Authorized>
+            <FluentNavLink Href="Account/Manage">@context.User.Identity?.Name</FluentNavLink>
+            <form action="Account/Logout" method="post">
+            <AntiforgeryToken />
+            <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+            <FluentButton Type="ButtonType.Submit" Style="width: 100%;">Logout</FluentButton>
+            </form>
+            </Authorized>
+            <NotAuthorized>
+            <FluentNavLink Href="Account/Register">Register</FluentNavLink>
+            <FluentNavLink Href="Account/Login">Login</FluentNavLink>
+            </NotAuthorized>
             </AuthorizeView> *@
         </FluentNavMenu>
     </nav>
 </div>
 
 @code {
+    [Inject] public SessaoUsuario sessaoUsuario { get; set; }
     private bool expanded = true;
     private string? currentUrl;
 

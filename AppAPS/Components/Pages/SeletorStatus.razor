@@ -94,8 +94,8 @@
 
 @code {
     [Parameter] public Pedido Pedido { get; set; }
+    [Parameter] public SessaoUsuario SessaoUsuario { get; set; }
     [Parameter] public EventCallback<PedidoStatusDTO> AtualizaStatus { get; set; }
-    [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     private bool DesabilitaBotaoConfirmado = true;
     private bool DesabilitaBotaoEmPreparo = true;
     private bool DesabilitaBotaoProntoParaEntrega = true;
@@ -107,17 +107,22 @@
         AtualizaLayoutStatus(Pedido.Status);
     }
 
-    private void HandleClick(Pedido pedido, StatusPedido novoStatus)
+    private async void HandleClick(Pedido pedido, StatusPedido novoStatus)
     {
-        if (sessaoUsuario.TipoUsuario != TipoUsuario.Cliente)
+        if (SessaoUsuario.TipoUsuario != TipoUsuario.Cliente)
         {
             PedidoStatusDTO pedidoStatusDTO = new PedidoStatusDTO
                 {
                     Pedido = pedido,
                     NovoStatus = novoStatus
                 };
-            AtualizaStatus.InvokeAsync(pedidoStatusDTO);
+            await AtualizaStatus.InvokeAsync(pedidoStatusDTO);
             AtualizaLayoutStatus(novoStatus);
+        }
+
+        if(novoStatus == StatusPedido.Finalizado)
+        {
+            await DialogService.ShowSuccessAsync($"O pedido {Pedido.Id} foi finalizado", "Pedido finalizado.");
         }
     }
 
@@ -184,14 +189,14 @@
             case StatusPedido.Confirmado:
                 if (DesabilitaBotaoConfirmado)
                 {
-                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                    if (SessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
                         classes = "disabled-stack custom-botao-cliente cor-botao-confirmado";
                     else
                         classes = "disabled-stack custom-botao cor-botao-confirmado";
                 }
                 else
                 {
-                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                    if (SessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
                         classes = "custom-botao-cliente cor-botao-confirmado";
                     else
                         classes = "custom-botao cor-botao-confirmado";
@@ -200,14 +205,14 @@
             case StatusPedido.EmPreparo:
                 if (DesabilitaBotaoEmPreparo)
                 {
-                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                    if (SessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
                         classes = "disabled-stack custom-botao-cliente cor-botao-em-preparo";
                     else
                         classes = "disabled-stack custom-botao cor-botao-em-preparo";
                 }
                 else
                 {
-                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                    if (SessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
                         classes = "custom-botao-cliente cor-botao-em-preparo";
                     else
                         classes = "custom-botao cor-botao-em-preparo";
@@ -216,14 +221,14 @@
             case StatusPedido.ProntoParaEntrega:
                 if (DesabilitaBotaoProntoParaEntrega)
                 {
-                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                    if (SessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
                         classes = "disabled-stack custom-botao-cliente cor-botao-pronto-entrega";
                     else
                         classes = "disabled-stack custom-botao cor-botao-pronto-entrega";
                 }
                 else
                 {
-                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                    if (SessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
                         classes = "custom-botao-cliente cor-botao-pronto-entrega";
                     else
                         classes = "custom-botao cor-botao-pronto-entrega";
@@ -232,14 +237,14 @@
             case StatusPedido.EmTransito:
                 if (DesabilitaBotaoEmTransito)
                 {
-                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                    if (SessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
                         classes = "disabled-stack custom-botao-cliente cor-botao-em-transito";
                     else
                         classes = "disabled-stack custom-botao cor-botao-em-transito";
                 }
                 else
                 {
-                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                    if (SessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
                         classes = "custom-botao-cliente cor-botao-em-transito";
                     else
                         classes = "custom-botao cor-botao-em-transito";
@@ -248,14 +253,14 @@
             case StatusPedido.Finalizado:
                 if (DesabilitaBotaoFinalizado)
                 {
-                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                    if (SessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
                         classes = "disabled-stack custom-botao-cliente cor-botao-finalizado";
                     else
                         classes = "disabled-stack custom-botao cor-botao-finalizado";
                 }
                 else
                 {
-                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                    if (SessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
                         classes = "custom-botao-cliente cor-botao-finalizado";
                     else
                         classes = "custom-botao cor-botao-finalizado";

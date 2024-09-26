@@ -1,6 +1,7 @@
 ﻿@page "/produtos"
 @using AppAPS.Entities
 @using AppAPS.Interfaces
+@using AppAPS.Services.Model
 @rendermode InteractiveServer
 
 <PageTitle>Produtos</PageTitle>
@@ -39,14 +40,25 @@
     </FluentDataGrid>
 </FluentCard>
 
+<FluentStack Style="position: fixed; bottom: 20px; left: 10px">
+    <FluentCombobox Position="SelectPosition.Above" TOption="string" Placeholder="Modo de visualização" ValueChanged="@(e => OnTipoUsuarioChanged(e))" Autofocus="true" Height="200px" Required>
+        @foreach (var item in TiposUsuario)
+        {
+            <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
+        }
+    </FluentCombobox>
+</FluentStack>
+
 
 @code {
+    [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     [Inject] private IProdutoService produtoService { get; set; }
     public IEnumerable<Produto> SelectedItems = new List<Produto>();
     public IQueryable<Produto>? produtos;
 
     protected async override Task OnInitializedAsync()
     {
+        TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
         var resultadoProdutos = await produtoService.GetAllProdutos();
         produtos = resultadoProdutos.AsQueryable();
     }
@@ -65,5 +77,12 @@
             var resultadoProdutos = await produtoService.GetAllProdutos();
             produtos = resultadoProdutos.AsQueryable();
         }
+    }
+
+    private List<EnumItem<TipoUsuario>> TiposUsuario;
+
+    private void OnTipoUsuarioChanged(string selectedValue)
+    {
+        sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
     }
 }

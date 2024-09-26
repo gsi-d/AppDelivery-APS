@@ -1,7 +1,7 @@
 ﻿@using AppAPS.Entities
 @using AppAPS.Services.Model
 @inherits LayoutComponentBase
-
+@inject SessaoUsuario sessaoUsuario
 
 <FluentLayout>
 
@@ -10,7 +10,6 @@
 
     <FluentHeader Style="position: fixed; width: 100vw">
         AppAPS
-        
     </FluentHeader>
     <FluentStack Class="main" Style="margin-top: 15px" Orientation="Orientation.Horizontal" Width="100%">
         <NavMenu />
@@ -26,20 +25,3 @@
         <a href="https://learn.microsoft.com/en-us/aspnet/core/blazor" target="_blank">About Blazor</a>
     </FluentFooter> *@
 </FluentLayout>
-
-@code{
-    [Inject] private SessaoUsuario sessaoUsuario { get; set; }
-    private List<EnumItem<TipoUsuario>> TiposUsuario;
-    private string? SelectedTipoUsuario = "";
-
-    protected async override Task OnInitializedAsync()
-    {
-        TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
-        OnTipoUsuarioChanged(EnumHelper.GetEnumDescription(TipoUsuario.Cliente));
-    }
-
-    private void OnTipoUsuarioChanged(string selectedValue)
-    {
-        sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
-    }
-}

@@ -21,6 +21,8 @@ namespace AppAPS.Entities
         public DateTime DataAbertura { get; set; }
         public DateTime DataUltimaAtualizacao { get; set; }
         public DateTime? DataFinalizacao { get; set; }
+        public decimal Valor { get; set; }
+        public decimal TaxaEntrega { get; set; }
         public List<PedidoItem> Itens { get; set; } = new List<PedidoItem>();
 
         public void DadosInclusao()

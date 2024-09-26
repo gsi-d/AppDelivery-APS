@@ -43,8 +43,6 @@
 
 <PageTitle>Página inicial</PageTitle>
 
-
-
 <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
     <FluentCard Width="80%" Height="92vh" Style="display: flex; flex-wrap: wrap; gap: 10px;">
         <FluentWizard StepperPosition="@(StepperPosition.Top)"
@@ -55,7 +53,6 @@
                       Height="88vh"
                       OnFinish="@OnFinishedAsync">
             <Steps>
-
                 <FluentWizardStep Label="Confirmar itens"
                                   OnChange="@OnStepChange">
                     <FluentStack HorizontalAlignment="HorizontalAlignment.Center" Style="height: 60vh; overflow-y: auto">
@@ -65,27 +62,34 @@
                                 {
                                     foreach (ProdutoItemDTO produtoItem in produtosItens)
                                     {
-                                        <FluentStack Style="display:flex; flex-direction: column;">
-                                            <FluentStack Width="80%" Style="height 10vh;">
+                                        <FluentStack Style="display:flex; flex-direction: column">
+                                            <FluentStack Width="100%" Style="height 10vh;">
                                                 <FluentCard Style="padding: 0;" Width="40%" Height="100%">
                                                     <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 20vh; width: 100%" />
                                                 </FluentCard>
-                                                <FluentStack Style="display:flex; flex-direction: column">
-                                                    <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
-                                                    <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
-                                                    <FluentStack>
-                                                        <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
-                                                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
-                                                            <FluentNumberField Value="produtoItem.Quantidade" ValueChanged="@(v => OnQuantidadeChanged(v, produtoItem))" TValue="int" Size="1" Min="0"></FluentNumberField>
-                                                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">X</FluentLabel>
-                                                            <FluentLabel Typo="Typography.H4" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
+                                                <FluentStack Style="display:flex; flex-direction: column" Width="100%">
+                                                    <FluentStack Style="justify-content: space-between">
+                                                        <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
+                                                        <FluentButton OnClick="() => AbreDialogExclusao(produtoItem)" BackgroundColor="transparent"> <FluentIcon Color="Color.Error" Value="@(new Icons.Regular.Size24.Dismiss())" /></FluentButton>
+                                                    </FluentStack>
+                                                    <FluentStack Style="display:flex; flex-direction: column" Width="90%">
+                                                        <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
+                                                        <FluentStack>
+                                                            <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
+                                                                <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
+                                                                <FluentNumberField Value="produtoItem.Quantidade" ValueChanged="@(v => OnQuantidadeChanged(v, produtoItem))" TValue="int" Size="1" Min="0"></FluentNumberField>
+                                                                <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">X</FluentLabel>
+                                                                <FluentLabel Typo="Typography.H4" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
+                                                            </FluentStack>
+                                                            <FluentStack Style="margin-top: 3px" HorizontalAlignment="HorizontalAlignment.Right">
+                                                                <FluentLabel Typo="Typography.H5">Total item:</FluentLabel>
+                                                                <FluentLabel Typo="Typography.H5">R$ @produtoItem.ValorTotal</FluentLabel>
+                                                            </FluentStack>
                                                         </FluentStack>
-                                                        <FluentStack Style="margin-top: 3px" HorizontalAlignment="HorizontalAlignment.Right">
-                                                            <FluentLabel Typo="Typography.H5">Total item:</FluentLabel>
-                                                            <FluentLabel Typo="Typography.H5">R$ @produtoItem.ValorTotal</FluentLabel>
-                                                        </FluentStack>
+
                                                     </FluentStack>
                                                 </FluentStack>
+
                                             </FluentStack>
                                             <FluentDivider Style="background-color: black; width: 100%; height: 1.5px" />
                                         </FluentStack>
@@ -114,25 +118,32 @@
                         <DataAnnotationsValidator />
                         <FluentStack Style="margin-top: 5vh" HorizontalAlignment="HorizontalAlignment.Center">
                             <FluentStack Width="70%" Orientation="Orientation.Vertical">
-                                <FluentTextField Appearance="FluentInputAppearance.Outline" Class="text-field" Immediate Placeholder="Informe seu nome" Name="Nome" @bind-Value="Pedido.Cliente" Label="Nome" Required></FluentTextField>
+                                <FluentTextField Appearance="FluentInputAppearance.Filled" Class="text-field" Immediate Placeholder="Informe seu nome" Name="Nome" @bind-Value="Pedido.Cliente" Label="Nome" Required></FluentTextField>
                                 <ValidationMessage For="@(() => Pedido.Cliente)" />
-                                <FluentTextField Appearance="FluentInputAppearance.Outline" Class="text-field" Immediate Placeholder="Rua" Name="Rua" @bind-Value="Pedido.Rua" Label="Rua" Required></FluentTextField>
+                                <FluentTextField Appearance="FluentInputAppearance.Filled" Class="text-field" Immediate Placeholder="Rua" Name="Rua" @bind-Value="Pedido.Rua" Label="Rua" Required></FluentTextField>
                                 <ValidationMessage For="@(() => Pedido.Rua)" />
-                                <FluentCombobox TOption="string" Placeholder="Selecione o seu bairro..." ValueChanged="@(e => OnBairroChanged(e))" Label="Bairro" Autofocus="true" Height="200px" Required>
+                                <FluentCombobox Appearance="Appearance.Filled" TOption="string" Placeholder="Selecione o seu bairro..." ValueChanged="@(e => OnBairroChanged(e))" Label="Bairro" Autofocus="true" Height="200px" Required>
                                     @foreach (var item in BairroItems)
                                     {
                                         <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
                                     }
                                 </FluentCombobox>
                                 <ValidationMessage For="@(() => Pedido.Bairro)" />
-                                <FluentCombobox TOption="string" Placeholder="Selecione a forma de entrega" ValueChanged="@(e => OnFormaEntregaChanged(e))" Label="Forma de entrega" Autofocus="true" Height="200px" Required>
+                                <FluentCombobox Appearance="Appearance.Filled" Disabled="@DesabilitaComboFormaPagamento()" TOption="string" Placeholder="Selecione a forma de entrega" ValueChanged="@(e => OnFormaEntregaChanged(e))" Label="Forma de entrega" Autofocus="true" Height="200px" Required>
                                     @foreach (var item in FormaEntregaItems)
                                     {
                                         <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
                                     }
                                 </FluentCombobox>
                                 <ValidationMessage For="@(() => Pedido.FormaEntrega)" />
-                                <FluentTextArea Appearance="FluentInputAppearance.Outline" Class="width-maximo" Placeholder="Observações..." Name="Observações" Rows=5 @bind-Value="Pedido.Observacoes" Label="Observações"></FluentTextArea>
+                                @{
+                                    if (Pedido.FormaEntrega == FormaEntrega.Entrega)
+                                    {
+                                        <FluentLabel Typo="Typography.H6">Taxa de entrega para @EnumHelper.GetEnumDescription(Pedido.Bairro): @DefineTaxaEntrega(Pedido.Bairro).ToString("C")</FluentLabel>
+
+                                    }
+                                }
+                                <FluentTextArea Appearance="FluentInputAppearance.Filled" Class="width-maximo" Placeholder="Observações..." Name="Observações" Rows=5 @bind-Value="Pedido.Observacoes" Label="Observações"></FluentTextArea>
                             </FluentStack>
                         </FluentStack>
                     </EditForm>
@@ -146,19 +157,27 @@
                                 <FluentLabel Typo="Typography.H4">Informações sobre a entrega</FluentLabel>
                                 <FluentTextField Appearance="FluentInputAppearance.Filled" Disabled Class="text-field" Placeholder="Informe seu nome" Name="Nome" @bind-Value="Pedido.Cliente" Label="Nome" Required></FluentTextField>
                                 <FluentTextField Appearance="FluentInputAppearance.Filled" Disabled Class="text-field" Placeholder="Rua" Name="Rua" @bind-Value="Pedido.Rua" Label="Rua" Required></FluentTextField>
-                                <FluentCombobox TOption="string" Disabled Placeholder="Selecione o seu bairro..." Value="@EnumHelper.GetEnumDescription(Pedido.Bairro)" ValueChanged="@(e => OnBairroChanged(e))" Label="Bairro" Autofocus="true" Height="200px" Required>
+                                <FluentCombobox Appearance="Appearance.Filled" TOption="string" Disabled Placeholder="Selecione o seu bairro..." Value="@EnumHelper.GetEnumDescription(Pedido.Bairro)" ValueChanged="@(e => OnBairroChanged(e))" Label="Bairro" Autofocus="true" Height="200px" Required>
                                 </FluentCombobox>
                                 <FluentCombobox TOption="string" Disabled Placeholder="Selecione a forma de entrega" Value="@EnumHelper.GetEnumDescription(Pedido.FormaEntrega)" ValueChanged="@(e => OnFormaEntregaChanged(e))" Label="Forma de entrega" Autofocus="true" Height="200px" Required>
                                 </FluentCombobox>
                                 <FluentTextArea Disabled Appearance="FluentInputAppearance.Filled" Class="width-maximo" Placeholder="Observações..." Name="Observações" Rows=5 @bind-Value="Pedido.Observacoes" Label="Observações"></FluentTextArea>
                                 <FluentLabel Typo="Typography.H4">Forma de pagamento</FluentLabel>
                                 <ValidationMessage For="@(() => Pedido.FormaPagamento)" />
-                                <FluentCombobox TOption="string" Placeholder="Informe a forma de pagamento" ValueChanged="@(e => OnFormaPagamentoChanged(e))" Label="Método de pagamento" Autofocus="true" Height="200px" Required>
+                                <FluentCombobox Appearance="Appearance.Filled" TOption="string" Placeholder="Informe a forma de pagamento" ValueChanged="@(e => OnFormaPagamentoChanged(e))" Label="Método de pagamento" Autofocus="true" Height="200px" Width="55%" Required>
                                     @foreach (var item in FormaPagamentoItems)
                                     {
                                         <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
                                     }
                                 </FluentCombobox>
+                                <FluentStack Style="gap: 2px" HorizontalAlignment="HorizontalAlignment.Left" Width="50%">
+                                    <img src="/uploads/visa.png" style="object-fit: contain; height: 4vh; width: 20%" />
+                                    <img src="/uploads/mastercard.png" style="object-fit: contain; height: 4vh; width: 20%" />
+                                    <img src="/uploads/elo.png" style="object-fit: contain; height: 4vh; width: 20%" />
+                                    <img src="/uploads/hipercard.png" style="object-fit: contain; height: 4vh; width: 20%" />
+                                    <img src="/uploads/bancobrasil.png" style="object-fit: contain; height: 4vh; width: 20%" />
+                                    <img src="/uploads/pix.png" style="object-fit: contain; height: 4vh; width: 20%" />
+                                </FluentStack>
                             </FluentStack>
                         </FluentStack>
                     </EditForm>
@@ -166,6 +185,38 @@
             </Steps>
         </FluentWizard>
     </FluentCard>
+</FluentStack>
+
+<FluentDialog Hidden="bDesabilitaDialogSucesso">
+    <FluentDialogHeader>
+        <FluentStack Orientation="Orientation.Horizontal">
+            <FluentIcon Value="@(new Icons.Regular.Size32.CheckmarkCircle())" Color="@Color.Success" />
+            <FluentLabel Typo="Typography.H3">Seu pedido foi confirmado.</FluentLabel>
+        </FluentStack>
+    </FluentDialogHeader>
+    <FluentDialogBody>
+        <FluentLabel Typo="Typography.Subject">O número do seu pedido é @Pedido.Id.</FluentLabel>
+        @{
+            if (Pedido.FormaEntrega == FormaEntrega.Entrega)
+            {
+                <FluentLabel Typo="Typography.Subject">Valor do pedido: @Pedido.Valor.ToString("C")</FluentLabel>
+                <FluentLabel Typo="Typography.Subject">Taxa de entrega: @Pedido.TaxaEntrega.ToString("C")</FluentLabel>
+            }
+        }
+        <FluentLabel Typo="Typography.Subject">Valor total: @TotalPedido.ToString("C")</FluentLabel>
+    </FluentDialogBody>
+    <FluentDialogFooter>
+        <FluentButton Style="border-width: 0px" BackgroundColor="green" Color="white" OnClick="HandleOkClick">OK</FluentButton>
+    </FluentDialogFooter>
+</FluentDialog>
+
+<FluentStack Style="position: fixed; bottom: 20px; left: 10px">
+    <FluentCombobox Position="SelectPosition.Above" TOption="string" Placeholder="Modo de visualização" ValueChanged="@(e => OnTipoUsuarioChanged(e))" Autofocus="true" Height="200px" Required>
+        @foreach (var item in TiposUsuario)
+        {
+            <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
+        }
+    </FluentCombobox>
 </FluentStack>
 
 @code {
@@ -181,9 +232,7 @@
     private List<EnumItem<FormaEntrega>> FormaEntregaItems;
     private List<EnumItem<FormaPagamento>> FormaPagamentoItems;
     [Inject] public IValidator<Pedido> Validator { get; set; }
-    private string? SelectedBairro = "";
-    private string? SelectedFormaEntrega = "";
-    private string? SelectedFormaPagamento = "";
+    private bool bDesabilitaDialogSucesso = true;
 
     protected async override Task OnInitializedAsync()
     {
@@ -192,6 +241,7 @@
         FormaPagamentoItems = EnumHelper.GetEnumItems<FormaPagamento>();
         produtosItens = sessaoUsuario.ProdutosItem;
         produtosItens.ToList().ForEach(item => TotalPedido += item.Quantidade * item.Preco);
+        TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
         AtualizaTotal();
     }
 
@@ -223,6 +273,43 @@
         Pedido.FormaPagamento = FormaPagamentoItems.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? Pedido.FormaPagamento;
     }
 
+    private decimal DefineTaxaEntrega(Bairro bairro)
+    {
+        // Pega o índice do bairro no enum
+        int bairroIndex = (int)bairro;
+
+        // A cada 3 bairros, a taxa aumenta em 1 real, começando com 5 reais
+        decimal taxaBase = 5;
+        decimal taxa = taxaBase + (bairroIndex / 3);
+        Pedido.TaxaEntrega = taxa;
+        return taxa;
+    }
+
+    private bool DesabilitaComboFormaPagamento()
+    {
+        return (int)Pedido.Bairro == 0;
+    }
+
+    private async Task AbreDialogExclusao(ProdutoItemDTO produtoItem)
+    {
+        var dialogReference = await DialogService.ShowConfirmationAsync("Deseja mesmo excluir este item?", "Sim", "Não", "Confirmação");
+        var result = await dialogReference.Result;
+
+        if (!result.Cancelled)
+        {
+            produtosItens.Remove(produtoItem); // Remove o item da listagem
+            if (!produtosItens.Any())
+            {
+                ToastService.ShowSuccess("Seu carrinho não possui mais itens.");
+                _navigationManager.NavigateTo("/");
+            }
+            else
+            {
+                ToastService.ShowSuccess("Item excluído com sucesso.");
+            }
+        }
+    }
+
     WizardStepSequence StepSequence = WizardStepSequence.Linear;
 
     void OnStepChange(FluentWizardStepChangeEventArgs e)
@@ -234,9 +321,12 @@
         ValidationResult validationResult = await Validator.ValidateAsync(Pedido);
         if (validationResult.IsValid)
         {
+            Pedido.Valor = TotalPedido;
+            TotalPedido += Pedido.TaxaEntrega;
             Pedido.DadosInclusao();
             sessaoUsuario.Pedidos.Add(Pedido);
-            await DialogService.ShowSuccessAsync("O número do seu pedido é " + Pedido.Id, "Seu pedido foi finalizado.");
+            bDesabilitaDialogSucesso = false;
+            sessaoUsuario.ProdutosItem.Clear();
         }
         else
         {
@@ -248,5 +338,18 @@
 
             await DialogService.ShowErrorAsync(erros, "Ops, tem algo errado com seu pedido.");
         }
+    }
+
+    private void HandleOkClick()
+    {
+        bDesabilitaDialogSucesso = true;
+        _navigationManager.NavigateTo("/"); // Redireciona o usuário após clicar em Ok
+    }
+
+    private List<EnumItem<TipoUsuario>> TiposUsuario;
+
+    private void OnTipoUsuarioChanged(string selectedValue)
+    {
+        sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
     }
 }

@@ -4,6 +4,7 @@
 @using AppAPS.Interfaces
 @using AppAPS.Services.Model
 @using AutoMapper
+@rendermode RenderMode.InteractiveServer
 
 <style>
     .fluent-label {
@@ -55,6 +56,15 @@
     <Produtos />
 </FluentCard>
 
+<FluentStack Style="position: fixed; bottom: 20px; left: 10px">
+    <FluentCombobox Position="SelectPosition.Above" TOption="string" Placeholder="Modo de visualização" ValueChanged="@(e => OnTipoUsuarioChanged(e))" Autofocus="true" Height="200px" Required>
+        @foreach (var item in TiposUsuario)
+        {
+            <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
+        }
+    </FluentCombobox>
+</FluentStack>
+
 @code {
     [Parameter] public string Id { get; set; }
     [Inject] private IProdutoService produtoService { get; set; }
@@ -66,8 +76,16 @@
 
     protected async override Task OnInitializedAsync()
     {
+        TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
         IdProduto = Convert.ToInt32(Id);
         // Produto = await produtoService.GetByIdProdutos(IdProduto);
         Produto = sessaoUsuario.Produtos.FirstOrDefault(produto => produto.Id == IdProduto);
+    }
+
+    private List<EnumItem<TipoUsuario>> TiposUsuario;
+
+    private void OnTipoUsuarioChanged(string selectedValue)
+    {
+        sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
     }
 }

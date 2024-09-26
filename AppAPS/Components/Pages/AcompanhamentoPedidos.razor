@@ -70,7 +70,7 @@
                                             <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">@EnumHelper.GetEnumDescription(pedido.FormaEntrega)</FluentLabel>
                                             <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">@EnumHelper.GetEnumDescription(pedido.FormaPagamento)</FluentLabel>
                                         </FluentStack>
-                                        <SeletorStatus Pedido="pedido" AtualizaStatus="AtualizaStatus" />
+                                    <SeletorStatus Pedido="pedido" AtualizaStatus="AtualizaStatus" SessaoUsuario="sessaoUsuario" />
                                     </FluentStack>
                                 </FluentStack>
                             <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
@@ -89,7 +89,6 @@
     </FluentCard>
 </FluentStack>
 
-
 @code {
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     public List<Pedido> Pedidos = new();
@@ -103,10 +102,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        if (sessaoUsuario.TipoUsuario != TipoUsuario.Entregador)
-            Pedidos = sessaoUsuario.Pedidos;
-        else
-            Pedidos = sessaoUsuario.Pedidos.Where(pedido => pedido.Status == StatusPedido.ProntoParaEntrega || pedido.Status == StatusPedido.EmTransito).ToList();
+        DefineListagemPedidosPorTipoUsuario();
     }
 
     private void OnQuantidadeChanged(int novaQuantidade, ProdutoItemDTO produtoItem)
@@ -155,9 +151,11 @@
         return Task.CompletedTask;
     }
 
-
-    async Task OnFinishedAsync()
+    private void DefineListagemPedidosPorTipoUsuario()
     {
-        await DialogService.ShowSuccessAsync("O pedido {numeroPedido} foi finalizado", "Pedido finalizado.");
+        if (sessaoUsuario.TipoUsuario != TipoUsuario.Entregador)
+            Pedidos = sessaoUsuario.Pedidos.Where(pedido => pedido.DataAbertura.Date == DateTime.Today).ToList();
+        else
+            Pedidos = sessaoUsuario.Pedidos.Where(pedido => (pedido.Status == StatusPedido.ProntoParaEntrega || pedido.Status == StatusPedido.EmTransito) && pedido.DataAbertura.Date == DateTime.Today).ToList();
     }
 }

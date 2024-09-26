@@ -137,24 +137,24 @@
     </FluentTab>
 </FluentTabs>
 
-<FluentButton Appearance="Appearance.Accent"
-              OnClick="AbreAlterarVisualizacao"
-              BackgroundColor="purple"
-              style="position: fixed; bottom: 20px; left: 20px;">
-    Alterar visualização
-</FluentButton>
-
-@* <TrocaVisualizacao DialogTrocaVisu="@DialogTrocaVisu" /> *@
-
+<FluentStack Style="position: fixed; bottom: 20px; left: 10px;" Width="20%">
+    <FluentCombobox Position="SelectPosition.Above" TOption="string" Placeholder="Modo de visualização" ValueChanged="@(e => OnTipoUsuarioChanged(e))" Autofocus="true" Height="200px" Required>
+        @foreach (var item in TiposUsuario)
+        {
+            <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
+        }
+    </FluentCombobox>
+</FluentStack>
 
 @code {
     // [Inject] private IProdutoService produtoService { get; set; }
     [Inject] private IMapper mapper { get; set; }
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
-    public FluentDialog? DialogTrocaVisu { get; set; }
+    public bool bDesabilitaDialogTrocaVisu { get; set; } = true;
     public List<Produto>? produtos;
     public IQueryable<ProdutoItemDTO>? produtosItem;
     public IQueryable<ProdutoItemDTO>? bebidasItem;
+    private List<EnumItem<TipoUsuario>> TiposUsuario;
     public decimal Numero { get; set; }
     string? activeid = "tab-1";
     FluentTab? changedto;
@@ -167,6 +167,7 @@
         var produtosMapeados = mapper.Map<List<ProdutoItemDTO>>(produtos).AsQueryable();
         produtosItem = produtosMapeados.Where(produto => !produto.Bebida);
         bebidasItem = produtosMapeados.Where(produto => produto.Bebida);
+        TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
     }
 
 
@@ -182,12 +183,12 @@
 
     private async Task InvokeCarrinho()
     {
-        _navigationManager.NavigateTo($"/carrinho/");
+        _navigationManager.NavigateTo("/carrinho/");
     }
 
-    private async Task AbreAlterarVisualizacao()
+    private void OnTipoUsuarioChanged(string selectedValue)
     {
-        DialogTrocaVisu.Show();
+        sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
     }
 
     private bool DesabilitaBotaoCarrinho(ProdutoItemDTO item)
