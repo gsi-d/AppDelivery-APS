@@ -137,17 +137,28 @@
     </FluentTab>
 </FluentTabs>
 
+<FluentButton Appearance="Appearance.Accent"
+              OnClick="AbreAlterarVisualizacao"
+              BackgroundColor="purple"
+              style="position: fixed; bottom: 20px; left: 20px;">
+    Alterar visualização
+</FluentButton>
+
+@* <TrocaVisualizacao DialogTrocaVisu="@DialogTrocaVisu" /> *@
+
 
 @code {
     // [Inject] private IProdutoService produtoService { get; set; }
     [Inject] private IMapper mapper { get; set; }
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
+    public FluentDialog? DialogTrocaVisu { get; set; }
     public List<Produto>? produtos;
     public IQueryable<ProdutoItemDTO>? produtosItem;
     public IQueryable<ProdutoItemDTO>? bebidasItem;
     public decimal Numero { get; set; }
     string? activeid = "tab-1";
     FluentTab? changedto;
+    public bool ExibeAlterarVisualizacao { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
@@ -172,6 +183,11 @@
     private async Task InvokeCarrinho()
     {
         _navigationManager.NavigateTo($"/carrinho/");
+    }
+
+    private async Task AbreAlterarVisualizacao()
+    {
+        DialogTrocaVisu.Show();
     }
 
     private bool DesabilitaBotaoCarrinho(ProdutoItemDTO item)

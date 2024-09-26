@@ -11,6 +11,14 @@
         gap: 0;
     }
 
+    .custom-botao-cliente {
+        height: 70px;
+        padding: 5px;
+        border-radius: 7px;
+        pointer-events: none;
+        gap: 0;
+    }
+
     .cor-botao-confirmado {
         background-color: palevioletred;
     }
@@ -41,45 +49,47 @@
     }
 </style>
 
-<FluentStack @onclick="() => HandleClick(Pedido, StatusPedido.Confirmado)" Class="@(DesabilitaBotaoConfirmado ? "disabled-stack custom-botao cor-botao-confirmado" : "custom-botao cor-botao-confirmado")" Style="display: flex; flex-direction: column; align-items: center;" Width="90px">
-    <FluentIcon Color="Color.Lightweight" Width="30px" Value="@(new Icons.Filled.Size24.AlertOn())"></FluentIcon>
-    <FluentLabel Color="Color.Lightweight">Confirmado</FluentLabel>
-</FluentStack>
+<FluentStack VerticalAlignment="VerticalAlignment.Center">
+    <FluentStack @onclick="() => HandleClick(Pedido, StatusPedido.Confirmado)" Class="@AtualizaClasses(StatusPedido.Confirmado)" Style="display: flex; flex-direction: column; align-items: center;" Width="90px">
+        <FluentIcon Color="Color.Lightweight" Width="30px" Value="@(new Icons.Filled.Size24.AlertOn())"></FluentIcon>
+        <FluentLabel Color="Color.Lightweight">Confirmado</FluentLabel>
+    </FluentStack>
 
-<FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
-<FluentIcon Value="@DefineIconeIntermediario(StatusPedido.EmPreparo, Pedido.Status)"></FluentIcon>
-<FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
+    <FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
+    <FluentIcon Value="@DefineIconeIntermediario(1, Pedido.Status)"></FluentIcon>
+    <FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
 
-<FluentStack @onclick="() => HandleClick(Pedido, StatusPedido.EmPreparo)" Class="@(DesabilitaBotaoEmPreparo ? "disabled-stack custom-botao cor-botao-em-preparo" : "custom-botao cor-botao-em-preparo")" Style="display: flex; flex-direction: column; align-items: center;" Width="90px">
-    <FluentIcon Color="Color.Lightweight" Width="30px" Value="@(new Icons.Filled.Size24.FoodPizza())"></FluentIcon>
-    <FluentLabel Color="Color.Lightweight">Em preparo</FluentLabel>
-</FluentStack>
+    <FluentStack @onclick="() => HandleClick(Pedido, StatusPedido.EmPreparo)" Class="@AtualizaClasses(StatusPedido.EmPreparo)" Style="display: flex; flex-direction: column; align-items: center;" Width="90px">
+        <FluentIcon Color="Color.Lightweight" Width="30px" Value="@(new Icons.Filled.Size24.FoodPizza())"></FluentIcon>
+        <FluentLabel Color="Color.Lightweight">Em preparo</FluentLabel>
+    </FluentStack>
 
-<FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
-<FluentIcon Value="DefineIconeIntermediario(StatusPedido.ProntoParaEntrega, Pedido.Status)"></FluentIcon>
-<FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
+    <FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
+    <FluentIcon Value="DefineIconeIntermediario(2, Pedido.Status)"></FluentIcon>
+    <FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
 
-<FluentStack @onclick="() => HandleClick(Pedido, StatusPedido.ProntoParaEntrega)" Class="@(DesabilitaBotaoProntoParaEntrega ? "disabled-stack custom-botao cor-botao-pronto-entrega" : "custom-botao cor-botao-pronto-entrega")" Style="display: flex; flex-direction: column; align-items: center;" Width="100px">
-    <FluentIcon Color="Color.Lightweight" Width="30px" Value="@(new Icons.Filled.Size24.ClockPause())"></FluentIcon>
-    <FluentLabel Style="font-size: small" Color="Color.Lightweight">Pronto entrega</FluentLabel>
-</FluentStack>
+    <FluentStack @onclick="() => HandleClick(Pedido, StatusPedido.ProntoParaEntrega)" Class="@AtualizaClasses(StatusPedido.ProntoParaEntrega)" Style="display: flex; flex-direction: column; align-items: center;" Width="100px">
+        <FluentIcon Color="Color.Lightweight" Width="30px" Value="@(new Icons.Filled.Size24.ClockPause())"></FluentIcon>
+        <FluentLabel Style="font-size: small" Color="Color.Lightweight">Pronto entrega</FluentLabel>
+    </FluentStack>
 
-<FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
-<FluentIcon Value="DefineIconeIntermediario(StatusPedido.EmTransito, Pedido.Status)"></FluentIcon>
-<FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
+    <FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
+    <FluentIcon Value="DefineIconeIntermediario(3, Pedido.Status)"></FluentIcon>
+    <FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
 
-<FluentStack @onclick="() => HandleClick(Pedido, StatusPedido.EmTransito)" Class="@(DesabilitaBotaoEmTransito ? "disabled-stack custom-botao cor-botao-em-transito" : "custom-botao cor-botao-em-transito")" Style="display: flex; flex-direction: column; align-items: center;" Width="100px">
-    <FluentIcon Color="Color.Lightweight" Width="30px" Value="@(new Icons.Filled.Size24.VehicleCarProfileLtrClock())"></FluentIcon>
-    <FluentLabel Style="font-size: small" Color="Color.Lightweight">Em trânsito</FluentLabel>
-</FluentStack>
+    <FluentStack @onclick="() => HandleClick(Pedido, StatusPedido.EmTransito)" Class="@AtualizaClasses(StatusPedido.EmTransito)" Style="display: flex; flex-direction: column; align-items: center;" Width="90px">
+        <FluentIcon Color="Color.Lightweight" Width="30px" Value="@(new Icons.Filled.Size24.VehicleCarProfileLtrClock())"></FluentIcon>
+        <FluentLabel Style="font-size: small" Color="Color.Lightweight">Em trânsito</FluentLabel>
+    </FluentStack>
 
-<FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
-<FluentIcon Value="DefineIconeIntermediario(StatusPedido.Finalizado, Pedido.Status)"></FluentIcon>
-<FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
+    <FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
+    <FluentIcon Value="DefineIconeIntermediario(4, Pedido.Status)"></FluentIcon>
+    <FluentDivider Orientation="Orientation.Horizontal" Style="height: 2px; width: 20px; background-color: lightgray;" />
 
-<FluentStack @onclick="() => HandleClick(Pedido, StatusPedido.Finalizado)" Class="@(DesabilitaBotaoFinalizado ? "disabled-stack custom-botao cor-botao-finalizado" : "custom-botao cor-botao-finalizado")" Style="display: flex; flex-direction: column; align-items: center;" Width="100px">
-    <FluentIcon Color="Color.Lightweight" Width="30px" Value="@(new Icons.Filled.Size24.Checkmark())"></FluentIcon>
-    <FluentLabel Style="font-size: small" Color="Color.Lightweight">Finalizado</FluentLabel>
+    <FluentStack @onclick="() => HandleClick(Pedido, StatusPedido.Finalizado)" Class="@AtualizaClasses(StatusPedido.Finalizado)" Style="display: flex; flex-direction: column; align-items: center;" Width="90px">
+        <FluentIcon Color="Color.Lightweight" Width="30px" Value="@(new Icons.Filled.Size24.CheckmarkStarburst())"></FluentIcon>
+        <FluentLabel Style="font-size: small" Color="Color.Lightweight">Finalizado</FluentLabel>
+    </FluentStack>
 </FluentStack>
 
 @code {
@@ -99,13 +109,16 @@
 
     private void HandleClick(Pedido pedido, StatusPedido novoStatus)
     {
-        PedidoStatusDTO pedidoStatusDTO = new PedidoStatusDTO
+        if (sessaoUsuario.TipoUsuario != TipoUsuario.Cliente)
         {
-            Pedido = pedido,
-            NovoStatus = novoStatus
-        };
-        AtualizaStatus.InvokeAsync(pedidoStatusDTO);
-        AtualizaLayoutStatus(novoStatus);
+            PedidoStatusDTO pedidoStatusDTO = new PedidoStatusDTO
+                {
+                    Pedido = pedido,
+                    NovoStatus = novoStatus
+                };
+            AtualizaStatus.InvokeAsync(pedidoStatusDTO);
+            AtualizaLayoutStatus(novoStatus);
+        }
     }
 
     private void AtualizaLayoutStatus(StatusPedido statusAtual)
@@ -116,35 +129,139 @@
                 DesabilitaBotaoEmPreparo = false;
                 break;
             case StatusPedido.EmPreparo:
+                DesabilitaBotaoEmPreparo = true;
                 DesabilitaBotaoProntoParaEntrega = false;
                 break;
             case StatusPedido.ProntoParaEntrega:
+                DesabilitaBotaoProntoParaEntrega = true;
                 DesabilitaBotaoEmTransito = false;
                 break;
             case StatusPedido.EmTransito:
+                DesabilitaBotaoEmTransito = true;
                 DesabilitaBotaoFinalizado = false;
                 break;
             case StatusPedido.Finalizado:
-                DesabilitaBotaoFinalizado = false;
+                DesabilitaBotaoFinalizado = true;
                 break;
         }
     }
 
-    private Icon DefineIconeIntermediario(StatusPedido statusIcone, StatusPedido statusAtual)
+    private Icon DefineIconeIntermediario(int numeroIcone, StatusPedido statusAtual)
     {
-        switch (statusIcone)
+        switch (numeroIcone)
         {
-            case StatusPedido.EmPreparo:
-                return statusAtual == StatusPedido.EmPreparo && DesabilitaBotaoEmPreparo ? new Icons.Filled.Size24.Checkmark() : new Icons.Filled.Size24.Clock();
-            case StatusPedido.ProntoParaEntrega:
-                return statusAtual == StatusPedido.ProntoParaEntrega && DesabilitaBotaoProntoParaEntrega ? new Icons.Filled.Size24.Checkmark() : new Icons.Filled.Size24.Clock();
-            case StatusPedido.EmTransito:
-                return statusAtual == StatusPedido.EmTransito && DesabilitaBotaoEmTransito ? new Icons.Filled.Size24.Checkmark() : new Icons.Filled.Size24.Clock();
-            case StatusPedido.Finalizado:
-                return statusAtual == StatusPedido.Finalizado && DesabilitaBotaoFinalizado ? new Icons.Filled.Size24.Checkmark() : new Icons.Filled.Size24.Clock();
+            case 1:
+                if (statusAtual == StatusPedido.EmPreparo || statusAtual == StatusPedido.ProntoParaEntrega || statusAtual == StatusPedido.EmTransito || statusAtual == StatusPedido.Finalizado)
+                    return new Icons.Filled.Size24.Checkmark();
+                else
+                    return new Icons.Filled.Size24.Clock();
+            case 2:
+                if (statusAtual == StatusPedido.ProntoParaEntrega || statusAtual == StatusPedido.EmTransito || statusAtual == StatusPedido.Finalizado)
+                    return new Icons.Filled.Size24.Checkmark();
+                else
+                    return new Icons.Filled.Size24.Clock();
+            case 3:
+                if (statusAtual == StatusPedido.EmTransito || statusAtual == StatusPedido.Finalizado)
+                    return new Icons.Filled.Size24.Checkmark();
+                else
+                    return new Icons.Filled.Size24.Clock();
+            case 4:
+                if (statusAtual == StatusPedido.Finalizado)
+                    return new Icons.Filled.Size24.Checkmark();
+                else
+                    return new Icons.Filled.Size24.Clock();
             default:
                 return new Icons.Filled.Size24.Clock();
 
         }
+    }
+
+    private string AtualizaClasses(StatusPedido status)
+    {
+        string classes = "";
+        switch (status)
+        {
+            case StatusPedido.Confirmado:
+                if (DesabilitaBotaoConfirmado)
+                {
+                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                        classes = "disabled-stack custom-botao-cliente cor-botao-confirmado";
+                    else
+                        classes = "disabled-stack custom-botao cor-botao-confirmado";
+                }
+                else
+                {
+                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                        classes = "custom-botao-cliente cor-botao-confirmado";
+                    else
+                        classes = "custom-botao cor-botao-confirmado";
+                }
+                break;
+            case StatusPedido.EmPreparo:
+                if (DesabilitaBotaoEmPreparo)
+                {
+                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                        classes = "disabled-stack custom-botao-cliente cor-botao-em-preparo";
+                    else
+                        classes = "disabled-stack custom-botao cor-botao-em-preparo";
+                }
+                else
+                {
+                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                        classes = "custom-botao-cliente cor-botao-em-preparo";
+                    else
+                        classes = "custom-botao cor-botao-em-preparo";
+                }
+                break;
+            case StatusPedido.ProntoParaEntrega:
+                if (DesabilitaBotaoProntoParaEntrega)
+                {
+                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                        classes = "disabled-stack custom-botao-cliente cor-botao-pronto-entrega";
+                    else
+                        classes = "disabled-stack custom-botao cor-botao-pronto-entrega";
+                }
+                else
+                {
+                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                        classes = "custom-botao-cliente cor-botao-pronto-entrega";
+                    else
+                        classes = "custom-botao cor-botao-pronto-entrega";
+                }
+                break;
+            case StatusPedido.EmTransito:
+                if (DesabilitaBotaoEmTransito)
+                {
+                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                        classes = "disabled-stack custom-botao-cliente cor-botao-em-transito";
+                    else
+                        classes = "disabled-stack custom-botao cor-botao-em-transito";
+                }
+                else
+                {
+                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                        classes = "custom-botao-cliente cor-botao-em-transito";
+                    else
+                        classes = "custom-botao cor-botao-em-transito";
+                }
+                break;
+            case StatusPedido.Finalizado:
+                if (DesabilitaBotaoFinalizado)
+                {
+                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                        classes = "disabled-stack custom-botao-cliente cor-botao-finalizado";
+                    else
+                        classes = "disabled-stack custom-botao cor-botao-finalizado";
+                }
+                else
+                {
+                    if (sessaoUsuario.TipoUsuario == TipoUsuario.Cliente)
+                        classes = "custom-botao-cliente cor-botao-finalizado";
+                    else
+                        classes = "custom-botao cor-botao-finalizado";
+                }
+                break;
+        }
+        return classes;
     }
 }

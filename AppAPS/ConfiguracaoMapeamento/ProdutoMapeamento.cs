@@ -28,6 +28,9 @@ namespace AppAPS.ConfiguracaoMapeamento
             builder.Property(c => c.Ingrediente).HasColumnType("bit")
                    .IsRequired();
 
+            builder.Property(c => c.Bebida).HasColumnType("bit")
+                   .IsRequired();
+
             builder.Property(c => c.NomeArquivoUpload)
             .IsRequired()
                    .HasMaxLength(200);

@@ -1,0 +1,78 @@
+﻿@page "/metodoVisualizacao/"
+@using AppAPS.DTOs
+@using AppAPS.Entities
+@using AppAPS.Interfaces
+@using AppAPS.Services.Model
+@using AutoMapper
+@rendermode RenderMode.InteractiveServer
+
+<FluentStack Style="display: flex; align-items: center; justify-content: center">
+    <FluentStack HorizontalAlignment="HorizontalAlignment.Right" VerticalAlignment="VerticalAlignment.Center">
+        <FluentDialog @ref="_myFluentDialog" @bind-Hidden="@Hidden" aria-label="Simple dialog" Modal=@_modal TrapFocus=@_trapFocus PreventScroll=@_preventScroll @ondialogdismiss=OnDismiss>
+            <FluentStack>
+                <FluentLabel Color="Color.Lightweight" Typo="Typography.Subject">Modo de visualização: </FluentLabel>
+                <FluentCombobox TOption="string" Placeholder="Modo de visualização" ValueChanged="@(e => OnTipoUsuarioChanged(e))" Autofocus="true" Height="200px" Required>
+                    @foreach (var item in TiposUsuario)
+                    {
+                        <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
+                    }
+                </FluentCombobox>
+            </FluentStack>
+            <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="OnClose">Pronto</FluentButton>
+        </FluentDialog>
+    </FluentStack>
+</FluentStack>
+
+<FluentButton Appearance=Appearance.Accent @onclick="OnOpen">Alterar método de visualização</FluentButton>
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Inject] private SessaoUsuario sessaoUsuario { get; set; }
+    public FluentDialog? _myFluentDialog;
+    private List<EnumItem<TipoUsuario>> TiposUsuario;
+    private string? SelectedTipoUsuario = "";
+    private bool _trapFocus = true;
+    private bool _modal = true;
+    private bool _preventScroll = true;
+    private string? _status;
+    private bool Hidden { get; set; } = true;
+
+    protected async override Task OnInitializedAsync()
+    {
+        TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
+        OnTipoUsuarioChanged(EnumHelper.GetEnumDescription(TipoUsuario.Cliente));
+    }
+
+    private void OnTipoUsuarioChanged(string selectedValue)
+    {
+        sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+            _myFluentDialog!.Hide();
+    }
+
+    private void OnOpen()
+    {
+        _status = "Dialog opened with button click";
+        _myFluentDialog!.Show();
+    }
+
+    private void OnClose()
+    {
+        IsOpen = false;
+        _status = $"Dialog dismissed with reason: Close button clicked";
+        _myFluentDialog!.Hide();
+    }
+
+    private void OnDismiss(DialogEventArgs args)
+    {
+        if (args is not null && args.Reason is not null && args.Reason == "dismiss")
+        {
+            _status = $"Dialog dismissed with reason: Dismissed";
+            _myFluentDialog!.Hide();
+        }
+    }
+}

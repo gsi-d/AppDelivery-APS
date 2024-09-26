@@ -40,8 +40,12 @@
                              <FluentValidationMessage For="@(() => ProdutoModel.Preco)" />
                          </div>
                          <div>
-                             <FluentCheckbox Name="Ingrediente" Style="margin-left: 2px" @bind-Value="ProdutoModel.Ingrediente" Label="É um ingrediente" />
+                             <FluentCheckbox Name="Ingrediente" Style="margin-left: 2px" @bind-Value="ProdutoModel.Ingrediente" Label="É um ingrediente?" />
                              <FluentValidationMessage For="@(() => ProdutoModel.Ingrediente)" />
+                         </div>
+                         <div>
+                             <FluentCheckbox Name="Bebida" Style="margin-left: 2px" @bind-Value="ProdutoModel.Ingrediente" Label="É uma bebida?" />
+                             <FluentValidationMessage For="@(() => ProdutoModel.Bebida)" />
                          </div>
                          <div>
                              <FluentLabel>Selecione uma imagem</FluentLabel>

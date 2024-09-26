@@ -134,6 +134,18 @@ namespace AppAPS.Entities
         Entrega = 2,
     }
 
+    public enum TipoUsuario : byte
+    {
+        [Description("Restaurante")]
+        Restaurante = 1,
+
+        [Description("Entregador")]
+        Entregador = 2,
+
+        [Description("Cliente")]
+        Cliente = 3,
+    }
+
     public class EnumItem<T>
     {
         public string Description { get; set; }

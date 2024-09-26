@@ -19,6 +19,7 @@ namespace AppAPS.Entities
         // Propriedade auxiliar para o binding com @bind-Value
         public string? Observacoes { get; set; }
         public DateTime DataAbertura { get; set; }
+        public DateTime DataUltimaAtualizacao { get; set; }
         public DateTime? DataFinalizacao { get; set; }
         public List<PedidoItem> Itens { get; set; } = new List<PedidoItem>();
 
@@ -28,6 +29,7 @@ namespace AppAPS.Entities
             this.Id = random.Next();
             this.Status = StatusPedido.Confirmado;
             this.DataAbertura = DateTime.Now;
+            this.DataUltimaAtualizacao = DateTime.Now;
         }
     }
 }
