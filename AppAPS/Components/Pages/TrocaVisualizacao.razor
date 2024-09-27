@@ -1,0 +1,68 @@
+﻿<FluentDialog Hidden="bDesabilitaDialogTrocaVisu">
+    <FluentDialogHeader>
+        <FluentStack Orientation="Orientation.Horizontal">
+            <FluentIcon Value="@(new Icons.Regular.Size28.ChartPerson())" Color="@Color.Success" />
+            <FluentLabel Typo="Typography.H3">@DefineTituloPopup()</FluentLabel>
+        </FluentStack>
+    </FluentDialogHeader>
+    <FluentDialogBody>
+        <FluentCombobox Position="SelectPosition.Above" Label="Modo de visualização" tabindex="0" TOption="string" Placeholder="Modo de visualização" ValueChanged="@(e => OnTipoUsuarioChanged(e))" Autofocus="true" Height="200px" Required>
+            @foreach (var item in TiposUsuario)
+            {
+                <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
+            }
+        </FluentCombobox>
+        @{
+            if (tipoUsuario == TipoUsuario.Cliente)
+            {
+                <FluentTextField Appearance="FluentInputAppearance.Filled" Class="text-field" tabindex="1" Immediate Placeholder="Ex: 000.000.000.00" @bind-Value="@CPF" Name="CPF" Label="CPF" Required></FluentTextField>
+            }
+        }
+    </FluentDialogBody>
+    <FluentDialogFooter>
+        <FluentButton Style="border-width: 0px; pointer-events: visible" BackgroundColor="green" tabindex="2" Color="white" OnClick="ConfirmaTrocaModoVisualizacao">Confirmar</FluentButton>
+    </FluentDialogFooter>
+</FluentDialog>
+
+@code {
+    [Parameter] public bool bDesabilitaDialogTrocaVisu { get; set; } = true;
+    [Parameter] public bool? PrimeiraDefinicao { get; set; }
+    [Inject] private SessaoUsuario sessaoUsuario { get; set; }
+    private List<EnumItem<TipoUsuario>> TiposUsuario = new List<EnumItem<TipoUsuario>>();
+    private TipoUsuario tipoUsuario;
+    public string CPF { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
+    }
+
+    private async void ConfirmaTrocaModoVisualizacao()
+    {
+        await _localStorage.SetItemAsync("CPF", CPF);
+        bDesabilitaDialogTrocaVisu = true;
+        PrimeiraDefinicao = false;
+        await ReloadPage();
+    }
+
+    private async void OnTipoUsuarioChanged(string selectedValue)
+    {
+        await _localStorage.SetItemAsync("TipoUsuario", TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario);
+        sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
+        tipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
+        StateHasChanged();
+    }
+
+    private string DefineTituloPopup()
+    {
+        if (PrimeiraDefinicao == true)
+            return "Defina o modo de visualização";
+        else
+            return "Altere o modo de visualização";
+    }
+
+    private async Task ReloadPage()
+    {
+        await _jsRuntime.InvokeVoidAsync("reloadPage");
+    }
+}

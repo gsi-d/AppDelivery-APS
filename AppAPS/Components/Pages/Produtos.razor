@@ -1,31 +1,37 @@
 ﻿@page "/produtos"
-@using AppAPS.Entities
-@using AppAPS.Interfaces
-@using AppAPS.Services.Model
 @rendermode InteractiveServer
 
 <PageTitle>Produtos</PageTitle>
 
-<h1>Listagem de Produtos</h1>
+@{
+    if (produtos is not null && produtos.Any())
+    {
+        <h1>Listagem de Produtos</h1>
+        <FluentCard Height="Auto" Style="padding: 10px;">
+            <FluentStack VerticalAlignment="VerticalAlignment.Center" Style="padding-bottom: 4px;">
+                <FluentButton Type="ButtonType.Button" OnClick="InvokeTelaCadastro" Appearance="Appearance.Accent">Novo</FluentButton>
+                <FluentButton Type="ButtonType.Button" OnClick="ExcluirProdutos" Appearance="Appearance.Accent" BackgroundColor="red">Excluir</FluentButton>
+            </FluentStack>
 
-<FluentCard Height="Auto" Style="padding: 10px;">
-    <FluentStack VerticalAlignment="VerticalAlignment.Center" Style="padding-bottom: 4px;">
-        <FluentButton Type="ButtonType.Button" OnClick="InvokeTelaCadastro" Appearance="Appearance.Accent">Novo</FluentButton>
-        <FluentButton Type="ButtonType.Button" OnClick="ExcluirProdutos" Appearance="Appearance.Accent" BackgroundColor="red">Excluir</FluentButton>
-    </FluentStack>
+            <FluentDivider />
 
-    <FluentDivider />
+            <FluentDataGrid Items="@produtos" ShowHover="true" TGridItem="Produto">
+                <SelectColumn TGridItem="Produto"
+                              SelectMode="DataGridSelectMode.Multiple"
+                              SelectFromEntireRow="true"
+                              @bind-SelectedItems="@SelectedItems" />
+                <PropertyColumn Width="100px" Property="@(p => p.Id)" Title="Id" />
+                <PropertyColumn Width="300px" Property="@(p => p.Nome)" />
+                <PropertyColumn Width="300px" Property="@(p => p.Descricao)" />
+            </FluentDataGrid>
+        </FluentCard>
+    }
+    else
+    {
+        <FluentLabel Typo="Typography.H2">Não há produtos cadastrados.</FluentLabel>
+    }
+}
 
-    <FluentDataGrid Items="@produtos" ShowHover="true" TGridItem="Produto">
-        <SelectColumn TGridItem="Produto"
-                      SelectMode="DataGridSelectMode.Multiple"
-                      SelectFromEntireRow="true"
-                      @bind-SelectedItems="@SelectedItems" />
-        <PropertyColumn Width="100px" Property="@(p => p.Id)" Title="Id" />
-        <PropertyColumn Width="300px" Property="@(p => p.Nome)" />
-        <PropertyColumn Width="300px" Property="@(p => p.Descricao)" />
-    </FluentDataGrid>
-</FluentCard>
 
 <FluentStack Style="position: fixed; bottom: 20px; left: 10px">
     <FluentCombobox Position="SelectPosition.Above" TOption="string" Placeholder="Modo de visualização" ValueChanged="@(e => OnTipoUsuarioChanged(e))" Autofocus="true" Height="200px" Required>
@@ -39,14 +45,14 @@
 
 @code {
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
-    [Inject] private IProdutoService produtoService { get; set; }
+    [Inject] private IProdutoService ProdutoService { get; set; }
     public IEnumerable<Produto> SelectedItems = new List<Produto>();
     public IQueryable<Produto>? produtos;
 
     protected async override Task OnInitializedAsync()
     {
         TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
-        var resultadoProdutos = await produtoService.GetAllProdutos();
+        var resultadoProdutos = await ProdutoService.GetAllProdutos();
         produtos = resultadoProdutos.AsQueryable();
     }
 
@@ -57,11 +63,11 @@
 
     private async void ExcluirProdutos()
     {
-        bool sucesso = await produtoService.DeletarProdutos(SelectedItems.ToList());
+        bool sucesso = await ProdutoService.DeletarProdutos(SelectedItems.ToList());
         if (sucesso)
         {
             ToastService.ShowSuccess("Exclusão bem sucedida.");
-            var resultadoProdutos = await produtoService.GetAllProdutos();
+            var resultadoProdutos = await ProdutoService.GetAllProdutos();
             produtos = resultadoProdutos.AsQueryable();
         }
     }

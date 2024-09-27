@@ -1,9 +1,4 @@
 ﻿@page "/produtoDetalhes/{Id}"
-@using AppAPS.DTOs
-@using AppAPS.Entities
-@using AppAPS.Interfaces
-@using AppAPS.Services.Model
-@using AutoMapper
 @rendermode RenderMode.InteractiveServer
 
 <style>
@@ -29,27 +24,37 @@
 
 <FluentStack Style="display: flex; align-items: center; justify-content: center">
     <FluentCard Width="100%" Height="90%">
-        <FluentStack @* Style="background-color: blue" *@>
-            <FluentStack @* Style="background-color: red" *@>
-                <FluentCard Style="padding: 0;" Width="100%" Height="100%">
-                    <img src="@Produto.NomeArquivoUpload" style="object-fit: cover; height: 60vh; width: 100%" />
-                </FluentCard>
-            </FluentStack>
-            <FluentStack Style="@* background-color: green *@; display: flex; flex-direction: column; padding: 10px">
-                <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
-                    <FluentLabel Typo="Typography.H2">@Produto.Nome</FluentLabel>
-                </FluentStack>
-                <FluentLabel Typo="Typography.Subject">@Produto.Descricao</FluentLabel>
-                <FluentDivider />
+        @{
+            if (Produto is not null)
+            {
                 <FluentStack>
-                    <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Quantidade:</FluentLabel>
-                    <FluentNumberField @bind-Value="@Numero" Size="1" Min="0"></FluentNumberField>
-                    <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Appearance="Appearance.Accent"></FluentButton>
+                    <FluentStack>
+                        <FluentCard Style="padding: 0;" Width="100%" Height="100%">
+                            <img src="@Produto.NomeArquivoUpload" style="object-fit: cover; height: 60vh; width: 100%" />
+                        </FluentCard>
+                    </FluentStack>
+                    <FluentStack Style="@* background-color: green *@; display: flex; flex-direction: column; padding: 10px">
+                        <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
+                            <FluentLabel Typo="Typography.H2">@Produto.Nome</FluentLabel>
+                        </FluentStack>
+                        <FluentLabel Typo="Typography.Subject">@Produto.Descricao</FluentLabel>
+                        <FluentDivider />
+                        <FluentStack>
+                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Quantidade:</FluentLabel>
+                            <FluentNumberField @bind-Value="@Numero" Size="1" Min="0"></FluentNumberField>
+                            <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Appearance="Appearance.Accent"></FluentButton>
+                        </FluentStack>
+                    </FluentStack>
                 </FluentStack>
-            </FluentStack>
-        </FluentStack>
+            }
+            else
+            {
+                <FluentLabel Typo="Typography.H2">Produto não encontrado.</FluentLabel>
+            }
+        }
     </FluentCard>
 </FluentStack>
+
 
 @* Precisa ser substituída pela listagem de fichas técnicas *@
 <FluentCard Style="margin-top: 20px">
@@ -67,10 +72,11 @@
 
 @code {
     [Parameter] public string Id { get; set; }
-    [Inject] private IProdutoService produtoService { get; set; }
+    [Inject] private IProdutoService ProdutoService { get; set; }
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     [Inject] private IMapper mapper { get; set; }
-    public Produto Produto = new();
+    private List<EnumItem<TipoUsuario>> TiposUsuario = new List<EnumItem<TipoUsuario>>();
+    public Produto? Produto;
     public decimal Numero { get; set; }
     public int IdProduto { get; set; }
 
@@ -78,11 +84,8 @@
     {
         TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
         IdProduto = Convert.ToInt32(Id);
-        // Produto = await produtoService.GetByIdProdutos(IdProduto);
-        Produto = sessaoUsuario.Produtos.FirstOrDefault(produto => produto.Id == IdProduto);
+        Produto = await ProdutoService.GetByIdProduto(IdProduto);
     }
-
-    private List<EnumItem<TipoUsuario>> TiposUsuario;
 
     private void OnTipoUsuarioChanged(string selectedValue)
     {

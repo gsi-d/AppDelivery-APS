@@ -167,12 +167,12 @@
 </div>
 
 @code {
+    [Inject] private IProdutoService produtoService { get; set; }
+    [Inject] private IUploadService uploadService { get; set; }
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     [SupplyParameterFromForm]
     private Produto ProdutoModel { get; set; } = new();
-
-    [Inject] private IProdutoService produtoService { get; set; }
-    [Inject] private IUploadService uploadService { get; set; }
+    private List<EnumItem<TipoUsuario>> TiposUsuario = new List<EnumItem<TipoUsuario>>();
 
     List<string> mensagens = new();
     public IBrowserFile Arquivo { get; set; }
@@ -231,7 +231,6 @@
         }
     }
 
-    private List<EnumItem<TipoUsuario>> TiposUsuario;
 
     private void OnTipoUsuarioChanged(string selectedValue)
     {

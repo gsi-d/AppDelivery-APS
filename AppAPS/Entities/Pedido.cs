@@ -26,10 +26,9 @@ namespace AppAPS.Entities
         public decimal TaxaEntrega { get; set; }
         public List<PedidoItem> Itens { get; set; } = new List<PedidoItem>();
 
-        public void DadosInclusao()
+        public void DadosInclusao(string cpf)
         {
-            Random random = new Random();
-            this.Id = random.Next();
+            this.CPF = cpf;
             this.Status = StatusPedido.Confirmado;
             this.DataAbertura = DateTime.Now;
             this.DataUltimaAtualizacao = DateTime.Now;
