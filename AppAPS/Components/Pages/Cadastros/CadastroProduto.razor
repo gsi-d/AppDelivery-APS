@@ -5,60 +5,166 @@
 @rendermode RenderMode.InteractiveServer
 
 <style>
-    .text-field {
-        width: 100%;
+    body {
+        font-family: Arial, sans-serif;
     }
 
-    .width-maximo {
-        width: 100%;
+    .container-formulario {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f4f4f4;
     }
+
+    .cartao-formulario {
+        width: 60vw;
+        padding: 30px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .titulo-formulario {
+        text-align: center;
+        color: #0078d4;
+        font-size: 1.8em;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .campo-formulario {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+        .campo-formulario label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .campo-formulario input, .campo-formulario textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+    fluent-text-field, fluent-text-area, fluent-number-field {
+        width: 100% !important;
+    }
+
+    .campo-formulario textarea {
+        resize: vertical;
+        height: 100px;
+    }
+
+    .grupo-checkbox {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .botao-formulario {
+        width: 100%;
+        padding: 12px;
+        background-color: #0078d4;
+        color: white;
+        font-size: 1.2em;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 30px;
+    }
+
+        .botao-formulario:hover {
+            background-color: #005a9e;
+        }
+
+    .grupo-checkbox {
+        gap: 15px;
+        align-items: center;
+    }
+
+    .campo-formulario input[type="file"] {
+        padding: 10px;
+        width: 100%;
+        font-size: 1em;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .rodape-formulario {
+        text-align: center;
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
+
+        .rodape-formulario a {
+            color: #0078d4;
+            font-size: 1.1em;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 2px solid #0078d4;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+            .rodape-formulario a:hover {
+                background-color: #0078d4;
+                color: white;
+            }
+
 </style>
 
 <PageTitle>Cadastro de Produtos</PageTitle>
 
-<FluentStack Style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%;">
-    <h1>Cadastro de Produtos</h1>
-    <FluentGrid Justify="@JustifyContent.Center">
-        <FluentGridItem>
-            <FluentCard>
-                <EditForm Model="@ProdutoModel" OnValidSubmit="@HandleValidSubmit" FormName="ProdutoModel_fluent_entry" novalidate>
-                    <DataAnnotationsValidator />
-                    <FluentValidationSummary />
+<div class="container-formulario">
+    <div class="cartao-formulario">
+        <h1 class="titulo-formulario">Cadastro de Produtos</h1>
+        <EditForm Model="@ProdutoModel" OnValidSubmit="@HandleValidSubmit" FormName="ProdutoModel_fluent_entry" novalidate>
+            <DataAnnotationsValidator />
+            <FluentValidationSummary />
 
+            <div class="campo-formulario">
+                <label for="Nome">Nome do Produto</label>
+                <FluentTextField Appearance="FluentInputAppearance.Filled" Id="Nome" @bind-Value="ProdutoModel.Nome" Required />
+                <FluentValidationMessage For="@(() => ProdutoModel.Nome)" />
+            </div>
 
-                    <FluentStack Style="width: 30vw; " VerticalGap="25" Orientation="Orientation.Vertical">
-                        <div class="width-maximo">
-                            <FluentTextField Appearance="FluentInputAppearance.Filled" Class="text-field" Name="Nome do Produto" @bind-Value="ProdutoModel.Nome" Label="Nome do Produto" Required />
-                             <FluentValidationMessage For="@(() => ProdutoModel.Nome)" />
-                         </div>
-                         <div class="width-maximo">
-                             <FluentTextArea Appearance="FluentInputAppearance.Filled" Class="width-maximo" Name="Descricao" Rows=5 @bind-Value="ProdutoModel.Descricao" Label="Descrição do Produto" Required />
-                             <FluentValidationMessage For="@(() => ProdutoModel.Descricao)" />
-                         </div>
-                         <div>
-                             <FluentNumberField Appearance="FluentInputAppearance.Filled" Placeholder="R$" Class="text-field" Name="Preço" @bind-Value="ProdutoModel.Preco" Label="Preço" HideStep=true Required />
-                             <FluentValidationMessage For="@(() => ProdutoModel.Preco)" />
-                         </div>
-                         <div>
-                             <FluentLabel>Selecione uma imagem</FluentLabel>
-                             <InputFile OnChange="@SelectFile" />
-                         </div>
-                         <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent">Salvar</FluentButton>
-                     </FluentStack>
-                 </EditForm>
-             </FluentCard>
-         </FluentGridItem>
-     </FluentGrid>
- </FluentStack>
+            <div class="campo-formulario">
+                <label for="Descricao">Descrição do Produto</label>
+                <FluentTextArea Appearance="FluentInputAppearance.Filled" Id="Descricao" Rows="4" @bind-Value="ProdutoModel.Descricao" Required />
+                <FluentValidationMessage For="@(() => ProdutoModel.Descricao)" />
+            </div>
 
-<FluentStack Style="position: fixed; bottom: 20px; left: 10px">
-    <FluentCombobox Position="SelectPosition.Above" TOption="string" Placeholder="Modo de visualização" ValueChanged="@(e => OnTipoUsuarioChanged(e))" Autofocus="true" Height="200px" Required>
-        @foreach (var item in TiposUsuario)
-        {
-            <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
-        }
-    </FluentCombobox>
-</FluentStack>
+            <div class="campo-formulario">
+                <label for="Preco">Preço</label>
+                <FluentNumberField Appearance="FluentInputAppearance.Filled" Id="Preco" Placeholder="R$" @bind-Value="ProdutoModel.Preco" HideStep="true" Required />
+                <FluentValidationMessage For="@(() => ProdutoModel.Preco)" />
+            </div>
+
+            <div class="grupo-checkbox">
+                <FluentCheckbox @bind-Value="ProdutoModel.Bebida" Label="É uma bebida?" />
+            </div>
+
+            <div class="campo-formulario">
+                <label for="Imagem">Selecione uma imagem</label>
+                <InputFile OnChange="@SelectFile" />
+            </div>
+
+            <button type="submit" class="botao-formulario">Salvar</button>
+        </EditForm>
+
+        <div class="rodape-formulario">
+            <a href="/produtos">Voltar para listagem de produtos</a>
+        </div>
+    </div>
+</div>
 
 @code {
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
@@ -71,12 +177,10 @@
     List<string> mensagens = new();
     public IBrowserFile Arquivo { get; set; }
     ArquivoUpload arquivoUpload = new();
-    private string pageTitle => ProdutoModel.Id != 0 ? "Edita Aluno" : "Novo Aluno";
-
 
     protected override void OnInitialized()
     {
-        TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();        
+        TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
     }
 
     private void SelectFile(InputFileChangeEventArgs e)

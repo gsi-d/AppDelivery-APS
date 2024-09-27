@@ -18,7 +18,16 @@ namespace AppAPS.Services
 
         public async Task<List<Produto>> GetAllProdutos()
         {
-            return await _context.Produto.Include(produto => produto.FichaTecnica).ToListAsync();
+            try
+            {
+                var retorno = await _context.Produto.Include(produto => produto.FichaTecnica).ToListAsync();
+                return retorno;
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<Produto> GetByIdProdutos(int id)
