@@ -10,6 +10,7 @@ namespace AppAPS.Data
         public DbSet<FichaTecnica> FichaTecnica { get; set; }
         public DbSet<Pedido> Pedido { get; set; }
         public DbSet<PedidoItem> PedidoItem { get; set; }
+        public DbSet<IngredienteFichaTecnica> IngredienteFichaTecnica { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -34,9 +34,6 @@
         </TemplateColumn> *@
         <PropertyColumn Width="300px" Property="@(p => p.Nome)" />
         <PropertyColumn Width="300px" Property="@(p => p.Descricao)" />
-        <TemplateColumn Title="É ingrediente">
-            <FluentCheckbox style="pointer-events:none;" @bind-Checked="@context.Ingrediente"></FluentCheckbox>
-        </TemplateColumn>
     </FluentDataGrid>
 </FluentCard>
 

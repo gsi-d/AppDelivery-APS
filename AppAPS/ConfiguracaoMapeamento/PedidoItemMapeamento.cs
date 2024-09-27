@@ -8,27 +8,31 @@ namespace AppAPS.ConfiguracaoMapeamento
     {
         public void Configure(EntityTypeBuilder<PedidoItem> builder)
         {
-            // Definindo a tabela
-            builder.ToTable("PedidoItem");
+            // Define a chave primária e auto-incremento (identity)
+            builder.HasKey(p => p.Id);
 
-            // Definindo a chave primária
-            builder.HasKey(pi => pi.Id);
+            builder.Property(p => p.Id)
+                .ValueGeneratedOnAdd() // Define que o Id é gerado automaticamente (sequencial)
+                .HasColumnType("int"); // Define o tipo da coluna como int
 
-            // Propriedades
-            builder.Property(pi => pi.Quantidade)
-                .IsRequired();
-
-            // Relacionamento com Pedido (muitos-para-um)
-            builder.HasOne(pi => pi.Pedido)
+            // Define a Foreign Key para Pedido (relacionamento muitos-para-um)
+            builder.HasOne(p => p.Pedido)
                 .WithMany(p => p.Itens)
-                .HasForeignKey(pi => pi.PedidoId)
-                .OnDelete(DeleteBehavior.Cascade); // Exclui itens associados se o pedido for deletado
+                .HasForeignKey(p => p.PedidoId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Cascade); // Exclusão em cascata (quando um Pedido for excluído, os itens também são)
 
-            // Relacionamento com Produto (muitos-para-um)
-            builder.HasOne(pi => pi.Produto)
+            // Define a Foreign Key para Produto (relacionamento muitos-para-um)
+            builder.HasOne(p => p.Produto)
                 .WithMany()
-                .HasForeignKey(pi => pi.ProdutoId)
-                .OnDelete(DeleteBehavior.Restrict); // Protege a exclusão de produtos se forem referenciados
+                .HasForeignKey(p => p.ProdutoId)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict); // Impede a exclusão de um Produto se ele estiver associado a um PedidoItem
+
+            // Define a Quantidade como obrigatória e configura o tipo da coluna
+            builder.Property(p => p.Quantidade)
+                .IsRequired()
+                .HasColumnType("int"); // Define o tipo da coluna como int
         }
     }
 }

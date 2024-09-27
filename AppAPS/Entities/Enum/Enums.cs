@@ -146,6 +146,89 @@ namespace AppAPS.Entities
         Cliente = 3,
     }
 
+    public enum Ingredientes
+    {
+        [Description("Pão de Hambúrguer")]
+        PaoHamburguer,
+
+        [Description("Hambúrguer de Carne Bovina")]
+        HamburguerCarneBovina,
+
+        [Description("Hambúrguer de Frango")]
+        HamburguerFrango,
+
+        [Description("Hambúrguer Vegetariano")]
+        HamburguerVegetariano,
+
+        [Description("Queijo Cheddar")]
+        QueijoCheddar,
+
+        [Description("Queijo Mussarela")]
+        QueijoMussarela,
+
+        [Description("Bacon Crocante")]
+        BaconCrocante,
+
+        [Description("Alface Americana")]
+        AlfaceAmericana,
+
+        [Description("Tomate Fatiado")]
+        TomateFatiado,
+
+        [Description("Cebola Roxa")]
+        CebolaRoxa,
+
+        [Description("Molho Barbecue")]
+        MolhoBarbecue,
+
+        [Description("Molho de Maionese")]
+        MolhoMaionese,
+
+        [Description("Molho de Mostarda e Mel")]
+        MolhoMostardaMel,
+
+        [Description("Picles")]
+        Picles,
+
+        [Description("Pepperoni")]
+        Pepperoni,
+
+        [Description("Ovo Frito")]
+        OvoFrito,
+
+        [Description("Batata Palha")]
+        BatataPalha,
+
+        [Description("Milho Verde")]
+        MilhoVerde,
+
+        [Description("Cenoura Ralada")]
+        CenouraRalada,
+
+        [Description("Ketchup")]
+        Ketchup,
+
+        [Description("Molho de Pimenta")]
+        MolhoPimenta,
+
+        [Description("Queijo Gorgonzola")]
+        QueijoGorgonzola,
+
+        [Description("Azeitonas Pretas")]
+        AzeitonasPretas,
+
+        [Description("Molho Ranch")]
+        MolhoRanch
+    }
+
+    public enum Medida : byte
+    {
+        [Description("UN")]
+        UN = 1,
+        [Description("GR")]
+        GR = 1,
+    }
+
     public class EnumItem<T>
     {
         public string Description { get; set; }

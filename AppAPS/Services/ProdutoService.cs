@@ -26,11 +26,6 @@ namespace AppAPS.Services
             return await _context.Produto.Include(produto => produto.FichaTecnica).FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<Produto>> GetSomenteProdutos()
-        {
-            return await _context.Produto.Include(produto => produto.FichaTecnica).Where(produto => !produto.Ingrediente).ToListAsync();
-        }
-
         public async Task<Produto> InserirProduto(Produto produto)
         {
             var entityEntry = await _context.Produto.AddAsync(produto);

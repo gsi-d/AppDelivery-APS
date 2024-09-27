@@ -7,16 +7,17 @@ namespace AppAPS.Entities
         public int Id { get; set; }
         [Required(ErrorMessage = "Nome do cliente é obrigatório.")]
         public string Cliente { get; set; }
+        [Required(ErrorMessage = "CPF do cliente é obrigatório.")]
+        public string CPF { get; set; }
         [Required(ErrorMessage = "Rua é obrigatória.")]
         public string Rua { get; set; }
+        [Required(ErrorMessage = "Bairro é obrigatório.")]
+        public Bairro Bairro { get; set; }
         [Required(ErrorMessage = "Forma de pagamento é obrigatória.")]
         public FormaPagamento FormaPagamento { get; set; }
         [Required(ErrorMessage = "Forma de entrega é obrigatória.")]
         public FormaEntrega FormaEntrega { get; set; }
-        [Required(ErrorMessage = "Bairro é obrigatório.")]
-        public Bairro Bairro { get; set; }
         public StatusPedido Status { get; set; }
-        // Propriedade auxiliar para o binding com @bind-Value
         public string? Observacoes { get; set; }
         public DateTime DataAbertura { get; set; }
         public DateTime DataUltimaAtualizacao { get; set; }

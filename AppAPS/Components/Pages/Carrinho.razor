@@ -221,6 +221,7 @@
 
 @code {
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
+    [Inject] private IProdutoService ProdutoService { get; set; }
 
     public Produto Produto = new();
     public Pedido Pedido = new();
