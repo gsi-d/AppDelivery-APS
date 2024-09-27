@@ -26,116 +26,126 @@
 
 <PageTitle>Página inicial</PageTitle>
 
-<FluentTabs Size="TabSize.Large" @bind-ActiveTabId="@activeid" OnTabChange="HandleOnTabChange">
-    <FluentTab LabelStyle="font-size: 2vh; gap: 5px" Label="Lanches" Icon="@(new Icons.Regular.Size28.Food())" Id="tab-1">
-        <FluentStack Style="display: flex; flex-wrap: wrap; gap: 20px;">
-            @{
-                if (produtosItem != null && produtos.Any())
-                {
-                    foreach (ProdutoItemDTO produtoItem in produtosItem)
-                    {
-                        <FluentCard Width="30%" Height="50%">
-                            <FluentCard Style="padding: 0;" Width="100%" Height="60%">
-                                <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 30vh; width: 100%" />
-                            </FluentCard>
-                            <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
-                                <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
-                                <FluentStack Style="padding-top: 10px" VerticalAlignment="VerticalAlignment.Bottom">
-                                    <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
-                                        <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
-                                        <FluentNumberField @bind-Value="@produtoItem.Quantidade" Size="1" Min="0"></FluentNumberField>
-                                        <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Disabled="@DesabilitaBotaoCarrinho(produtoItem)" Appearance="Appearance.Accent" OnClick="() => AdicionaItemAoCarrinho(produtoItem)">
-                                        </FluentButton>
-                                        <FluentLabel Typo="Typography.H3" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
-                                    </FluentStack>
-                                </FluentStack>
-                                <FluentStack>
-                                    <FluentButton Style="margin-top: 10px" IconStart="@(new Icons.Regular.Size20.AppsListDetail())" Appearance="Appearance.Accent" OnClick="async () => await InvokeDetalhes(produtoItem.Id)" BackgroundColor="purple">Detalhes</FluentButton>
-                                    @{
-                                    if (produtoItem.Selecionado)
-                                    {
-                                        <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
-                                            <FluentIcon Color="Color.Success" Value="@(new Icons.Regular.Size32.CheckmarkCircle())" />
+@{
+    if (produtos != null && produtos.Any())
+    {
+        <FluentTabs Size="TabSize.Large" @bind-ActiveTabId="@activeid" OnTabChange="HandleOnTabChange">
+            <FluentTab LabelStyle="font-size: 2vh; gap: 5px" Label="Lanches" Icon="@(new Icons.Regular.Size28.Food())" Id="tab-1">
+                <FluentStack Style="display: flex; flex-wrap: wrap; gap: 20px;">
+                    @{
+                        if (produtosItem != null && produtos != null)
+                        {
+                            foreach (ProdutoItemDTO produtoItem in produtosItem)
+                            {
+                                <FluentCard Width="30%" Height="50%">
+                                    <FluentCard Style="padding: 0;" Width="100%" Height="60%">
+                                        <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 30vh; width: 100%" />
+                                    </FluentCard>
+                                    <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
+                                    <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
+                                    <FluentStack Style="padding-top: 10px" VerticalAlignment="VerticalAlignment.Bottom">
+                                        <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
+                                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
+                                            <FluentNumberField @bind-Value="@produtoItem.Quantidade" Size="1" Min="0"></FluentNumberField>
+                                            <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Disabled="@DesabilitaBotaoCarrinho(produtoItem)" Appearance="Appearance.Accent" OnClick="() => AdicionaItemAoCarrinho(produtoItem)">
+                                            </FluentButton>
+                                            <FluentLabel Typo="Typography.H3" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
                                         </FluentStack>
-                                    }
-                                }
-                            </FluentStack>
-                        </FluentCard>
-                    }
-                    if (sessaoUsuario.ProdutosItem.Any())
-                    {
-                        <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())"
-                                      Appearance="Appearance.Accent"
-                                      OnClick="InvokeCarrinho"
-                                      BackgroundColor="green"
-                                      style="position: fixed; bottom: 20px; right: 20px;">
-                            Finalizar pedido
-                        </FluentButton>
-                    }
-
-                }
-                else
-                {
-                    <FluentLabel Typo="Typography.H2">Não há registros cadastrados.</FluentLabel>
-                }
-            }
-        </FluentStack>
-    </FluentTab>
-    <FluentTab LabelStyle="font-size: 2vh; gap: 5px" Label="Bebidas" Icon="@(new Icons.Filled.Size24.DrinkMargarita())" Id="tab-2">
-        <FluentStack Style="display: flex; flex-wrap: wrap; gap: 20px;">
-            @{
-                if (bebidasItem != null && produtos.Any())
-                {
-                    foreach (ProdutoItemDTO bebidaItem in bebidasItem)
-                    {
-                        <FluentCard Width="30%" Height="50%">
-                            <FluentCard Style="padding: 0;" Width="100%" Height="60%">
-                                <img src="@bebidaItem.NomeArquivoUpload" style="object-fit: cover; height: 30vh; width: 100%" />
-                            </FluentCard>
-                            <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@bebidaItem.Nome</FluentLabel>
-                                <FluentLabel Typo="Typography.Body" Class="fluent-label">@bebidaItem.Descricao</FluentLabel>
-                                <FluentStack Style="padding-top: 10px" VerticalAlignment="VerticalAlignment.Bottom">
-                                    <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
-                                        <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
-                                        <FluentNumberField @bind-Value="@bebidaItem.Quantidade" Size="1" Min="0"></FluentNumberField>
-                                        <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Disabled="@DesabilitaBotaoCarrinho(bebidaItem)" Appearance="Appearance.Accent" OnClick="() => AdicionaItemAoCarrinho(bebidaItem)">
-                                        </FluentButton>
-                                        <FluentLabel Typo="Typography.H3" Style="color: limegreen">R$ @bebidaItem.Preco</FluentLabel>
                                     </FluentStack>
-                                </FluentStack>
-                                <FluentStack>
-                                    <FluentButton Style="margin-top: 10px" IconStart="@(new Icons.Regular.Size20.AppsListDetail())" Appearance="Appearance.Accent" OnClick="async () => await InvokeDetalhes(bebidaItem.Id)" BackgroundColor="purple">Detalhes</FluentButton>
-                                    @{
-                                    if (bebidaItem.Selecionado)
-                                    {
-                                        <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
-                                            <FluentIcon Color="Color.Success" Value="@(new Icons.Regular.Size32.CheckmarkCircle())" />
-                                        </FluentStack>
-                                    }
-                                }
-                            </FluentStack>
-                        </FluentCard>
-                    }
-                    if (sessaoUsuario.ProdutosItem.Any())
-                    {
-                        <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())"
-                                      Appearance="Appearance.Accent"
-                                      OnClick="InvokeCarrinho"
-                                      BackgroundColor="green"
-                                      style="position: fixed; bottom: 20px; right: 20px;">
-                            Finalizar pedido
-                        </FluentButton>
-                    }
+                                    <FluentStack>
+                                        <FluentButton Style="margin-top: 10px" IconStart="@(new Icons.Regular.Size20.AppsListDetail())" Appearance="Appearance.Accent" OnClick="async () => await InvokeDetalhes(produtoItem.Id)" BackgroundColor="purple">Detalhes</FluentButton>
+                                        @{
+                                            if (produtoItem.Selecionado)
+                                            {
+                                                <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
+                                                    <FluentIcon Color="Color.Success" Value="@(new Icons.Regular.Size32.CheckmarkCircle())" />
+                                                </FluentStack>
+                                            }
+                                        }
+                                    </FluentStack>
+                                </FluentCard>
+                            }
+                            if (produtosItem.Any() || bebidasItem.Any())
+                            {
+                                <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())"
+                                              Appearance="Appearance.Accent"
+                                              OnClick="InvokeCarrinho"
+                                              BackgroundColor="green"
+                                              style="position: fixed; bottom: 20px; right: 20px;">
+                                    Finalizar pedido
+                                </FluentButton>
+                            }
 
-                }
-                else
-                {
-                    <FluentLabel Typo="Typography.H2">Não há registros cadastrados.</FluentLabel>
-                }
-            }
-        </FluentStack>
-    </FluentTab>
-</FluentTabs>
+                        }
+                        else
+                        {
+                            <FluentLabel Typo="Typography.H2">Não há registros cadastrados.</FluentLabel>
+                        }
+                    }
+                </FluentStack>
+            </FluentTab>
+            <FluentTab LabelStyle="font-size: 2vh; gap: 5px" Label="Bebidas" Icon="@(new Icons.Filled.Size24.DrinkMargarita())" Id="tab-2">
+                <FluentStack Style="display: flex; flex-wrap: wrap; gap: 20px;">
+                    @{
+                        if (bebidasItem != null && produtos != null)
+                        {
+                            foreach (ProdutoItemDTO bebidaItem in bebidasItem)
+                            {
+                                <FluentCard Width="30%" Height="50%">
+                                    <FluentCard Style="padding: 0;" Width="100%" Height="60%">
+                                        <img src="@bebidaItem.NomeArquivoUpload" style="object-fit: cover; height: 30vh; width: 100%" />
+                                    </FluentCard>
+                                    <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@bebidaItem.Nome</FluentLabel>
+                                    <FluentLabel Typo="Typography.Body" Class="fluent-label">@bebidaItem.Descricao</FluentLabel>
+                                    <FluentStack Style="padding-top: 10px" VerticalAlignment="VerticalAlignment.Bottom">
+                                        <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
+                                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
+                                            <FluentNumberField @bind-Value="@bebidaItem.Quantidade" Size="1" Min="0"></FluentNumberField>
+                                            <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Disabled="@DesabilitaBotaoCarrinho(bebidaItem)" Appearance="Appearance.Accent" OnClick="() => AdicionaItemAoCarrinho(bebidaItem)">
+                                            </FluentButton>
+                                            <FluentLabel Typo="Typography.H3" Style="color: limegreen">R$ @bebidaItem.Preco</FluentLabel>
+                                        </FluentStack>
+                                    </FluentStack>
+                                    <FluentStack>
+                                        <FluentButton Style="margin-top: 10px" IconStart="@(new Icons.Regular.Size20.AppsListDetail())" Appearance="Appearance.Accent" OnClick="async () => await InvokeDetalhes(bebidaItem.Id)" BackgroundColor="purple">Detalhes</FluentButton>
+                                        @{
+                                            if (bebidaItem.Selecionado)
+                                            {
+                                                <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
+                                                    <FluentIcon Color="Color.Success" Value="@(new Icons.Regular.Size32.CheckmarkCircle())" />
+                                                </FluentStack>
+                                            }
+                                        }
+                                    </FluentStack>
+                                </FluentCard>
+                            }
+                            if (produtosItem.Any() || bebidasItem.Any())
+                            {
+                                <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())"
+                                              Appearance="Appearance.Accent"
+                                              OnClick="InvokeCarrinho"
+                                              BackgroundColor="green"
+                                              style="position: fixed; bottom: 20px; right: 20px;">
+                                    Finalizar pedido
+                                </FluentButton>
+                            }
+
+                        }
+                        else
+                        {
+                            <FluentLabel Typo="Typography.H2">Não há registros cadastrados.</FluentLabel>
+                        }
+                    }
+                </FluentStack>
+            </FluentTab>
+        </FluentTabs>
+    }
+    else
+    {
+        <FluentLabel Typo="Typography.H2">Não há produtos cadastrados.</FluentLabel>
+    }
+}
+
 
 <FluentStack Style="position: fixed; bottom: 20px; left: 10px;" Width="20%">
     <FluentCombobox Position="SelectPosition.Above" TOption="string" Placeholder="Modo de visualização" ValueChanged="@(e => OnTipoUsuarioChanged(e))" Autofocus="true" Height="200px" Required>
@@ -147,14 +157,14 @@
 </FluentStack>
 
 @code {
-    // [Inject] private IProdutoService produtoService { get; set; }
+    [Inject] private IProdutoService produtoService { get; set; }
     [Inject] private IMapper mapper { get; set; }
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     public bool bDesabilitaDialogTrocaVisu { get; set; } = true;
     public List<Produto>? produtos;
     public IQueryable<ProdutoItemDTO>? produtosItem;
     public IQueryable<ProdutoItemDTO>? bebidasItem;
-    private List<EnumItem<TipoUsuario>> TiposUsuario;
+    private List<EnumItem<TipoUsuario>> TiposUsuario = new List<EnumItem<TipoUsuario>>();
     public decimal Numero { get; set; }
     string? activeid = "tab-1";
     FluentTab? changedto;
@@ -162,8 +172,8 @@
 
     protected async override Task OnInitializedAsync()
     {
-        // produtos = await produtoService.GetAllProdutos();
-        produtos = sessaoUsuario.Produtos.Where(item => !sessaoUsuario.ProdutosItem.Any(x => x.Id == item.Id)).ToList();
+        produtos = await produtoService.GetAllProdutos();
+        //produtos = sessaoUsuario.Produtos.Where(item => !sessaoUsuario.ProdutosItem.Any(x => x.Id == item.Id)).ToList();
         var produtosMapeados = mapper.Map<List<ProdutoItemDTO>>(produtos).AsQueryable();
         produtosItem = produtosMapeados.Where(produto => !produto.Bebida);
         bebidasItem = produtosMapeados.Where(produto => produto.Bebida);

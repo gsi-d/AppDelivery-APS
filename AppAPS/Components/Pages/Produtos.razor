@@ -22,16 +22,6 @@
                       SelectFromEntireRow="true"
                       @bind-SelectedItems="@SelectedItems" />
         <PropertyColumn Width="100px" Property="@(p => p.Id)" Title="Id" />
-        @* <TemplateColumn Title="Avatar" Align="Align.Start">
-        @if (@context.NomeArquivoUpload is not null)
-        {
-        <FluentPersona ImageSize="40px" StatusSize="PresenceBadgeSize.Medium"  Style="object-fit: fill !important;" Image="@context.NomeArquivoUpload" />
-        }
-        else
-        {
-        <FluentPersona ImageSize="40px" Initials="@context!.Nome[0]!.ToString().ToUpper()" />
-        }
-        </TemplateColumn> *@
         <PropertyColumn Width="300px" Property="@(p => p.Nome)" />
         <PropertyColumn Width="300px" Property="@(p => p.Descricao)" />
     </FluentDataGrid>
