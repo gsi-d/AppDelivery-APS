@@ -6,6 +6,7 @@ namespace AppAPS.Services.Model
     public class SessaoUsuario
     {
         public int UsuarioId { get; set; }
+        public string CpfCliente { get; set; }
         public TipoUsuario TipoUsuario { get; set; }
         public List<Produto> Produtos { get; set; } = new List<Produto>();
         public List<ProdutoItemDTO> ProdutosItem { get; set; } = new List<ProdutoItemDTO>();
@@ -241,6 +242,5 @@ namespace AppAPS.Services.Model
             //    });
             //}
         }
-
     }
 }

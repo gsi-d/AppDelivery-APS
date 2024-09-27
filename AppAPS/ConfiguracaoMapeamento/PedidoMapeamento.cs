@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using AppAPS.Entities;
 using Microsoft.EntityFrameworkCore;
-using AppAPS.Entities;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AppAPS.ConfiguracaoMapeamento
 {
@@ -26,6 +26,9 @@ namespace AppAPS.ConfiguracaoMapeamento
                 .IsRequired()
                 .HasColumnType("varchar(11)") // Define como varchar para o CPF, que normalmente tem 11 caracteres
                 .HasMaxLength(11);
+
+            //builder.HasIndex(p => p.CPF)
+            //    .IsUnique();
 
             // Rua - Obrigatória
             builder.Property(p => p.Rua)

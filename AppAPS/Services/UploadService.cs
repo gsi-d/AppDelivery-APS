@@ -36,7 +36,7 @@ namespace AppAPS.Services
 
                 var arquivoExtensao = Path.GetExtension(arquivo.Name);
 
-                if (!ExtensoesPermitidas.Contains(arquivoExtensao))
+                if (!ExtensoesPermitidas.Contains(arquivoExtensao.ToLower()))
                 {
                     var mensagem = $"Arquivo: {arquivo.Name}, tipo de Arquivo não permitido";
                     logger.LogInformation(mensagem);
@@ -57,7 +57,7 @@ namespace AppAPS.Services
             {
                 return (0, ex.InnerException?.Message);
             }
-            
+
         }
     }
 }

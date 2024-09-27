@@ -27,7 +27,7 @@
 <PageTitle>Página inicial</PageTitle>
 
 @{
-    if (produtos != null && produtos.Any())
+    if (produtos is not null && produtos.Any())
     {
         <FluentTabs Size="TabSize.Large" @bind-ActiveTabId="@activeid" OnTabChange="HandleOnTabChange">
             <FluentTab LabelStyle="font-size: 2vh; gap: 5px" Label="Lanches" Icon="@(new Icons.Regular.Size28.Food())" Id="tab-1">
@@ -65,7 +65,7 @@
                                     </FluentStack>
                                 </FluentCard>
                             }
-                            if (produtosItem.Any() || bebidasItem.Any())
+                            if (sessaoUsuario.ProdutosItem.Any())
                             {
                                 <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())"
                                               Appearance="Appearance.Accent"
@@ -119,7 +119,7 @@
                                     </FluentStack>
                                 </FluentCard>
                             }
-                            if (produtosItem.Any() || bebidasItem.Any())
+                            if (sessaoUsuario.ProdutosItem.Any())
                             {
                                 <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())"
                                               Appearance="Appearance.Accent"
@@ -146,14 +146,10 @@
     }
 }
 
+<TrocaVisualizacao PrimeiraDefinicao="@PrimeiraDefinicao" bDesabilitaDialogTrocaVisu="@bDesabilitaDialogTrocaVisu" />
 
 <FluentStack Style="position: fixed; bottom: 20px; left: 10px;" Width="20%">
-    <FluentCombobox Position="SelectPosition.Above" TOption="string" Placeholder="Modo de visualização" ValueChanged="@(e => OnTipoUsuarioChanged(e))" Autofocus="true" Height="200px" Required>
-        @foreach (var item in TiposUsuario)
-        {
-            <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
-        }
-    </FluentCombobox>
+    <FluentButton BackgroundColor="purple" Color="white" OnClick="() => bDesabilitaDialogTrocaVisu = false">Altera Modo Visualização</FluentButton>
 </FluentStack>
 
 @code {
@@ -164,22 +160,32 @@
     public List<Produto>? produtos;
     public IQueryable<ProdutoItemDTO>? produtosItem;
     public IQueryable<ProdutoItemDTO>? bebidasItem;
-    private List<EnumItem<TipoUsuario>> TiposUsuario = new List<EnumItem<TipoUsuario>>();
     public decimal Numero { get; set; }
     string? activeid = "tab-1";
     FluentTab? changedto;
-    public bool ExibeAlterarVisualizacao { get; set; }
+    private TipoUsuario TipoUsuario;
+    public bool PrimeiraDefinicao { get; set; }
+    private string Cpf;
 
     protected async override Task OnInitializedAsync()
     {
         produtos = await produtoService.GetAllProdutos();
-        //produtos = sessaoUsuario.Produtos.Where(item => !sessaoUsuario.ProdutosItem.Any(x => x.Id == item.Id)).ToList();
         var produtosMapeados = mapper.Map<List<ProdutoItemDTO>>(produtos).AsQueryable();
         produtosItem = produtosMapeados.Where(produto => !produto.Bebida);
         bebidasItem = produtosMapeados.Where(produto => produto.Bebida);
-        TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
     }
 
+    protected async override Task OnAfterRenderAsync(bool firstrender)
+    {
+        string? tipoUsuarioStorage = await _localStorage.GetItemAsync<string>("TipoUsuario");
+        string? cpf = await _localStorage.GetItemAsync<string>("CPF");
+        if(tipoUsuarioStorage is null && cpf is null)
+        {
+            bDesabilitaDialogTrocaVisu = false;
+            PrimeiraDefinicao = true;
+        }
+        StateHasChanged();
+    }
 
     private void HandleOnTabChange(FluentTab tab)
     {
@@ -194,11 +200,6 @@
     private async Task InvokeCarrinho()
     {
         _navigationManager.NavigateTo("/carrinho/");
-    }
-
-    private void OnTipoUsuarioChanged(string selectedValue)
-    {
-        sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
     }
 
     private bool DesabilitaBotaoCarrinho(ProdutoItemDTO item)

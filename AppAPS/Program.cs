@@ -7,6 +7,7 @@ using AppAPS.Services;
 using AppAPS.Services.Model;
 using AppAPS.Validators;
 using AutoMapper;
+using Blazored.LocalStorage;
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -21,8 +22,11 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddFluentUIComponents();
 
+builder.Services.AddBlazoredLocalStorage();
+
 builder.Services.AddScoped<SessaoUsuario>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IUploadService, UploadService>();
 
 var assembly = Assembly.Load("AppAPS");

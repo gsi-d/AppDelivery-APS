@@ -14,7 +14,7 @@
             <FluentNavLink Style="width: 100%" Href="/" Match="NavLinkMatch.All" Icon="@(new Icons.Regular.Size20.Home())" IconColor="Color.Accent">Página inicial</FluentNavLink>
             <FluentNavLink Href="acompanhamentoPedidos" Icon="@(new Icons.Regular.Size20.TextBulletListSquare())" IconColor="Color.Accent">Acompanhamento dos pedidos</FluentNavLink>
             @{
-                if (sessaoUsuario.TipoUsuario == TipoUsuario.Restaurante)
+                if (TipoUsuario == TipoUsuario.Restaurante)
                 {
                     <FluentNavLink Href="produtos" Icon="@(new Icons.Regular.Size20.Food())" IconColor="Color.Accent">Listagem de Produtos</FluentNavLink>
                     <FluentNavLink Href="cadastroProduto" Icon="@(new Icons.Regular.Size20.FoodToast())" IconColor="Color.Accent">Cadastro de Produto</FluentNavLink>
@@ -41,6 +41,7 @@
 
 @code {
     [Inject] public SessaoUsuario sessaoUsuario { get; set; }
+    private TipoUsuario TipoUsuario;
     private bool expanded = true;
     private string? currentUrl;
 
@@ -48,6 +49,14 @@
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstrender)
+    {
+        string? tipoUsuarioStorage = await _localStorage.GetItemAsync<string>("TipoUsuario");
+        Enum.TryParse(tipoUsuarioStorage, out TipoUsuario tipoUsuario);
+        TipoUsuario = tipoUsuario;
+        StateHasChanged();
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
