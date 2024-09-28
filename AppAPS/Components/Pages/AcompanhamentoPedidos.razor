@@ -18,9 +18,9 @@
         text-overflow: ellipsis;
     }
 
-        .fluent-label-nome:hover {
-            pointer-events: none;
-        }
+    .fluent-label-nome:hover {
+        pointer-events: none;
+    }
 
     .text-field {
         width: 100%;
@@ -33,7 +33,6 @@
     .neutral:hover {
         pointer-events: none;
     }
-
 </style>
 
 <PageTitle>Acompanhamento pedidos</PageTitle>
@@ -50,25 +49,34 @@
                             <FluentStack Style="display:flex; flex-direction: row;">
                                 <FluentStack Width="100%" Style="height 10vh;" VerticalAlignment="VerticalAlignment.Center">
                                     <FluentStack Style="display:flex; flex-direction: column; gap: 2; max-width: 15vw;">
-                                        <FluentLabel Typo="Typography.H2" Color="Color.Accent" Class="fluent-label-nome">Cód: @pedido.Id</FluentLabel>
+                                        <FluentLabel Typo="Typography.H2" Color="Color.Accent" Class="fluent-label-nome">Cód:
+                                            @pedido.Id</FluentLabel>
                                         <FluentLabel Typo="Typography.H3" Class="fluent-label-nome">@pedido.Cliente</FluentLabel>
-                                        <FluentButton Color="white" BackgroundColor="@DefineCorStatus(pedido.Status)" Stye="pointer-events: none;">
-                                            <FluentLabel Color="Color.Lightweight" Typo="Typography.Subject" Class="fluent-label-nome">@EnumHelper.GetEnumDescription(pedido.Status)</FluentLabel>
+                                        <FluentButton Color="white" BackgroundColor="@DefineCorStatus(pedido.Status)"
+                                            Stye="pointer-events: none;">
+                                            <FluentLabel Color="Color.Lightweight" Typo="Typography.Subject"
+                                                Class="fluent-label-nome">@EnumHelper.GetEnumDescription(pedido.Status)
+                                            </FluentLabel>
                                         </FluentButton>
-                                        <FluentLabel Typo="Typography.Body" Class="fluent-label">@pedido.DataAbertura.ToString("dd/MM HH:mm")</FluentLabel>
+                                        <FluentLabel Typo="Typography.Body" Class="fluent-label">
+                                            @pedido.DataAbertura.ToString("dd/MM HH:mm")</FluentLabel>
                                     </FluentStack>
 
                                     <FluentStack Style="display:flex; flex-direction: column; gap: 1; max-width: 15vw;">
                                         <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">@pedido.Rua</FluentLabel>
-                                        <FluentLabel Typo="Typography.Body" Class="fluent-label-nome">@EnumHelper.GetEnumDescription(pedido.Bairro)</FluentLabel>
-                                        <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">@EnumHelper.GetEnumDescription(pedido.FormaEntrega)</FluentLabel>
-                                        <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">@EnumHelper.GetEnumDescription(pedido.FormaPagamento)</FluentLabel>
+                                        <FluentLabel Typo="Typography.Body" Class="fluent-label-nome">
+                                            @EnumHelper.GetEnumDescription(pedido.Bairro)</FluentLabel>
+                                        <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">
+                                            @EnumHelper.GetEnumDescription(pedido.FormaEntrega)</FluentLabel>
+                                        <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">
+                                            @EnumHelper.GetEnumDescription(pedido.FormaPagamento)</FluentLabel>
                                     </FluentStack>
                                     <SeletorStatus Pedido="pedido" AtualizaStatus="AtualizaStatus" tipoUsuario="TipoUsuario" />
                                 </FluentStack>
                             </FluentStack>
                             <FluentStack HorizontalAlignment="HorizontalAlignment.Right">
-                                <FluentLabel Typo="Typography.Body">Última atualização: @pedido.DataUltimaAtualizacao.ToString("dd/MM HH:mm")</FluentLabel>
+                                <FluentLabel Typo="Typography.Body">Última atualização:
+                                    @pedido.DataUltimaAtualizacao.ToString("dd/MM HH:mm")</FluentLabel>
                             </FluentStack>
                             <FluentDivider Style="background-color: black; width: 100%; height: 2px" />
                         }
@@ -99,7 +107,8 @@
 
     protected async override Task OnAfterRenderAsync(bool firstrender)
     {
-        await DefineListagemPedidosPorTipoUsuario();
+        if (firstrender)
+            await DefineListagemPedidosPorTipoUsuario();
     }
 
     private void OnQuantidadeChanged(int novaQuantidade, ProdutoItemDTO produtoItem)

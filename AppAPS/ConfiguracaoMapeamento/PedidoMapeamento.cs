@@ -27,9 +27,6 @@ namespace AppAPS.ConfiguracaoMapeamento
                 .HasColumnType("varchar(11)") // Define como varchar para o CPF, que normalmente tem 11 caracteres
                 .HasMaxLength(11);
 
-            builder.HasIndex(p => p.CPF)
-                .IsUnique();
-
             // Rua - Obrigatória
             builder.Property(p => p.Rua)
                 .IsRequired()
