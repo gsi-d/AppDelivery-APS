@@ -1,0 +1,30 @@
+﻿@using Radzen
+@using Radzen.Blazor
+@using System.Globalization
+@rendermode RenderMode.InteractiveServer
+
+<FluentCard Height="55vh" Width="100%">
+    <FluentLabel Typo="Typography.H1">Pedidos por bairro</FluentLabel>
+    <div style="margin-top: 3vh" class="rz-p-0 rz-p-md-0">
+        <RadzenChart Style="height: 40vh">
+            <RadzenColumnSeries Data="@DadosGrafico" CategoryProperty="Indicador" ValueProperty="Valor">
+                <TooltipTemplate Context="dados">
+                    Pedidos: <strong>@dados.Valor</strong>
+                </TooltipTemplate>
+            </RadzenColumnSeries>
+            <RadzenValueAxis>
+                <RadzenAxisTitle Text="Quantidade"/>
+                <RadzenGridLines Visible="true" />
+            </RadzenValueAxis>
+            <RadzenCategoryAxis>
+                <RadzenAxisTitle Text="Bairro" />
+            </RadzenCategoryAxis>
+            <RadzenValueAxis Min="0" />
+            <RadzenLegend Visible="false"/>
+        </RadzenChart>
+    </div>
+</FluentCard>
+
+@code {
+    [Parameter] public List<ItemGrafico> DadosGrafico { get; set; } = new();
+}

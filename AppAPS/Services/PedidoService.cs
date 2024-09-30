@@ -1,7 +1,9 @@
 ﻿using AppAPS.Data;
+using AppAPS.DTOs;
 using AppAPS.Entities;
 using AppAPS.Interfaces;
 using AppAPS.Services.Model;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppAPS.Services
@@ -10,10 +12,12 @@ namespace AppAPS.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly SessaoUsuario _sessaoUsuario;
-        public PedidoService(ApplicationDbContext context, SessaoUsuario sessaoUsuario)
+        private readonly IMapper _mapper;
+        public PedidoService(ApplicationDbContext context, SessaoUsuario sessaoUsuario, IMapper mapper)
         {
             _context = context;
             _sessaoUsuario = sessaoUsuario;
+            _mapper = mapper;
         }
 
         public async Task<List<Pedido>> GetAllPedidos()
@@ -53,6 +57,41 @@ namespace AppAPS.Services
             _context.Pedido.RemoveRange(Pedidos);
             Save();
             return true;
+        }
+
+        public async Task<List<ItemGrafico>> GetPedidosPorBairro()
+        {
+            List<Pedido> resultado = await _context.Pedido.AsNoTracking().ToListAsync();
+            List<ItemGrafico> itensGrafico = new List<ItemGrafico>();
+            resultado.DistinctBy(pedido => pedido.Bairro).ToList().ForEach(pedido => itensGrafico.Add(new ItemGrafico { Indicador = EnumHelper.GetEnumDescription(pedido.Bairro), Valor = resultado.Where(pedidoAux => pedidoAux.Bairro == pedido.Bairro).Count() }));
+            //List<ItemGrafico> itensGrafico = _mapper.Map<List<ItemGrafico>>(resultado);
+            return itensGrafico;
+        }
+
+        public async Task<List<ItemGrafico>> GetComparativoPedidosPorBairroMesAnterior(Bairro bairro)
+        {
+            DateTime hoje = DateTime.Today;
+            DateTime primeiroDiaMesAnterior = new DateTime(hoje.Year, hoje.Month, 1).AddMonths(-1);
+            DateTime ultimoDiaMesAnterior = new DateTime(hoje.Year, hoje.Month, 1).AddDays(-1);
+
+            List<Pedido> resultado = await _context.Pedido.Where(pedido => pedido.Bairro == bairro &&
+                     pedido.DataAbertura.Date >= primeiroDiaMesAnterior &&
+                     pedido.DataAbertura.Date <= ultimoDiaMesAnterior).AsNoTracking().ToListAsync();
+
+            List<ItemGrafico> itensGrafico = _mapper.Map<List<ItemGrafico>>(resultado);
+            return itensGrafico;
+        }
+
+        public async Task<int> GetQtdPedidosDiaAtual()
+        {
+            int qtdPedidos = await _context.Pedido.Where(pedido => pedido.DataAbertura.Date == DateTime.Today).AsNoTracking().CountAsync();
+            return qtdPedidos;
+        }
+
+        public async Task<int> GetQtdPedidosDiaAnterior()
+        {
+            int qtdPedidos = await _context.Pedido.Where(pedido => pedido.DataAbertura.Date == DateTime.Today.AddDays(-1)).AsNoTracking().CountAsync();
+            return qtdPedidos;
         }
 
         public void Save()

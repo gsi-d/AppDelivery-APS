@@ -1,0 +1,45 @@
+﻿@using Radzen
+@using Radzen.Blazor
+@rendermode RenderMode.InteractiveServer
+
+<div class="rz-p-0 rz-p-md-0">
+    <RadzenCard Variant="Variant.Filled" class="rz-my-0 rz-mx-auto" Style="height: 20vh; width: 100%">
+        <RadzenStack Orientation="Radzen.Orientation.Horizontal" JustifyContent="Radzen.JustifyContent.Center" Gap="1rem" class="rz-p-4">
+            <RadzenProgressBarCircular Size="ProgressBarCircularSize.Large" ProgressBarStyle="@StyleProgressBar" @bind-Value="@PorcentagemComparacao" />
+            <RadzenStack Gap="0">
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-2 rz-my-0">Hoje foram feitos </RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@QtdPedidosDiaAtual pedidos</b></RadzenText>
+                <RadzenText TextStyle="TextStyle.Overline" class="rz-display-flex rz-mt-4 rz-mb-0">Pedidos de ontem</RadzenText>
+                <RadzenText TextStyle="TextStyle.Body1"><b>@QtdPedidosDiaAnterior pedidos</b></RadzenText>
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenCard>
+</div>
+
+@code {
+    [Parameter] public double QtdPedidosDiaAtual { get; set; }
+    [Parameter] public double QtdPedidosDiaAnterior { get; set; }
+    public ProgressBarStyle StyleProgressBar { get; set; }
+    public double PorcentagemComparacao { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (QtdPedidosDiaAnterior != 0)
+        {
+            PorcentagemComparacao = ((QtdPedidosDiaAtual - QtdPedidosDiaAnterior) / QtdPedidosDiaAnterior) * 100;
+        }
+        else
+        {
+            PorcentagemComparacao = QtdPedidosDiaAtual > 0 ? QtdPedidosDiaAtual * 100 : 0;
+        }
+        double diferencaDias = QtdPedidosDiaAtual - QtdPedidosDiaAnterior;
+        if (diferencaDias < 0)
+        {
+            StyleProgressBar = ProgressBarStyle.Danger;
+        }
+        else
+        {
+            StyleProgressBar = ProgressBarStyle.Success;
+        }
+    }
+}

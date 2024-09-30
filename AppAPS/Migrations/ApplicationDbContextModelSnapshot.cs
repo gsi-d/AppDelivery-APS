@@ -183,10 +183,7 @@ namespace AppAPS.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CPF")
-                        .IsUnique();
-
-                    b.ToTable("Pedido");
+                    b.ToTable("Pedido", (string)null);
                 });
 
             modelBuilder.Entity("AppAPS.Entities.PedidoItem", b =>
@@ -212,7 +209,7 @@ namespace AppAPS.Migrations
 
                     b.HasIndex("ProdutoId");
 
-                    b.ToTable("PedidoItem");
+                    b.ToTable("PedidoItem", (string)null);
                 });
 
             modelBuilder.Entity("AppAPS.Entities.Produto", b =>
