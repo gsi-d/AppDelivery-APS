@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
+using Radzen;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddFluentUIComponents();
 
 builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddRadzenComponents();
 
 builder.Services.AddScoped<SessaoUsuario>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();

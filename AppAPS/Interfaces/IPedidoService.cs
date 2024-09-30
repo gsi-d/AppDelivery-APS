@@ -1,4 +1,5 @@
-﻿using AppAPS.Entities;
+﻿using AppAPS.DTOs;
+using AppAPS.Entities;
 
 namespace AppAPS.Interfaces
 {
@@ -11,5 +12,9 @@ namespace AppAPS.Interfaces
         Task<Pedido> GetByIdPedidos(int id);
         Task<Pedido> InserirPedido(Pedido Pedido);
         Task<bool> DeletarPedidos(List<Pedido> Pedidos);
+        Task<List<ItemGrafico>> GetPedidosPorBairro();
+        Task<int> GetQtdPedidosDiaAtual();
+        Task<int> GetQtdPedidosDiaAnterior();
+        Task<List<ItemGrafico>> GetComparativoPedidosPorBairroMesAnterior(Bairro bairro);
     }
 }

@@ -1,0 +1,25 @@
+﻿@page "/dashboard/"
+
+<PageTitle>Dashboards</PageTitle>
+
+<FluentLabel Alignment="HorizontalAlignment.Center" Typo="Typography.H1">INDICADORES</FluentLabel>
+
+<FluentStack Style="gap: 15px; display: flex; flex-wrap: wrap;">
+    <PedidosPorBairro DadosGrafico="@DadosGrafico" />
+    <ComparativoBairros />
+    <PedidosVendidosHoje QtdPedidosDiaAtual="@QtdPedidosDiaAtual" QtdPedidosDiaAnterior="@QtdPedidosDiaAnterior" />
+</FluentStack>
+
+@code{
+    [Inject] public IPedidoService pedidoService { get; set; }
+    public double QtdPedidosDiaAtual { get; set; }
+    public double QtdPedidosDiaAnterior { get; set; }
+    public List<ItemGrafico> DadosGrafico { get; set; } = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+        DadosGrafico = await pedidoService.GetPedidosPorBairro();
+        QtdPedidosDiaAtual = await pedidoService.GetQtdPedidosDiaAtual();
+        QtdPedidosDiaAnterior = await pedidoService.GetQtdPedidosDiaAnterior();
+    }
+}

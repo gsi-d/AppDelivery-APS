@@ -7,14 +7,19 @@
     <base href="/" />
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="AppAPS.styles.css" />
+    <link href="_content/Radzen.Blazor/css/default-base.css" rel="stylesheet">
+    <link href="_content/Radzen.Blazor/css/default.css" rel="stylesheet">
+
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <HeadOutlet />
+    <RadzenTheme Theme="material" />
 </head>
 
 <body >
     <Routes />
     <script src="_framework/blazor.web.js"></script>
     <script src="funcoes.js"></script>
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
 </body>
 
 </html>

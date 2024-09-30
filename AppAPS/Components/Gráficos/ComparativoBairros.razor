@@ -1,0 +1,237 @@
+﻿@using Radzen
+@using Radzen.Blazor
+@using System.Globalization
+@using Radzen.Blazor.Rendering
+@rendermode RenderMode.InteractiveServer
+
+<FluentCard Height="45vh" Width="50%">
+    <FluentStack Style="display: flex; flex-direction: row; justify-content: space-between">
+        <FluentLabel Typo="Typography.H1">Comparativo por bairro (mês anterior)</FluentLabel>
+        <div class="rz-p-0 rz-text-align-right">
+            <RadzenButton @ref=button Icon="filter_alt" ButtonStyle="ButtonStyle.Secondary" Click="@(args => popup.ToggleAsync(button.Element))" />
+        </div>
+    </FluentStack>
+
+    
+    <RadzenStack class="rz-p-0 rz-p-md-0 rz-p-lg-0">
+        <RadzenChart>
+            <RadzenChartTooltipOptions Shared="@sharedTooltip" />
+            <RadzenLineSeries Smooth="@smooth" Data="@revenue2023" CategoryProperty="Date" Title="2023" LineType="LineType.Dashed" ValueProperty="Revenue">
+                <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Square" />
+                <RadzenSeriesDataLabels Visible="@showDataLabels" />
+            </RadzenLineSeries>
+            <RadzenLineSeries Smooth="@smooth" Data="@revenue2024" CategoryProperty="Date" Title="2024" ValueProperty="Revenue">
+                <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Circle" />
+                <RadzenSeriesDataLabels Visible="@showDataLabels" />
+            </RadzenLineSeries>
+            <RadzenCategoryAxis Padding="20" />
+            <RadzenValueAxis Formatter="@FormatAsUSD">
+                <RadzenGridLines Visible="true" />
+                <RadzenAxisTitle Text="Revenue in USD" />
+            </RadzenValueAxis>
+        </RadzenChart>
+    </RadzenStack>
+</FluentCard>
+
+<Popup @ref=popup Lazy=true Open="@OnOpen"
+       Style="display: none; position: absolute; overflow: hidden; height: 35vh; width: 20%; border-width: 10px; border-color: black; background-color: var(--rz-panel-background-color); box-shadow: var(--rz-panel-shadow); border-radius: var(--rz-border-radius)">
+    <RadzenStack Orientation="Radzen.Orientation.Vertical" Gap="1rem" class="rz-h-100 rz-p-4">
+        <FluentCombobox Appearance="Appearance.Filled" TOption="string" Placeholder="Selecione um bairro" ValueChanged="@(e => OnPrimeiroBairroChanged(e))" Autofocus="true" Height="200px">
+            @foreach (var item in PrimeiroBairroItems)
+            {
+                <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
+            }
+        </FluentCombobox>
+        <FluentCombobox Appearance="Appearance.Filled" TOption="string" Placeholder="Selecione outro bairro" ValueChanged="@(e => OnSegundoBairroChanged(e))" Autofocus="true" Height="200px">
+            @foreach (var item in SegundoBairroItems)
+            {
+                <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
+            }
+        </FluentCombobox>
+        <FluentButton OnClick="@Filtrar">Filtrar</FluentButton>
+    </RadzenStack>
+</Popup>
+
+
+@code {
+    [Inject] public IPedidoService pedidoService { get; set; }
+    bool smooth = true;
+    bool sharedTooltip = true;
+    bool showDataLabels = false;
+    bool showMarkers = true;
+    private List<EnumItem<Bairro>> PrimeiroBairroItems;
+    private List<EnumItem<Bairro>> SegundoBairroItems;
+    public Bairro PrimeiroBairro { get; set; }
+    public Bairro SegundoBairro { get; set; }
+
+    RadzenButton button;
+    Popup popup;
+    int? orderId;
+    string searchString = "";
+
+    class DataItem
+    {
+        public string Date { get; set; }
+        public double Revenue { get; set; }
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        PrimeiroBairroItems = EnumHelper.GetEnumItems<Bairro>();
+        SegundoBairroItems = EnumHelper.GetEnumItems<Bairro>();
+    }
+
+    async Task OnOpen()
+    {
+        await _jsRuntime.InvokeVoidAsync("eval", "setTimeout(function(){ document.getElementById('search').focus(); }, 200)");
+    }
+
+    string FormatAsUSD(object value)
+    {
+        return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-US"));
+    }
+
+    private void OnPrimeiroBairroChanged(string selectedValue)
+    {
+        PrimeiroBairro = PrimeiroBairroItems.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? PrimeiroBairro;
+        EnumItem<Bairro>? bairroEscolhido = PrimeiroBairroItems.FirstOrDefault(bairro => bairro.Value == PrimeiroBairro);
+        SegundoBairroItems.Remove(bairroEscolhido);
+    }
+
+    private void Filtrar()
+    {
+    }
+
+    private void OnSegundoBairroChanged(string selectedValue)
+    {
+        SegundoBairro = SegundoBairroItems.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? SegundoBairro;
+        EnumItem<Bairro>? bairroEscolhido = SegundoBairroItems.FirstOrDefault(bairro => bairro.Value == PrimeiroBairro);
+        PrimeiroBairroItems.Remove(bairroEscolhido);
+    }
+
+    DataItem[] revenue2023 = new DataItem[] {
+        new DataItem
+        {
+            Date = "Jan",
+            Revenue = 234000
+        },
+        new DataItem
+        {
+            Date = "Feb",
+            Revenue = 269000
+        },
+        new DataItem
+        {
+            Date = "Mar",
+            Revenue = 233000
+        },
+        new DataItem
+        {
+            Date = "Apr",
+            Revenue = 244000
+        },
+        new DataItem
+        {
+            Date = "May",
+            Revenue = 214000
+        },
+        new DataItem
+        {
+            Date = "Jun",
+            Revenue = 253000
+        },
+        new DataItem
+        {
+            Date = "Jul",
+            Revenue = 274000
+        },
+        new DataItem
+        {
+            Date = "Aug",
+            Revenue = 284000
+        },
+        new DataItem
+        {
+            Date = "Sept",
+            Revenue = 273000
+        },
+        new DataItem
+        {
+            Date = "Oct",
+            Revenue = 282000
+        },
+        new DataItem
+        {
+            Date = "Nov",
+            Revenue = 289000
+        },
+        new DataItem
+        {
+            Date = "Dec",
+            Revenue = 294000
+        }
+    };
+
+    DataItem[] revenue2024 = new DataItem[] {
+        new DataItem
+        {
+            Date = "Jan",
+            Revenue = 334000
+        },
+        new DataItem
+        {
+            Date = "Feb",
+            Revenue = 369000
+        },
+        new DataItem
+        {
+            Date = "Mar",
+            Revenue = 333000
+        },
+        new DataItem
+        {
+            Date = "Apr",
+            Revenue = 344000
+        },
+        new DataItem
+        {
+            Date = "May",
+            Revenue = 314000
+        },
+        new DataItem
+        {
+            Date = "Jun",
+            Revenue = 353000
+        },
+        new DataItem
+        {
+            Date = "Jul",
+            Revenue = 374000
+        },
+        new DataItem
+        {
+            Date = "Aug",
+            Revenue = 384000
+        },
+        new DataItem
+        {
+            Date = "Sept",
+            Revenue = 373000
+        },
+        new DataItem
+        {
+            Date = "Oct",
+            Revenue = 382000
+        },
+        new DataItem
+        {
+            Date = "Nov",
+            Revenue = 389000
+        },
+        new DataItem
+        {
+            Date = "Dec",
+            Revenue = 394000
+        }
+    };
+}
