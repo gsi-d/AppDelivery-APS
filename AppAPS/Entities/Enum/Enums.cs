@@ -42,6 +42,9 @@ namespace AppAPS.Entities
         [Description("Maluche")]
         Maluche,
 
+        [Description("Nova Brasília")]
+        NovaBrasilia,
+
         [Description("Paquetá")]
         Paquetá,
 
@@ -60,20 +63,20 @@ namespace AppAPS.Entities
         [Description("Rio Branco")]
         RioBranco,
 
-        [Description("Rio Pardo")]
-        RioPardo,
-
         [Description("Santa Luzia")]
         SantaLuzia,
 
         [Description("Santa Rita")]
         SantaRita,
 
-        [Description("São João")]
-        SãoJoão,
+        [Description("Santa Terezinha")]
+        SantaTerezinha,
 
         [Description("São Luiz")]
         SãoLuiz,
+
+        [Description("São Pedro")]
+        SaoPedro,
 
         [Description("Souza Cruz")]
         SouzaCruz,
@@ -227,6 +230,24 @@ namespace AppAPS.Entities
         UN = 1,
         [Description("GR")]
         GR = 1,
+    }
+
+    public enum PeriodoFiltro : byte
+    {
+        [Description("Hoje")]
+        Hoje = 1,
+
+        [Description("Semana atual")]
+        SemanaAtual,
+
+        [Description("Mês atual")]
+        MesAtual,
+
+        [Description("Mês anterior")]
+        MesAnterior,
+
+        [Description("Ano atual")]
+        AnoAtual,
     }
 
     public class EnumItem<T>

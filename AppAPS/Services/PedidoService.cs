@@ -13,6 +13,8 @@ namespace AppAPS.Services
         private readonly ApplicationDbContext _context;
         private readonly SessaoUsuario _sessaoUsuario;
         private readonly IMapper _mapper;
+        private DateTime DataDe = DateTime.MinValue;
+        private DateTime DataAte = DateTime.MaxValue;
         public PedidoService(ApplicationDbContext context, SessaoUsuario sessaoUsuario, IMapper mapper)
         {
             _context = context;
@@ -52,6 +54,13 @@ namespace AppAPS.Services
             return entityEntry.Entity;
         }
 
+        public async Task<Pedido> AlterarPedido(Pedido Pedido)
+        {
+            var entityEntry = _context.Pedido.Update(Pedido);
+            Save();
+            return entityEntry.Entity;
+        }
+
         public async Task<bool> DeletarPedidos(List<Pedido> Pedidos)
         {
             _context.Pedido.RemoveRange(Pedidos);
@@ -64,7 +73,16 @@ namespace AppAPS.Services
             List<Pedido> resultado = await _context.Pedido.AsNoTracking().ToListAsync();
             List<ItemGrafico> itensGrafico = new List<ItemGrafico>();
             resultado.DistinctBy(pedido => pedido.Bairro).ToList().ForEach(pedido => itensGrafico.Add(new ItemGrafico { Indicador = EnumHelper.GetEnumDescription(pedido.Bairro), Valor = resultado.Where(pedidoAux => pedidoAux.Bairro == pedido.Bairro).Count() }));
-            //List<ItemGrafico> itensGrafico = _mapper.Map<List<ItemGrafico>>(resultado);
+            return itensGrafico;
+        }
+
+        public async Task<List<ItemGrafico>> GetPedidosPorBairroComPeriodo(PeriodoFiltro periodo)
+        {
+            DefinePeriodoFiltragem(periodo);
+
+            List<Pedido> resultado = await _context.Pedido.Where(pedido => pedido.DataAbertura >= DataDe && pedido.DataAbertura <= DataAte).AsNoTracking().ToListAsync();
+            List<ItemGrafico> itensGrafico = new List<ItemGrafico>();
+            resultado.DistinctBy(pedido => pedido.Bairro).ToList().ForEach(pedido => itensGrafico.Add(new ItemGrafico { Indicador = EnumHelper.GetEnumDescription(pedido.Bairro), Valor = resultado.Where(pedidoAux => pedidoAux.Bairro == pedido.Bairro).Count() }));
             return itensGrafico;
         }
 
@@ -74,12 +92,24 @@ namespace AppAPS.Services
             DateTime primeiroDiaMesAnterior = new DateTime(hoje.Year, hoje.Month, 1).AddMonths(-1);
             DateTime ultimoDiaMesAnterior = new DateTime(hoje.Year, hoje.Month, 1).AddDays(-1);
 
+            List<ItemGrafico> listaItensGrafico = new List<ItemGrafico>();
+
+            for (DateTime data = primeiroDiaMesAnterior; data <= ultimoDiaMesAnterior; data = data.AddDays(1))
+            {
+                // Adicionar o dia e o mês na lista
+                listaItensGrafico.Add(new ItemGrafico { Periodo = data.ToString("dd/MM") });
+            }
+
             List<Pedido> resultado = await _context.Pedido.Where(pedido => pedido.Bairro == bairro &&
                      pedido.DataAbertura.Date >= primeiroDiaMesAnterior &&
                      pedido.DataAbertura.Date <= ultimoDiaMesAnterior).AsNoTracking().ToListAsync();
 
-            List<ItemGrafico> itensGrafico = _mapper.Map<List<ItemGrafico>>(resultado);
-            return itensGrafico;
+            List<ItemGrafico> itensGraficoVindoBanco = _mapper.Map<List<ItemGrafico>>(resultado);
+            foreach (ItemGrafico itemVindoBanco in itensGraficoVindoBanco)
+            {
+                listaItensGrafico.Where(item => item.Periodo == itemVindoBanco.Periodo).ToList().ForEach(item => item.Valor++);
+            }
+            return listaItensGrafico;
         }
 
         public async Task<int> GetQtdPedidosDiaAtual()
@@ -88,10 +118,45 @@ namespace AppAPS.Services
             return qtdPedidos;
         }
 
+        public async Task<int> GetQtdPedidosDiaAtualPorStatus(StatusPedido status)
+        {
+            int qtdPedidos = await _context.Pedido.Where(pedido => pedido.DataAbertura.Date == DateTime.Today && pedido.Status == status).AsNoTracking().CountAsync();
+            return qtdPedidos;
+        }
+
         public async Task<int> GetQtdPedidosDiaAnterior()
         {
             int qtdPedidos = await _context.Pedido.Where(pedido => pedido.DataAbertura.Date == DateTime.Today.AddDays(-1)).AsNoTracking().CountAsync();
             return qtdPedidos;
+        }
+
+        public void DefinePeriodoFiltragem(PeriodoFiltro periodo)
+        {
+            DateTime dataAtual = DateTime.Now;
+
+            switch (periodo)
+            {
+                case PeriodoFiltro.Hoje:
+                    DataDe = dataAtual.Date;
+                    DataAte = dataAtual.Date.AddDays(1).AddTicks(-1);
+                    break;
+                case PeriodoFiltro.SemanaAtual:
+                    DataDe = dataAtual.Date.AddDays(-(int)dataAtual.DayOfWeek);
+                    DataAte = DataDe.AddDays(7).AddTicks(-1);
+                    break;
+                case PeriodoFiltro.MesAtual:
+                    DataDe = new DateTime(dataAtual.Year, dataAtual.Month, 1);
+                    DataAte = DataDe.AddMonths(1).AddTicks(-1);
+                    break;
+                case PeriodoFiltro.MesAnterior:
+                    DataDe = new DateTime(dataAtual.Year, dataAtual.Month, 1).AddMonths(-1);
+                    DataAte = DataDe.AddMonths(1).AddTicks(-1);
+                    break;
+                case PeriodoFiltro.AnoAtual:
+                    DataDe = new DateTime(dataAtual.Year, 1, 1);
+                    DataAte = new DateTime(dataAtual.Year + 1, 1, 1).AddTicks(-1);
+                    break;
+            }
         }
 
         public void Save()

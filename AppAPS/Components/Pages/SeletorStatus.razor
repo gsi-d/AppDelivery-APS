@@ -93,6 +93,7 @@
 </FluentStack>
 
 @code {
+    [Inject] private IPedidoService PedidoService { get; set; }
     [Parameter] public Pedido Pedido { get; set; }
     [Parameter] public TipoUsuario tipoUsuario { get; set; }
     [Parameter] public EventCallback<PedidoStatusDTO> AtualizaStatus { get; set; }
@@ -111,6 +112,12 @@
     {
         if (tipoUsuario != TipoUsuario.Cliente)
         {
+            pedido.DataUltimaAtualizacao = DateTime.Now;
+            pedido.Status = novoStatus;
+            if (novoStatus == StatusPedido.Finalizado)
+                pedido.DataFinalizacao = DateTime.Now;
+            await PedidoService.AlterarPedido(pedido);
+
             PedidoStatusDTO pedidoStatusDTO = new PedidoStatusDTO
                 {
                     Pedido = pedido,
@@ -120,7 +127,7 @@
             AtualizaLayoutStatus(novoStatus);
         }
 
-        if(novoStatus == StatusPedido.Finalizado)
+        if (novoStatus == StatusPedido.Finalizado)
         {
             await DialogService.ShowSuccessAsync($"O pedido {Pedido.Id} foi finalizado", "Pedido finalizado.");
         }

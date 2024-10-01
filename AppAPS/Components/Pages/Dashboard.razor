@@ -2,24 +2,55 @@
 
 <PageTitle>Dashboards</PageTitle>
 
-<FluentLabel Alignment="HorizontalAlignment.Center" Typo="Typography.H1">INDICADORES</FluentLabel>
-
-<FluentStack Style="gap: 15px; display: flex; flex-wrap: wrap;">
+<FluentStack Style="gap: 15px; display: flex; flex-wrap: wrap; margin-bottom: 30px">
+    <PedidosVendidosHoje QtdPedidosDiaAtual="@QtdPedidosDiaAtual" QtdPedidosDiaAnterior="@QtdPedidosDiaAnterior" />
+    @{
+        if (TotalPedidosStatusConfirmado > 0)
+        {
+            <PedidosPorStatus Status="StatusPedido.Confirmado" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusConfirmado" />
+        }
+        if (TotalPedidosStatusEmPreparo > 0)
+        {
+            <PedidosPorStatus Status="StatusPedido.EmPreparo" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusEmPreparo" />
+        }
+        if (TotalPedidosStatusProntoParaEntrega > 0)
+        {
+            <PedidosPorStatus Status="StatusPedido.ProntoParaEntrega" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusProntoParaEntrega" />
+        }
+        if (TotalPedidosStatusEmTransito > 0)
+        {
+            <PedidosPorStatus Status="StatusPedido.EmTransito" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusEmTransito" />
+        }
+        if (TotalPedidosStatusFinalizado > 0)
+        {
+            <PedidosPorStatus Status="StatusPedido.Finalizado" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusFinalizado" />
+        }
+    }
     <PedidosPorBairro DadosGrafico="@DadosGrafico" />
     <ComparativoBairros />
-    <PedidosVendidosHoje QtdPedidosDiaAtual="@QtdPedidosDiaAtual" QtdPedidosDiaAnterior="@QtdPedidosDiaAnterior" />
 </FluentStack>
 
-@code{
+@code {
     [Inject] public IPedidoService pedidoService { get; set; }
-    public double QtdPedidosDiaAtual { get; set; }
-    public double QtdPedidosDiaAnterior { get; set; }
+    public int QtdPedidosDiaAtual { get; set; }
+    public int QtdPedidosDiaAnterior { get; set; }
     public List<ItemGrafico> DadosGrafico { get; set; } = new();
+
+    public int TotalPedidosStatusConfirmado { get; set; }
+    public int TotalPedidosStatusEmPreparo { get; set; }
+    public int TotalPedidosStatusProntoParaEntrega { get; set; }
+    public int TotalPedidosStatusEmTransito { get; set; }
+    public int TotalPedidosStatusFinalizado { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
-        DadosGrafico = await pedidoService.GetPedidosPorBairro();
+        DadosGrafico = await pedidoService.GetPedidosPorBairroComPeriodo(PeriodoFiltro.Hoje);
         QtdPedidosDiaAtual = await pedidoService.GetQtdPedidosDiaAtual();
         QtdPedidosDiaAnterior = await pedidoService.GetQtdPedidosDiaAnterior();
+        TotalPedidosStatusConfirmado = await pedidoService.GetQtdPedidosDiaAtualPorStatus(StatusPedido.Confirmado);
+        TotalPedidosStatusEmPreparo = await pedidoService.GetQtdPedidosDiaAtualPorStatus(StatusPedido.EmPreparo);
+        TotalPedidosStatusProntoParaEntrega = await pedidoService.GetQtdPedidosDiaAtualPorStatus(StatusPedido.ProntoParaEntrega);
+        TotalPedidosStatusEmTransito = await pedidoService.GetQtdPedidosDiaAtualPorStatus(StatusPedido.EmTransito);
+        TotalPedidosStatusFinalizado = await pedidoService.GetQtdPedidosDiaAtualPorStatus(StatusPedido.Finalizado);
     }
 }
