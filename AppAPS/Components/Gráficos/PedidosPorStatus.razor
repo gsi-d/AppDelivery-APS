@@ -1,0 +1,92 @@
+﻿@using Radzen
+@using Radzen.Blazor
+@rendermode RenderMode.InteractiveServer
+
+<div class="rz-p-0 rz-p-md-0" style="width: 20%">
+    <RadzenCard Variant="Variant.Filled" class="rz-my-0 rz-mx-auto rz-pt-2" Style="height: 20vh; width: 100%">
+        <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
+            <FluentLabel Typo="Typography.H3">Pedidos @SufixoTitulo</FluentLabel>
+        </FluentStack>
+        <RadzenStack Orientation="Radzen.Orientation.Horizontal" JustifyContent="Radzen.JustifyContent.Left" Gap="1rem" class="rz-p-4">
+            <RadzenProgressBarCircular Style="margin-top: 1vh" Size="ProgressBarCircularSize.Large" ProgressBarStyle="@StyleProgressBar" @bind-Value="@Porcentagem" />
+            <RadzenStack Gap="0">
+                <FluentLabel Typo="Typography.Subject" class="rz-display-flex rz-mt-0 rz-my-0">TOTAL DIA</FluentLabel>
+                <FluentLabel Typo="Typography.H2"><b>@TotalPedidosDiaAtual</b></FluentLabel>
+                <FluentLabel Typo="Typography.Subject" class="rz-display-flex rz-mt-4 rz-mb-0">TOTAL STATUS</FluentLabel>
+                <FluentLabel Color="@CorLabel" Typo="Typography.H2"><b>@TotalPedidosStatus</b></FluentLabel>
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenCard>
+</div>
+
+@code {
+    [Parameter] public StatusPedido Status { get; set; }
+    [Parameter] public double TotalPedidosDiaAtual { get; set; }
+    [Parameter] public double TotalPedidosStatus { get; set; }
+    public ProgressBarStyle StyleProgressBar { get; set; }
+    public Color CorLabel { get; set; }
+    public double Porcentagem { get; set; }
+    public string SufixoTitulo { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (TotalPedidosDiaAtual != 0)
+        {
+            Porcentagem = (TotalPedidosStatus / TotalPedidosDiaAtual) * 100;
+            Porcentagem = Math.Round(Porcentagem, 2);
+        }
+        DefineCorStatus();
+        DefineSufixoTitulo();
+    }
+
+    public void DefineCorStatus()
+    {
+        switch (Status)
+        {
+            case StatusPedido.Confirmado:
+                StyleProgressBar = ProgressBarStyle.Primary;
+                CorLabel = Color.Error;
+                break;
+            case StatusPedido.EmPreparo:
+                StyleProgressBar = ProgressBarStyle.Info;
+                CorLabel = Color.Accent;
+                break;
+            case StatusPedido.ProntoParaEntrega:
+                StyleProgressBar = ProgressBarStyle.Warning;
+                CorLabel = Color.Warning;
+                break;
+            case StatusPedido.EmTransito:
+                StyleProgressBar = ProgressBarStyle.Secondary;
+                CorLabel = Color.Accent;
+                break;
+            case StatusPedido.Finalizado:
+                StyleProgressBar = ProgressBarStyle.Success;
+                CorLabel = Color.Success;
+                break;
+
+        }
+    }
+
+    public void DefineSufixoTitulo()
+    {
+        switch (Status)
+        {
+            case StatusPedido.Confirmado:
+                SufixoTitulo = "Confirmados";
+                break;
+            case StatusPedido.EmPreparo:
+                SufixoTitulo = "Em preparo";
+                break;
+            case StatusPedido.ProntoParaEntrega:
+                SufixoTitulo = "Prontos para entrega";
+                break;
+            case StatusPedido.EmTransito:
+                SufixoTitulo = "Em trânsito";
+                break;
+            case StatusPedido.Finalizado:
+                SufixoTitulo = "Finalizados";
+                break;
+
+        }
+    }
+}

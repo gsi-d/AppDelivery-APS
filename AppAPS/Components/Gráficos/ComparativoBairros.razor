@@ -4,7 +4,23 @@
 @using Radzen.Blazor.Rendering
 @rendermode RenderMode.InteractiveServer
 
-<FluentCard Height="45vh" Width="50%">
+<style>
+    .my-popup {
+        display: none;
+        position: absolute;
+        right: 40px;
+        transform: translateX(-20%);
+        overflow: hidden;
+        height: 35vh;
+        width: 20%;
+        border: var(--rz-panel-border);
+        background-color: var(--rz-panel-background-color);
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+        border-radius: var(--rz-border-radius);
+    }
+</style>
+
+<FluentCard Height="52vh" Width="100%">
     <FluentStack Style="display: flex; flex-direction: row; justify-content: space-between">
         <FluentLabel Typo="Typography.H1">Comparativo por bairro (mês anterior)</FluentLabel>
         <div class="rz-p-0 rz-text-align-right">
@@ -12,29 +28,30 @@
         </div>
     </FluentStack>
 
-    
+
     <RadzenStack class="rz-p-0 rz-p-md-0 rz-p-lg-0">
-        <RadzenChart>
+        <RadzenChart Style="height: 45vh">
             <RadzenChartTooltipOptions Shared="@sharedTooltip" />
-            <RadzenLineSeries Smooth="@smooth" Data="@revenue2023" CategoryProperty="Date" Title="2023" LineType="LineType.Dashed" ValueProperty="Revenue">
+            <RadzenLineSeries Smooth="@smooth" Data="@DadosGraficoBairro1" CategoryProperty="Periodo" Title="@EnumHelper.GetEnumDescription(PrimeiroBairro)" LineType="LineType.Dashed" ValueProperty="Valor">
                 <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Square" />
                 <RadzenSeriesDataLabels Visible="@showDataLabels" />
             </RadzenLineSeries>
-            <RadzenLineSeries Smooth="@smooth" Data="@revenue2024" CategoryProperty="Date" Title="2024" ValueProperty="Revenue">
+            <RadzenLineSeries Smooth="@smooth" Data="@DadosGraficoBairro2" CategoryProperty="Periodo" Title="@EnumHelper.GetEnumDescription(SegundoBairro)" ValueProperty="Valor">
                 <RadzenMarkers Visible="@showMarkers" MarkerType="MarkerType.Circle" />
                 <RadzenSeriesDataLabels Visible="@showDataLabels" />
             </RadzenLineSeries>
             <RadzenCategoryAxis Padding="20" />
-            <RadzenValueAxis Formatter="@FormatAsUSD">
+
+            <RadzenValueAxis>
                 <RadzenGridLines Visible="true" />
-                <RadzenAxisTitle Text="Revenue in USD" />
+                <RadzenAxisTitle Text="Quantidade" />
             </RadzenValueAxis>
+            <RadzenLegend Position="LegendPosition.Bottom" />
         </RadzenChart>
     </RadzenStack>
 </FluentCard>
 
-<Popup @ref=popup Lazy=true Open="@OnOpen"
-       Style="display: none; position: absolute; overflow: hidden; height: 35vh; width: 20%; border-width: 10px; border-color: black; background-color: var(--rz-panel-background-color); box-shadow: var(--rz-panel-shadow); border-radius: var(--rz-border-radius)">
+<Popup @ref=popup Lazy=true class="my-popup" Open="@OnOpen">
     <RadzenStack Orientation="Radzen.Orientation.Vertical" Gap="1rem" class="rz-h-100 rz-p-4">
         <FluentCombobox Appearance="Appearance.Filled" TOption="string" Placeholder="Selecione um bairro" ValueChanged="@(e => OnPrimeiroBairroChanged(e))" Autofocus="true" Height="200px">
             @foreach (var item in PrimeiroBairroItems)
@@ -48,7 +65,9 @@
                 <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
             }
         </FluentCombobox>
-        <FluentButton OnClick="@Filtrar">Filtrar</FluentButton>
+        <FluentStack HorizontalAlignment="HorizontalAlignment.Center" Style="margin-top: 18vh">
+            <FluentButton Style="width: 40%;" BackgroundColor="purple" Color="white" Disabled="@DesabilitaBotaoFiltrar()" OnClick="@Filtrar">Filtrar</FluentButton>
+        </FluentStack>
     </RadzenStack>
 </Popup>
 
@@ -63,6 +82,8 @@
     private List<EnumItem<Bairro>> SegundoBairroItems;
     public Bairro PrimeiroBairro { get; set; }
     public Bairro SegundoBairro { get; set; }
+    public List<ItemGrafico> DadosGraficoBairro1 { get; set; } = new();
+    public List<ItemGrafico> DadosGraficoBairro2 { get; set; } = new();
 
     RadzenButton button;
     Popup popup;
@@ -81,32 +102,35 @@
         SegundoBairroItems = EnumHelper.GetEnumItems<Bairro>();
     }
 
+    public bool DesabilitaBotaoFiltrar()
+    {
+        return PrimeiroBairro == 0 || SegundoBairro == 0;
+    }
+
     async Task OnOpen()
     {
         await _jsRuntime.InvokeVoidAsync("eval", "setTimeout(function(){ document.getElementById('search').focus(); }, 200)");
     }
 
-    string FormatAsUSD(object value)
-    {
-        return ((double)value).ToString("C0", CultureInfo.CreateSpecificCulture("en-US"));
-    }
-
     private void OnPrimeiroBairroChanged(string selectedValue)
     {
         PrimeiroBairro = PrimeiroBairroItems.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? PrimeiroBairro;
-        EnumItem<Bairro>? bairroEscolhido = PrimeiroBairroItems.FirstOrDefault(bairro => bairro.Value == PrimeiroBairro);
-        SegundoBairroItems.Remove(bairroEscolhido);
+        SegundoBairroItems = EnumHelper.GetEnumItems<Bairro>().Where(x => x.Value != PrimeiroBairro).ToList();
+        StateHasChanged();
     }
 
-    private void Filtrar()
+    private async void Filtrar()
     {
+        DadosGraficoBairro1 = await pedidoService.GetComparativoPedidosPorBairroMesAnterior(PrimeiroBairro);
+        DadosGraficoBairro2 = await pedidoService.GetComparativoPedidosPorBairroMesAnterior(SegundoBairro);
+        StateHasChanged();
     }
 
     private void OnSegundoBairroChanged(string selectedValue)
     {
         SegundoBairro = SegundoBairroItems.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? SegundoBairro;
-        EnumItem<Bairro>? bairroEscolhido = SegundoBairroItems.FirstOrDefault(bairro => bairro.Value == PrimeiroBairro);
-        PrimeiroBairroItems.Remove(bairroEscolhido);
+        PrimeiroBairroItems = EnumHelper.GetEnumItems<Bairro>().Where(x => x.Value != SegundoBairro).ToList();
+        StateHasChanged();
     }
 
     DataItem[] revenue2023 = new DataItem[] {

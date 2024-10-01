@@ -11,9 +11,12 @@ namespace AppAPS.Interfaces
         Task<List<Pedido>> GetPedidosClienteDiaAtual(string cpf);
         Task<Pedido> GetByIdPedidos(int id);
         Task<Pedido> InserirPedido(Pedido Pedido);
+        Task<Pedido> AlterarPedido(Pedido Pedido);
         Task<bool> DeletarPedidos(List<Pedido> Pedidos);
         Task<List<ItemGrafico>> GetPedidosPorBairro();
+        Task<List<ItemGrafico>> GetPedidosPorBairroComPeriodo(PeriodoFiltro periodo);
         Task<int> GetQtdPedidosDiaAtual();
+        Task<int> GetQtdPedidosDiaAtualPorStatus(StatusPedido status);
         Task<int> GetQtdPedidosDiaAnterior();
         Task<List<ItemGrafico>> GetComparativoPedidosPorBairroMesAnterior(Bairro bairro);
     }

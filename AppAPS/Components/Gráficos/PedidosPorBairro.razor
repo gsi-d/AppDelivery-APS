@@ -1,30 +1,128 @@
 ﻿@using Radzen
 @using Radzen.Blazor
 @using System.Globalization
+@using Radzen.Blazor.Rendering
 @rendermode RenderMode.InteractiveServer
 
-<FluentCard Height="55vh" Width="100%">
-    <FluentLabel Typo="Typography.H1">Pedidos por bairro</FluentLabel>
-    <div style="margin-top: 3vh" class="rz-p-0 rz-p-md-0">
+<style>
+    .rz-chart svg {
+        overflow: visible;
+    }
+
+    .my-popup {
+        display: none;
+        position: absolute;
+        right: 40px;
+        transform: translateX(-20%);
+        overflow: hidden;
+        width: 20%;
+        border: var(--rz-panel-border);
+        background-color: var(--rz-panel-background-color);
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
+        border-radius: var(--rz-border-radius);
+    }
+</style>
+
+<FluentCard Height="53vh" Width="100%">
+    <FluentStack Style="display: flex; flex-direction: row; justify-content: space-between">
+        <FluentLabel Typo="Typography.H1">Pedidos por bairro @SufixoTituloGrafico</FluentLabel>
+        <div class="rz-p-0 rz-text-align-right">
+            <RadzenButton @ref=button Icon="filter_alt" ButtonStyle="ButtonStyle.Secondary" Click="@(args => popup.ToggleAsync(button.Element))" />
+        </div>
+    </FluentStack>
+    <div class="rz-p-0 rz-p-md-0">
         <RadzenChart Style="height: 40vh">
-            <RadzenColumnSeries Data="@DadosGrafico" CategoryProperty="Indicador" ValueProperty="Valor">
+            <RadzenColumnSeries Data="@DadosGrafico" CategoryProperty="Indicador" LineType="LineType.Dotted" ValueProperty="Valor">
                 <TooltipTemplate Context="dados">
-                    Pedidos: <strong>@dados.Valor</strong>
+                    <FluentStack Style="display:flex; flex-direction: column">
+                        <FluentLabel Typo="Typography.Subject">@dados.Indicador</FluentLabel>
+                        <FluentStack><strong>@dados.Valor</strong> pedidos.</FluentStack>
+                    </FluentStack>
                 </TooltipTemplate>
             </RadzenColumnSeries>
+            <RadzenColumnOptions Radius="10" Width="30" />
             <RadzenValueAxis>
-                <RadzenAxisTitle Text="Quantidade"/>
+                <RadzenAxisTitle Text="Quantidade" />
                 <RadzenGridLines Visible="true" />
             </RadzenValueAxis>
-            <RadzenCategoryAxis>
-                <RadzenAxisTitle Text="Bairro" />
+            <RadzenCategoryAxis Padding="5">
+                <RadzenTicks>
+                    <Template>
+                        <text class="rz-tick-text" style="text-anchor: start; transform: translate(@(Math.Truncate(context.X))px, @(Math.Truncate(context.Y + 10))px) rotate(45deg)">@context.Value</text>
+                    </Template>
+                </RadzenTicks>
             </RadzenCategoryAxis>
             <RadzenValueAxis Min="0" />
-            <RadzenLegend Visible="false"/>
+            <RadzenLegend Visible="false" />
         </RadzenChart>
     </div>
 </FluentCard>
 
+<Popup @ref=popup Lazy=true class="my-popup" Style="height: 25vh;" Open="@OnOpen">
+    <RadzenStack Orientation="Radzen.Orientation.Vertical" Gap="1rem" class="rz-h-100 rz-p-4">
+        <FluentCombobox Appearance="Appearance.Filled" TOption="string" Placeholder="Selecione um período" ValueChanged="@(e => OnPeriodoChanged(e))" Autofocus="true" Height="200px">
+            @foreach (var item in PeriodosFiltroItems)
+            {
+                <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
+            }
+        </FluentCombobox>
+        <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
+            <FluentButton Style="width: 40%;" BackgroundColor="purple" Color="white" OnClick="@Filtrar">Filtrar</FluentButton>
+        </FluentStack>
+    </RadzenStack>
+</Popup>
+
 @code {
+    [Inject] public IPedidoService pedidoService { get; set; }
     [Parameter] public List<ItemGrafico> DadosGrafico { get; set; } = new();
+    RadzenButton button;
+    Popup popup;
+    int? orderId;
+    string searchString = "";
+    public string SufixoTituloGrafico { get; set; } = "(Dia atual)";
+
+    public PeriodoFiltro Periodo { get; set; }
+    private List<EnumItem<PeriodoFiltro>> PeriodosFiltroItems;
+
+    protected async override Task OnInitializedAsync()
+    {
+        PeriodosFiltroItems = EnumHelper.GetEnumItems<PeriodoFiltro>();
+    }
+
+    private void OnPeriodoChanged(string selectedValue)
+    {
+        Periodo = PeriodosFiltroItems.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? Periodo;
+        StateHasChanged();
+    }
+
+    async Task OnOpen()
+    {
+        await _jsRuntime.InvokeVoidAsync("eval", "setTimeout(function(){ document.getElementById('search').focus(); }, 200)");
+    }
+
+    private async void Filtrar()
+    {
+        DadosGrafico = await pedidoService.GetPedidosPorBairroComPeriodo(Periodo);
+        SufixoTituloGrafico = DefineSufixoTituloGrafico();
+        StateHasChanged();
+    }
+
+    private string DefineSufixoTituloGrafico()
+    {
+        switch (Periodo)
+        {
+            case PeriodoFiltro.Hoje:
+                return "(Dia atual)";
+            case PeriodoFiltro.SemanaAtual:
+                return "(Semana atual)";
+            case PeriodoFiltro.MesAtual:
+                return "(Mês atual)";
+            case PeriodoFiltro.MesAnterior:
+                return "(Mês anterior)";
+            case PeriodoFiltro.AnoAtual:
+                return "(Ano atual)";
+            default:
+                return "(Dia atual)";
+        }
+    }
 }
