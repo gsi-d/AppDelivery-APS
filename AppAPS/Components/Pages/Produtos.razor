@@ -33,13 +33,10 @@
 }
 
 
-<FluentStack Style="position: fixed; bottom: 20px; left: 10px">
-    <FluentCombobox Position="SelectPosition.Above" TOption="string" Placeholder="Modo de visualização" ValueChanged="@(e => OnTipoUsuarioChanged(e))" Autofocus="true" Height="200px" Required>
-        @foreach (var item in TiposUsuario)
-        {
-            <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
-        }
-    </FluentCombobox>
+<TrocaVisualizacao PrimeiraDefinicao="false" bDesabilitaDialogTrocaVisu="@bDesabilitaDialogTrocaVisu" />
+
+<FluentStack Style="position: fixed; bottom: 20px; left: 10px;" Width="20%">
+    <FluentButton BackgroundColor="purple" Color="white" OnClick="() => bDesabilitaDialogTrocaVisu = false">Altera Modo Visualização</FluentButton>
 </FluentStack>
 
 
@@ -48,6 +45,7 @@
     [Inject] private IProdutoService ProdutoService { get; set; }
     public IEnumerable<Produto> SelectedItems = new List<Produto>();
     public IQueryable<Produto>? produtos;
+    public bool bDesabilitaDialogTrocaVisu { get; set; } = true;
 
     protected async override Task OnInitializedAsync()
     {

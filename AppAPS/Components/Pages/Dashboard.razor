@@ -2,33 +2,35 @@
 
 <PageTitle>Dashboards</PageTitle>
 
-<FluentStack Style="gap: 15px; display: flex; flex-wrap: wrap; margin-bottom: 30px">
-    <IndicadorPedidosHoje QtdPedidosDiaAtual="@QtdPedidosDiaAtual" QtdPedidosDiaAnterior="@QtdPedidosDiaAnterior" />
-    <IndicadorVendasHoje VendasDiaAtual="@VendasDiaAtual" VendasDiaAnterior="@VendasDiaAnterior" />
-    @{
-        if (TotalPedidosStatusConfirmado > 0)
-        {
-            <PedidosPorStatus Status="StatusPedido.Confirmado" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusConfirmado" />
+<FluentStack HorizontalAlignment="HorizontalAlignment.Center">
+    <FluentStack Style="gap: 15px; display: flex; flex-wrap: wrap; margin-bottom: 30px;" Height="90%">
+        <IndicadorPedidosHoje QtdPedidosDiaAtual="@QtdPedidosDiaAtual" QtdPedidosDiaAnterior="@QtdPedidosDiaAnterior" />
+        <IndicadorVendasHoje VendasDiaAtual="@VendasDiaAtual" VendasDiaAnterior="@VendasDiaAnterior" />
+        @{
+            if (TotalPedidosStatusConfirmado > 0)
+            {
+                <PedidosPorStatus Status="StatusPedido.Confirmado" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusConfirmado" />
+            }
+            if (TotalPedidosStatusEmPreparo > 0)
+            {
+                <PedidosPorStatus Status="StatusPedido.EmPreparo" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusEmPreparo" />
+            }
+            if (TotalPedidosStatusProntoParaEntrega > 0)
+            {
+                <PedidosPorStatus Status="StatusPedido.ProntoParaEntrega" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusProntoParaEntrega" />
+            }
+            if (TotalPedidosStatusEmTransito > 0)
+            {
+                <PedidosPorStatus Status="StatusPedido.EmTransito" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusEmTransito" />
+            }
+            if (TotalPedidosStatusFinalizado > 0)
+            {
+                <PedidosPorStatus Status="StatusPedido.Finalizado" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusFinalizado" />
+            }
         }
-        if (TotalPedidosStatusEmPreparo > 0)
-        {
-            <PedidosPorStatus Status="StatusPedido.EmPreparo" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusEmPreparo" />
-        }
-        if (TotalPedidosStatusProntoParaEntrega > 0)
-        {
-            <PedidosPorStatus Status="StatusPedido.ProntoParaEntrega" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusProntoParaEntrega" />
-        }
-        if (TotalPedidosStatusEmTransito > 0)
-        {
-            <PedidosPorStatus Status="StatusPedido.EmTransito" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusEmTransito" />
-        }
-        if (TotalPedidosStatusFinalizado > 0)
-        {
-            <PedidosPorStatus Status="StatusPedido.Finalizado" TotalPedidosDiaAtual="@QtdPedidosDiaAtual" TotalPedidosStatus="@TotalPedidosStatusFinalizado" />
-        }
-    }
-    <PedidosPorBairro DadosGrafico="@DadosGrafico" />
-    <ComparativoBairros />
+        <PedidosPorBairro DadosGrafico="@DadosGrafico" />
+        <ComparativoBairros />
+    </FluentStack>
 </FluentStack>
 
 @code {
