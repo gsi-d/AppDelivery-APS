@@ -67,8 +67,10 @@
                                     </FluentStack>
 
                                     <FluentStack Style="display:flex; flex-direction: column; gap: 1; max-width: 15vw;">
-                                        <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">@pedido.Rua</FluentLabel>
-                                        <FluentLabel Typo="Typography.Body" Class="fluent-label-nome">
+                                        <FluentLabel Id="rua" Typo="Typography.Subject" Class="fluent-label-nome">
+                                            @pedido.Rua
+                                        </FluentLabel>
+                                        <FluentLabel Typo="Typography.H3" Class="fluent-label-nome">
                                             @EnumHelper.GetEnumDescription(pedido.Bairro)
                                         </FluentLabel>
                                         <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">

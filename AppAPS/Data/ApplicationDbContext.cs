@@ -1,11 +1,16 @@
 using AppAPS.Entities;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppAPS.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+    public class ApplicationDbContext : DbContext
     {
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
+        {
+        }
+
         public DbSet<Produto> Produto { get; set; }
         public DbSet<FichaTecnica> FichaTecnica { get; set; }
         public DbSet<Pedido> Pedido { get; set; }
