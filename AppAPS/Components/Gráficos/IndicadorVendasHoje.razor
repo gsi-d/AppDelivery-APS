@@ -2,10 +2,10 @@
 @using Radzen.Blazor
 @rendermode RenderMode.InteractiveServer
 
-<div class="rz-p-0 rz-p-md-0" style="width: 22%">
+<div class="rz-p-0 rz-p-md-0" style="width: 24%">
     <RadzenCard Variant="Variant.Filled" class="rz-my-0 rz-mx-auto rz-pt-2 rz-pl-1 rz-pb-1" Style="height: 20vh; width: 100%">
         <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
-            <FluentLabel Typo="Typography.H3">Comparação Ontem/Hoje</FluentLabel>
+            <FluentLabel Typo="Typography.H3">Comparação Vendas Ontem/Hoje</FluentLabel>
         </FluentStack>
         <RadzenStack Orientation="Radzen.Orientation.Horizontal" JustifyContent="Radzen.JustifyContent.Left" Gap="1rem" class="rz-p-4">
             <FluentStack Width="50%" VerticalAlignment="VerticalAlignment.Center" Style="display: flex; flex-direction: row; height: 90%">
@@ -23,9 +23,9 @@
             </FluentStack>
             <RadzenStack Gap="0">
                 <FluentLabel Typo="Typography.Subject" class="rz-display-flex rz-mt-0 rz-my-0">TOTAL HOJE </FluentLabel>
-                <FluentLabel Typo="Typography.H2"><b>@VendasDiaAtual pedidos</b></FluentLabel>
+                <FluentLabel Typo="Typography.H2"><b>@VendasDiaAtual.ToString("C")</b></FluentLabel>
                 <FluentLabel Typo="Typography.Subject" class="rz-display-flex rz-mt-4 rz-mb-0">TOTAL ONTEM</FluentLabel>
-                <FluentLabel Typo="Typography.H2"><b>@VendasDiaAnterior pedidos</b></FluentLabel>
+                <FluentLabel Typo="Typography.H2"><b>@VendasDiaAnterior.ToString("C")</b></FluentLabel>
             </RadzenStack>
         </RadzenStack>
     </RadzenCard>
@@ -35,20 +35,20 @@
     [Parameter] public decimal VendasDiaAtual { get; set; }
     [Parameter] public decimal VendasDiaAnterior { get; set; }
     public ProgressBarStyle StyleProgressBar { get; set; }
-    public decimal PorcentagemComparacao { get; set; }
+    public double PorcentagemComparacao { get; set; }
     public decimal DiferenciaVendasPorDia { get; set; }
 
     protected async override Task OnInitializedAsync()
     {
         if (VendasDiaAnterior != 0)
         {
-            PorcentagemComparacao = ((VendasDiaAtual - VendasDiaAnterior) / VendasDiaAnterior) * 100;
+            PorcentagemComparacao = (double)((VendasDiaAtual - VendasDiaAnterior) / VendasDiaAnterior) * 100;
             PorcentagemComparacao = PorcentagemComparacao < 0 ? -PorcentagemComparacao : PorcentagemComparacao;
             PorcentagemComparacao = Math.Round(PorcentagemComparacao, 2);
         }
         else
         {
-            PorcentagemComparacao = VendasDiaAtual * 100;
+            PorcentagemComparacao = (double)VendasDiaAtual * 100;
             PorcentagemComparacao = Math.Round(PorcentagemComparacao, 2);
         }
         DiferenciaVendasPorDia = VendasDiaAtual - VendasDiaAnterior;
