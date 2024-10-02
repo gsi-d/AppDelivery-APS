@@ -130,6 +130,18 @@ namespace AppAPS.Services
             return qtdPedidos;
         }
 
+        public async Task<decimal> GetTotalVendasDiaAtual()
+        {
+            decimal qtdPedidos = await _context.Pedido.Where(pedido => pedido.DataAbertura.Date == DateTime.Today ).AsNoTracking().SumAsync(pedido => pedido.Valor);
+            return qtdPedidos;
+        }
+
+        public async Task<decimal> GetTotalVendasDiaAnterior()
+        {
+            decimal qtdPedidos = await _context.Pedido.Where(pedido => pedido.DataAbertura.Date == DateTime.Today.AddDays(-1)).AsNoTracking().SumAsync(pedido => pedido.Valor);
+            return qtdPedidos;
+        }
+
         public void DefinePeriodoFiltragem(PeriodoFiltro periodo)
         {
             DateTime dataAtual = DateTime.Now;
