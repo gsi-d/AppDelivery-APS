@@ -5,7 +5,7 @@
 <div class="rz-p-0 rz-p-md-0" style="width: 22%">
     <RadzenCard Variant="Variant.Filled" class="rz-my-0 rz-mx-auto rz-pt-2 rz-pl-1 rz-pb-1" Style="height: 20vh; width: 100%">
         <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
-            <FluentLabel Typo="Typography.H3">Comparação Ontem/Hoje</FluentLabel>
+            <FluentLabel Typo="Typography.H3">Comparação Pedidos Ontem/Hoje</FluentLabel>
         </FluentStack>
         <RadzenStack Orientation="Radzen.Orientation.Horizontal" JustifyContent="Radzen.JustifyContent.Left" Gap="1rem" class="rz-p-4">
             <FluentStack Width="50%" VerticalAlignment="VerticalAlignment.Center" Style="display: flex; flex-direction: row; height: 90%">
@@ -42,9 +42,10 @@
     {
         if (QtdPedidosDiaAnterior != 0)
         {
-            PorcentagemComparacao = ((QtdPedidosDiaAtual - QtdPedidosDiaAnterior) / QtdPedidosDiaAnterior) * 100;
+            PorcentagemComparacao = (double)(QtdPedidosDiaAtual - QtdPedidosDiaAnterior) / QtdPedidosDiaAnterior * 100;
             PorcentagemComparacao = PorcentagemComparacao < 0 ? -PorcentagemComparacao : PorcentagemComparacao;
             PorcentagemComparacao = Math.Round(PorcentagemComparacao, 2);
+            StateHasChanged();
         }
         else
         {
