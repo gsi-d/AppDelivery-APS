@@ -3,7 +3,8 @@
 <PageTitle>Dashboards</PageTitle>
 
 <FluentStack Style="gap: 15px; display: flex; flex-wrap: wrap; margin-bottom: 30px">
-    <PedidosVendidosHoje QtdPedidosDiaAtual="@QtdPedidosDiaAtual" QtdPedidosDiaAnterior="@QtdPedidosDiaAnterior" />
+    <IndicadorPedidosHoje QtdPedidosDiaAtual="@QtdPedidosDiaAtual" QtdPedidosDiaAnterior="@QtdPedidosDiaAnterior" />
+    <IndicadorVendasHoje VendasDiaAtual="@VendasDiaAtual" VendasDiaAnterior="@VendasDiaAnterior" />
     @{
         if (TotalPedidosStatusConfirmado > 0)
         {
@@ -42,6 +43,9 @@
     public int TotalPedidosStatusEmTransito { get; set; }
     public int TotalPedidosStatusFinalizado { get; set; }
 
+    public decimal VendasDiaAtual { get; set; }
+    public decimal VendasDiaAnterior { get; set; }
+
     protected async override Task OnInitializedAsync()
     {
         DadosGrafico = await pedidoService.GetPedidosPorBairroComPeriodo(PeriodoFiltro.Hoje);
@@ -52,5 +56,7 @@
         TotalPedidosStatusProntoParaEntrega = await pedidoService.GetQtdPedidosDiaAtualPorStatus(StatusPedido.ProntoParaEntrega);
         TotalPedidosStatusEmTransito = await pedidoService.GetQtdPedidosDiaAtualPorStatus(StatusPedido.EmTransito);
         TotalPedidosStatusFinalizado = await pedidoService.GetQtdPedidosDiaAtualPorStatus(StatusPedido.Finalizado);
+        VendasDiaAtual = await pedidoService.GetTotalVendasDiaAtual();
+        VendasDiaAnterior = await pedidoService.GetTotalVendasDiaAnterior();
     }
 }

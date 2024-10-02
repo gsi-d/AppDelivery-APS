@@ -18,6 +18,8 @@ namespace AppAPS.Interfaces
         Task<int> GetQtdPedidosDiaAtual();
         Task<int> GetQtdPedidosDiaAtualPorStatus(StatusPedido status);
         Task<int> GetQtdPedidosDiaAnterior();
+        Task<decimal> GetTotalVendasDiaAtual();
+        Task<decimal> GetTotalVendasDiaAnterior();
         Task<List<ItemGrafico>> GetComparativoPedidosPorBairroMesAnterior(Bairro bairro);
     }
 }
