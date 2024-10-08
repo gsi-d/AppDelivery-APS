@@ -18,7 +18,7 @@ namespace AppAPS.Entities
         [Required(ErrorMessage = "Forma de entrega é obrigatória.")]
         public FormaEntrega FormaEntrega { get; set; }
         public StatusPedido Status { get; set; }
-        public string? Observacoes { get; set; }
+        public string? Complemento { get; set; }
         public DateTime DataAbertura { get; set; }
         public DateTime DataUltimaAtualizacao { get; set; }
         public DateTime? DataFinalizacao { get; set; }

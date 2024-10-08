@@ -44,14 +44,22 @@ namespace AppAPS.Services
 
         public async Task<Pedido> GetByIdPedidos(int id)
         {
-            return await _context.Pedido.Include(Pedido => Pedido).FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Pedido.Include(Pedido => Pedido.Itens).ThenInclude(item => item.Produto).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<Pedido> InserirPedido(Pedido Pedido)
         {
-            var entityEntry = await _context.Pedido.AddAsync(Pedido);
-            Save();
-            return entityEntry.Entity;
+            try
+            {
+                var entityEntry = await _context.Pedido.AddAsync(Pedido);
+                Save();
+                return entityEntry.Entity;
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<Pedido> AlterarPedido(Pedido Pedido)
@@ -132,7 +140,7 @@ namespace AppAPS.Services
 
         public async Task<decimal> GetTotalVendasDiaAtual()
         {
-            decimal qtdPedidos = await _context.Pedido.Where(pedido => pedido.DataAbertura.Date == DateTime.Today ).AsNoTracking().SumAsync(pedido => pedido.Valor);
+            decimal qtdPedidos = await _context.Pedido.Where(pedido => pedido.DataAbertura.Date == DateTime.Today).AsNoTracking().SumAsync(pedido => pedido.Valor);
             return qtdPedidos;
         }
 

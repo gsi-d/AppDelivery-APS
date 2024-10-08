@@ -8,5 +8,6 @@
         public int ProdutoId { get; set; }
         public virtual Produto Produto { get; set; }
         public int Quantidade { get; set; }
+        public string? Observacoes { get; set; }
     }
 }
