@@ -1,0 +1,134 @@
+﻿@rendermode RenderMode.InteractiveServer
+
+<style>
+    .fluent-dialog-main {
+        --dialog-width: 80% !important;
+        --dialog-height: 80vh !important; /* Ajuste conforme necessário */
+    }
+</style>
+
+<FluentDialog Hidden="@bDesabilitaDialogTrocaVisu" PreventScroll="true">
+    <FluentDialogHeader>
+        <FluentStack Orientation="Orientation.Horizontal">
+            <FluentIcon Value="@(new Icons.Regular.Size48.TextBulletListSquare())" Color="@Color.Accent" />
+            <FluentLabel Typo="Typography.H1">@DefineTituloPopup()</FluentLabel>
+            </FluentStack>
+        </FluentDialogHeader>
+        <FluentDialogBody Style="max-height: 80vh; overflow: auto;">
+            @{
+            if (Itens != null && Itens.Any())
+            {
+                foreach (ProdutoItemDTO produtoItem in Itens)
+                {
+                    <FluentStack Style="display:flex; flex-direction: column;">
+                        <FluentStack Width="100%" Style="height 15vh; ">
+                            <FluentCard Style="padding: 0;" Width="40%" Height="100%">
+                                <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 20vh; width: 100%" />
+                            </FluentCard>
+                            <FluentStack Style="display:flex; flex-direction: column" Width="100%">
+                                <FluentStack Style="justify-content: space-between">
+                                    <FluentLabel Typo="Typography.H1" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
+                                    </FluentStack>
+                                    <FluentStack Style="display:flex; flex-direction: column" Width="90%">
+                                        <FluentLabel Typo="Typography.Subject" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
+                                        <FluentStack>
+                                            <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
+                                                <FluentLabel Typo="Typography.H3">Qtd:</FluentLabel>
+                                                <FluentLabel Typo="Typography.H3">@produtoItem.Quantidade</FluentLabel>
+                                                <FluentLabel Typo="Typography.H3">x</FluentLabel>
+                                                <FluentLabel Typo="Typography.H3" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
+                                            </FluentStack>
+                                            <FluentStack Style="margin-top: 3px" HorizontalAlignment="HorizontalAlignment.Right">
+                                                <FluentLabel Typo="Typography.H3">Total item:</FluentLabel>
+                                                <FluentLabel Typo="Typography.H3">R$ @produtoItem.ValorTotal</FluentLabel>
+                                            </FluentStack>
+                                        </FluentStack>
+                                        <FluentLabel Typo="Typography.Subject">Observações: @produtoItem.Observacoes</FluentLabel>
+                                    </FluentStack>
+                                </FluentStack>
+
+                            </FluentStack>
+                            <FluentDivider Style="background-color: black; width: 100%; height: 1.5px; margin-bottom: 5px" />
+                        </FluentStack>
+                }
+            }
+        }
+    </FluentDialogBody>
+    <FluentDialogFooter Style="justify-content: space-between">
+        <FluentStack Style="display: flex; flex-direction: column">
+            @{
+                if (Pedido.TaxaEntrega > 0)
+                {
+                    <FluentLabel Typo="Typography.Subject">Taxa de entrega: @Pedido.TaxaEntrega.ToString("C")</FluentLabel>
+                }
+            }
+            <FluentLabel Typo="Typography.H2">Valor total: @TotalPedido.ToString("C")</FluentLabel>
+            </FluentStack>
+            <FluentButton Style="border-width: 0px; pointer-events: visible" Appearance="Appearance.Accent" tabindex="2" Color="white" OnClick="ConfirmaTrocaModoVisualizacao">FECHAR</FluentButton>
+        </FluentDialogFooter>
+    </FluentDialog>
+
+    @code {
+    [Inject] private IPedidoService pedidoService { get; set; }
+    [Parameter] public bool bDesabilitaDialogTrocaVisu { get; set; } = true;
+    [Parameter] public int IdPedido { get; set; }
+    public Pedido Pedido { get; set; }
+    public List<ProdutoItemDTO> Itens { get; set; } = new List<ProdutoItemDTO>();
+
+    private List<EnumItem<TipoUsuario>> TiposUsuario = new List<EnumItem<TipoUsuario>>();
+    private TipoUsuario tipoUsuario;
+    public string CPF { get; set; }
+    public decimal TotalPedido { get; set; }
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        parameters.SetParameterProperties(this);
+
+        if (IdPedido > 0)
+        {
+            Pedido = await pedidoService.GetByIdPedidos(IdPedido);
+
+            foreach (PedidoItem produtoItem in Pedido.Itens)
+            {
+                Itens.Add(new ProdutoItemDTO
+                    {
+                        Id = produtoItem.Produto.Id,
+                        Nome = produtoItem.Produto.Nome,
+                        Descricao = produtoItem.Produto.Descricao,
+                        Preco = produtoItem.Produto.Preco,
+                        Bebida = produtoItem.Produto.Bebida,
+                        NomeArquivoUpload = produtoItem.Produto.NomeArquivoUpload,
+                        Quantidade = produtoItem.Quantidade,
+                        Selecionado = false,
+                        ValorTotal = produtoItem.Quantidade * produtoItem.Produto.Preco,
+                        Observacoes = produtoItem.Observacoes
+                    });
+            }
+
+            AtualizaTotal();
+            StateHasChanged();
+        }
+    }
+
+    private async void ConfirmaTrocaModoVisualizacao()
+    {
+        bDesabilitaDialogTrocaVisu = true;
+    }
+
+    private void AtualizaTotal()
+    {
+        TotalPedido = 0;
+        Itens.ToList().ForEach(item => item.ValorTotal = item.Quantidade * item.Preco);
+        Itens.ToList().ForEach(item => TotalPedido += item.ValorTotal);
+        TotalPedido += Pedido.TaxaEntrega;
+    }
+
+
+    private string DefineTituloPopup()
+    {
+        if (Pedido != null)
+            return $"Pedido: {Pedido.Id}";
+        else
+            return $"Pedido: ";
+    }
+}

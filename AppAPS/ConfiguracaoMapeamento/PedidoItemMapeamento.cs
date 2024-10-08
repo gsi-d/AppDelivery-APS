@@ -33,6 +33,11 @@ namespace AppAPS.ConfiguracaoMapeamento
             builder.Property(p => p.Quantidade)
                 .IsRequired()
                 .HasColumnType("int"); // Define o tipo da coluna como int
+
+            // Observações - Opcional
+            builder.Property(p => p.Observacoes)
+                .HasColumnType("varchar(500)") // Define como varchar com 500 caracteres
+                .HasMaxLength(500);
         }
     }
 }

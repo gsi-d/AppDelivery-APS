@@ -1,0 +1,65 @@
+﻿@using Radzen
+@using Radzen.Blazor
+@rendermode RenderMode.InteractiveServer
+
+<div class="rz-p-0 rz-p-md-0" style="width: 22%">
+    <RadzenCard Variant="Variant.Filled" class="rz-my-0 rz-mx-auto rz-pt-2 rz-pl-1 rz-pb-1" Style="height: 20vh; width: 100%">
+        <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
+            <FluentLabel Typo="Typography.H3">Comparação Pedidos Ontem/Hoje</FluentLabel>
+        </FluentStack>
+        <RadzenStack Orientation="Radzen.Orientation.Horizontal" JustifyContent="Radzen.JustifyContent.Left" Gap="1rem" class="rz-p-4">
+            <FluentStack Width="50%" VerticalAlignment="VerticalAlignment.Center" Style="display: flex; flex-direction: row; height: 90%">
+                @{
+                    if (DiferenciaDias > 0)
+                    {
+                        <FluentIcon Width="20%" Color="Color.Success" Value="@(new Icons.Regular.Size20.ArrowTrendingLines())" />
+                    }
+                    else
+                    {
+                        <FluentIcon Width="20%" Color="Color.Error" Value="@(new Icons.Regular.Size20.ArrowTrendingDown())" />
+                    }
+                }
+                <RadzenProgressBarCircular Size="ProgressBarCircularSize.Large" ProgressBarStyle="@StyleProgressBar" @bind-Value="@PorcentagemComparacao" />
+            </FluentStack>
+            <RadzenStack Gap="0">
+                <FluentLabel Typo="Typography.Subject" class="rz-display-flex rz-mt-0 rz-my-0">TOTAL HOJE </FluentLabel>
+                <FluentLabel Typo="Typography.H2"><b>@QtdPedidosDiaAtual pedidos</b></FluentLabel>
+                <FluentLabel Typo="Typography.Subject" class="rz-display-flex rz-mt-4 rz-mb-0">TOTAL ONTEM</FluentLabel>
+                <FluentLabel Typo="Typography.H2"><b>@QtdPedidosDiaAnterior pedidos</b></FluentLabel>
+            </RadzenStack>
+        </RadzenStack>
+    </RadzenCard>
+</div>
+
+@code {
+    [Parameter] public int QtdPedidosDiaAtual { get; set; }
+    [Parameter] public int QtdPedidosDiaAnterior { get; set; }
+    public ProgressBarStyle StyleProgressBar { get; set; }
+    public double PorcentagemComparacao { get; set; }
+    public double DiferenciaDias { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (QtdPedidosDiaAnterior != 0)
+        {
+            PorcentagemComparacao = (double)(QtdPedidosDiaAtual - QtdPedidosDiaAnterior) / QtdPedidosDiaAnterior * 100;
+            PorcentagemComparacao = PorcentagemComparacao < 0 ? -PorcentagemComparacao : PorcentagemComparacao;
+            PorcentagemComparacao = Math.Round(PorcentagemComparacao, 2);
+            StateHasChanged();
+        }
+        else
+        {
+            PorcentagemComparacao = QtdPedidosDiaAtual * 100;
+            PorcentagemComparacao = Math.Round(PorcentagemComparacao, 2);
+        }
+        DiferenciaDias = QtdPedidosDiaAtual - QtdPedidosDiaAnterior;
+        if (DiferenciaDias < 0)
+        {
+            StyleProgressBar = ProgressBarStyle.Danger;
+        }
+        else
+        {
+            StyleProgressBar = ProgressBarStyle.Success;
+        }
+    }
+}

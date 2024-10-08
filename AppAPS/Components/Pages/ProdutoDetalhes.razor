@@ -23,29 +23,29 @@
 
 
 <FluentStack Style="display: flex; align-items: center; justify-content: center">
-    <FluentCard Width="100%" Height="90%">
+    <FluentCard Width="80%" Height="90%">
         @{
             if (Produto is not null)
             {
                 <FluentStack>
                     <FluentStack>
                         <FluentCard Style="padding: 0;" Width="100%" Height="100%">
-                            <img src="@Produto.NomeArquivoUpload" style="object-fit: cover; height: 60vh; width: 100%" />
+                            <img src="@Produto.NomeArquivoUpload" style="object-fit: cover; height: 70vh; width: 100%" />
                         </FluentCard>
                     </FluentStack>
-                    <FluentStack Style="@* background-color: green *@; display: flex; flex-direction: column; padding: 10px">
+                    <FluentStack Style="display: flex; flex-direction: column; padding: 10px">
                         <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
-                            <FluentLabel Typo="Typography.H2">@Produto.Nome</FluentLabel>
-                        </FluentStack>
-                        <FluentLabel Typo="Typography.Subject">@Produto.Descricao</FluentLabel>
-                        <FluentDivider />
-                        <FluentStack>
-                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Quantidade:</FluentLabel>
-                            <FluentNumberField @bind-Value="@Numero" Size="1" Min="0"></FluentNumberField>
-                            <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Appearance="Appearance.Accent"></FluentButton>
+                            <FluentLabel Typo="Typography.H1">@Produto.Nome</FluentLabel>
+                            </FluentStack>
+                            <FluentStack Style="display: flex; flex-direction: column">
+                                <FluentLabel Style="font-size: 25px" Typo="Typography.Subject">@Produto.Descricao</FluentLabel>
+                                @* Precisa ser substituída pela listagem de ingredientes da ficha *@
+                                <Produtos />
+                            </FluentStack>
+                            <FluentDivider />
+
                         </FluentStack>
                     </FluentStack>
-                </FluentStack>
             }
             else
             {
@@ -56,18 +56,10 @@
 </FluentStack>
 
 
-@* Precisa ser substituída pela listagem de fichas técnicas *@
-<FluentCard Style="margin-top: 20px">
-    <Produtos />
-</FluentCard>
+<TrocaVisualizacao PrimeiraDefinicao="false" bDesabilitaDialogTrocaVisu="@bDesabilitaDialogTrocaVisu" />
 
-<FluentStack Style="position: fixed; bottom: 20px; left: 10px">
-    <FluentCombobox Position="SelectPosition.Above" TOption="string" Placeholder="Modo de visualização" ValueChanged="@(e => OnTipoUsuarioChanged(e))" Autofocus="true" Height="200px" Required>
-        @foreach (var item in TiposUsuario)
-        {
-            <FluentOption Value="@(EnumHelper.GetEnumDescription(item.Value))">@item.Description</FluentOption>
-        }
-    </FluentCombobox>
+<FluentStack Style="position: fixed; bottom: 20px; left: 10px;" Width="20%">
+    <FluentButton BackgroundColor="purple" Color="white" OnClick="() => bDesabilitaDialogTrocaVisu = false">Altera Modo Visualização</FluentButton>
 </FluentStack>
 
 @code {
@@ -79,6 +71,7 @@
     public Produto? Produto;
     public decimal Numero { get; set; }
     public int IdProduto { get; set; }
+    public bool bDesabilitaDialogTrocaVisu { get; set; } = true;
 
     protected async override Task OnInitializedAsync()
     {

@@ -41,15 +41,15 @@
                                     <FluentCard Style="padding: 0;" Width="100%" Height="60%">
                                         <img src="@produtoItem.NomeArquivoUpload" style="object-fit: cover; height: 30vh; width: 100%" />
                                     </FluentCard>
-                                    <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
-                                    <FluentLabel Typo="Typography.Body" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
+                                    <FluentLabel Typo="Typography.H1" Class="fluent-label-nome">@produtoItem.Nome</FluentLabel>
+                                    <FluentLabel Typo="Typography.Subject" Class="fluent-label">@produtoItem.Descricao</FluentLabel>
                                     <FluentStack Style="padding-top: 10px" VerticalAlignment="VerticalAlignment.Bottom">
                                         <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
-                                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
+                                            <FluentLabel Typo="Typography.H3" Style="margin-top: 3px">Qtd:</FluentLabel>
                                             <FluentNumberField @bind-Value="@produtoItem.Quantidade" Size="1" Min="0"></FluentNumberField>
                                             <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Disabled="@DesabilitaBotaoCarrinho(produtoItem)" Appearance="Appearance.Accent" OnClick="() => AdicionaItemAoCarrinho(produtoItem)">
                                             </FluentButton>
-                                            <FluentLabel Typo="Typography.H3" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
+                                            <FluentLabel Typo="Typography.H2" Style="color: limegreen">R$ @produtoItem.Preco</FluentLabel>
                                         </FluentStack>
                                     </FluentStack>
                                     <FluentStack>
@@ -95,15 +95,15 @@
                                     <FluentCard Style="padding: 0;" Width="100%" Height="60%">
                                         <img src="@bebidaItem.NomeArquivoUpload" style="object-fit: cover; height: 30vh; width: 100%" />
                                     </FluentCard>
-                                    <FluentLabel Typo="Typography.H2" Class="fluent-label-nome">@bebidaItem.Nome</FluentLabel>
-                                    <FluentLabel Typo="Typography.Body" Class="fluent-label">@bebidaItem.Descricao</FluentLabel>
+                                    <FluentLabel Typo="Typography.H1" Class="fluent-label-nome">@bebidaItem.Nome</FluentLabel>
+                                    <FluentLabel Typo="Typography.Subject" Class="fluent-label">@bebidaItem.Descricao</FluentLabel>
                                     <FluentStack Style="padding-top: 10px" VerticalAlignment="VerticalAlignment.Bottom">
                                         <FluentStack HorizontalAlignment="HorizontalAlignment.Left">
-                                            <FluentLabel Typo="Typography.H5" Style="margin-top: 3px">Qtd:</FluentLabel>
+                                            <FluentLabel Typo="Typography.H3" Style="margin-top: 3px">Qtd:</FluentLabel>
                                             <FluentNumberField @bind-Value="@bebidaItem.Quantidade" Size="1" Min="0"></FluentNumberField>
                                             <FluentButton IconStart="@(new Icons.Regular.Size20.Cart())" Disabled="@DesabilitaBotaoCarrinho(bebidaItem)" Appearance="Appearance.Accent" OnClick="() => AdicionaItemAoCarrinho(bebidaItem)">
                                             </FluentButton>
-                                            <FluentLabel Typo="Typography.H3" Style="color: limegreen">R$ @bebidaItem.Preco</FluentLabel>
+                                            <FluentLabel Typo="Typography.H2" Style="color: limegreen">R$ @bebidaItem.Preco</FluentLabel>
                                         </FluentStack>
                                     </FluentStack>
                                     <FluentStack>
