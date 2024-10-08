@@ -54,11 +54,11 @@
                                             @pedido.Id
                                         </FluentLabel>
                                         <FluentLabel Typo="Typography.H3" Class="fluent-label-nome">@pedido.Cliente</FluentLabel>
-                                        <FluentButton Color="white" BackgroundColor="@DefineCorStatus(pedido.Status)"
-                                                      Stye="pointer-events: none;">
-                                            <FluentLabel Color="Color.Lightweight" Typo="Typography.Subject"
-                                                         Class="fluent-label-nome">
-                                                @EnumHelper.GetEnumDescription(pedido.Status)
+                                            <FluentButton Color="white" BackgroundColor="@DefineCorStatus(pedido.Status)"
+                                                          Stye="pointer-events: none;">
+                                                <FluentLabel Color="Color.Lightweight" Typo="Typography.Subject"
+                                                             Class="fluent-label-nome">
+                                                    @EnumHelper.GetEnumDescription(pedido.Status)
                                             </FluentLabel>
                                         </FluentButton>
                                         <FluentLabel Typo="Typography.Body" Class="fluent-label">
@@ -79,6 +79,9 @@
                                         <FluentLabel Typo="Typography.Subject" Class="fluent-label-nome">
                                             @EnumHelper.GetEnumDescription(pedido.FormaPagamento)
                                         </FluentLabel>
+                                        <FluentButton IconStart="@(new Icons.Regular.Size20.TaskListLtr())" Appearance="Appearance.Accent" OnClick="async () => await AbrePopUpItens(pedido.Id)">
+                                        Itens
+                                        </FluentButton>
                                     </FluentStack>
                                     <SeletorStatus Pedido="pedido" AtualizaStatus="AtualizaStatus" tipoUsuario="TipoUsuario" />
                                 </FluentStack>
@@ -102,11 +105,14 @@
     </FluentCard>
 </FluentStack>
 
+<PopUpItensPedido IdPedido="@IdPedido" bDesabilitaDialogTrocaVisu="@bDesabilitaDialogTrocaVisu" />
+
 @code {
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     [Inject] private IPedidoService PedidoService { get; set; }
     public bool bDesabilitaDialogTrocaVisu { get; set; } = true;
     public List<Pedido> Pedidos = new();
+    public int IdPedido { get; set; }
     public List<ProdutoItemDTO> produtosItens = new();
     public decimal Numero { get; set; }
     public int IdProduto { get; set; }
@@ -171,7 +177,7 @@
         {
             case TipoUsuario.Restaurante:
                 Pedidos = await PedidoService.GetAllPedidosDiaAtual();
-                Pedidos = Pedidos.OrderBy(pedido => pedido.DataAbertura).ThenBy(pedido => pedido.Status).ToList();
+                Pedidos = Pedidos.OrderByDescending(pedido => pedido.DataAbertura).ThenByDescending(pedido => pedido.Status).ToList();
                 break;
             case TipoUsuario.Entregador:
                 Pedidos = await PedidoService.GetPedidosEntregadorDiaAtual();
@@ -181,15 +187,25 @@
                 if (cpf is not null)
                 {
                     Pedidos = await PedidoService.GetPedidosClienteDiaAtual(cpf);
-                    Pedidos = Pedidos.OrderBy(pedido => pedido.DataAbertura).ThenBy(pedido => pedido.Status).ToList();
+                    Pedidos = Pedidos.OrderByDescending(pedido => pedido.DataAbertura).ThenByDescending(pedido => pedido.Status).ToList();
                 }
                 else
                 {
                     Pedidos = await PedidoService.GetAllPedidosDiaAtual();
-                    Pedidos = Pedidos.OrderBy(pedido => pedido.DataAbertura).ThenBy(pedido => pedido.Status).ToList();
+                    Pedidos = Pedidos.OrderByDescending(pedido => pedido.DataAbertura).ThenByDescending(pedido => pedido.Status).ToList();
                 }
                 break;
         }
         StateHasChanged();
+    }
+
+    private async Task AbrePopUpItens(int idPedido)
+    {
+        await Task.Factory.StartNew(() =>
+        {
+            IdPedido = 0;
+            IdPedido = idPedido;
+            bDesabilitaDialogTrocaVisu = false;
+        });
     }
 }

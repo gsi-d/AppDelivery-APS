@@ -52,8 +52,8 @@ namespace AppAPS.ConfiguracaoMapeamento
             builder.Property(p => p.Status)
                 .HasColumnType("int"); // Define o enum como int
 
-            // Observações - Opcional
-            builder.Property(p => p.Observacoes)
+            // Complemento - Opcional
+            builder.Property(p => p.Complemento)
                 .HasColumnType("varchar(500)") // Define como varchar com 500 caracteres
                 .HasMaxLength(500);
 
