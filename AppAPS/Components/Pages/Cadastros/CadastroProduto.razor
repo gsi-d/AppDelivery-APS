@@ -38,22 +38,25 @@
         margin-bottom: 20px;
     }
 
-        .campo-formulario label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+    .campo-formulario label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
 
-        .campo-formulario input, .campo-formulario textarea {
-            width: 100%;
-            padding: 12px;
-            font-size: 1.1em;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
+    .campo-formulario input,
+    .campo-formulario textarea {
+        width: 100%;
+        padding: 12px;
+        font-size: 1.1em;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
 
-    fluent-text-field, fluent-text-area, fluent-number-field {
+    fluent-text-field,
+    fluent-text-area,
+    fluent-number-field {
         width: 100% !important;
     }
 
@@ -81,9 +84,9 @@
         margin-top: 30px;
     }
 
-        .botao-formulario:hover {
-            background-color: #005a9e;
-        }
+    .botao-formulario:hover {
+        background-color: #005a9e;
+    }
 
     .grupo-checkbox {
         gap: 15px;
@@ -104,21 +107,20 @@
         margin-bottom: 30px;
     }
 
-        .rodape-formulario a {
-            color: #0078d4;
-            font-size: 1.1em;
-            text-decoration: none;
-            padding: 10px 20px;
-            border: 2px solid #0078d4;
-            border-radius: 5px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
+    .rodape-formulario a {
+        color: #0078d4;
+        font-size: 1.1em;
+        text-decoration: none;
+        padding: 10px 20px;
+        border: 2px solid #0078d4;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
 
-            .rodape-formulario a:hover {
-                background-color: #0078d4;
-                color: white;
-            }
-
+    .rodape-formulario a:hover {
+        background-color: #0078d4;
+        color: white;
+    }
 </style>
 
 <PageTitle>Cadastro de Produtos</PageTitle>
@@ -126,25 +128,29 @@
 <div class="container-formulario">
     <div class="cartao-formulario">
         <h1 class="titulo-formulario">Cadastro de Produtos</h1>
-        <EditForm Model="@ProdutoModel" OnValidSubmit="@HandleValidSubmit" FormName="ProdutoModel_fluent_entry" novalidate>
+        <EditForm Model="@ProdutoModel" OnValidSubmit="@HandleValidSubmit" FormName="ProdutoModel_fluent_entry"
+            novalidate>
             <DataAnnotationsValidator />
             <FluentValidationSummary />
 
             <div class="campo-formulario">
                 <label for="Nome">Nome do Produto</label>
-                <FluentTextField Appearance="FluentInputAppearance.Filled" Id="Nome" @bind-Value="ProdutoModel.Nome" Required />
+                <FluentTextField Appearance="FluentInputAppearance.Filled" Id="Nome" @bind-Value="ProdutoModel.Nome"
+                    Required />
                 <FluentValidationMessage For="@(() => ProdutoModel.Nome)" />
             </div>
 
             <div class="campo-formulario">
                 <label for="Descricao">Descrição do Produto</label>
-                <FluentTextArea Appearance="FluentInputAppearance.Filled" Id="Descricao" Rows="4" @bind-Value="ProdutoModel.Descricao" Required />
+                <FluentTextArea Appearance="FluentInputAppearance.Filled" Id="Descricao" Rows="4"
+                    @bind-Value="ProdutoModel.Descricao" Required />
                 <FluentValidationMessage For="@(() => ProdutoModel.Descricao)" />
             </div>
 
             <div class="campo-formulario">
                 <label for="Preco">Preço</label>
-                <FluentNumberField Appearance="FluentInputAppearance.Filled" Id="Preco" Placeholder="R$" @bind-Value="ProdutoModel.Preco" HideStep="true" Required />
+                <FluentNumberField Appearance="FluentInputAppearance.Filled" Id="Preco" Placeholder="R$"
+                    @bind-Value="ProdutoModel.Preco" HideStep="true" Required />
                 <FluentValidationMessage For="@(() => ProdutoModel.Preco)" />
             </div>
 
@@ -166,6 +172,21 @@
     </div>
 </div>
 
+@* Ficha tecnica *@
+<FluentCard Height="Auto" Style="padding: 10px;">
+
+
+    <FluentDivider />
+
+    <FluentDataGrid Items="@ListaIngredientes" ShowHover="true" TGridItem="Ingredientes">
+        <SelectColumn TGridItem="Ingredientes" SelectMode="DataGridSelectMode.Multiple" SelectFromEntireRow="true"
+            @bind-SelectedItems="@SelectedItems" />
+
+        <PropertyColumn Width="300px" Property="@(p => EnumHelper.GetEnumDescription(p))" Title="Ingredientes" />
+
+    </FluentDataGrid>
+</FluentCard>
+
 @code {
     [Inject] private IProdutoService produtoService { get; set; }
     [Inject] private IUploadService uploadService { get; set; }
@@ -173,14 +194,21 @@
     [SupplyParameterFromForm]
     private Produto ProdutoModel { get; set; } = new();
     private List<EnumItem<TipoUsuario>> TiposUsuario = new List<EnumItem<TipoUsuario>>();
+    private IQueryable<Ingredientes> ListaIngredientes;
+    public IEnumerable<Ingredientes> SelectedItems = new List<Ingredientes>();
+    public IQueryable<Produto>? produtos;
 
     List<string> mensagens = new();
     public IBrowserFile Arquivo { get; set; }
     ArquivoUpload arquivoUpload = new();
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
         TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
+        var resultadoProdutos = await produtoService.GetAllProdutos();
+        produtos = resultadoProdutos.AsQueryable();
+
+        ListaIngredientes = Enum.GetValues(typeof(Ingredientes)).Cast<Ingredientes>().AsQueryable();
     }
 
     private void SelectFile(InputFileChangeEventArgs e)
@@ -195,7 +223,7 @@
             if (Arquivo != null)
             {
                 (int statusCode, string nomeArquivoMensagem) =
-                    await uploadService.ArquivoUploadAsync(Arquivo);
+                await uploadService.ArquivoUploadAsync(Arquivo);
                 if (statusCode == 1)
                 {
                     ProdutoModel.NomeArquivoUpload = nomeArquivoMensagem;
@@ -234,6 +262,7 @@
 
     private void OnTipoUsuarioChanged(string selectedValue)
     {
-        sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
+        sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ??
+        sessaoUsuario.TipoUsuario;
     }
 }
