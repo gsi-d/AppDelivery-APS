@@ -1,5 +1,6 @@
 ﻿@page "/carrinho/"
 @rendermode RenderMode.InteractiveServer
+@attribute [StreamRendering]
 
 <style>
     .fluent-label {
@@ -213,7 +214,9 @@
         </FluentDialogFooter>
     </FluentDialog>
 
-    @code {
+<Loading ExibeLoading="@sessaoUsuario._loading" />
+
+@code {
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     [Inject] private IProdutoService ProdutoService { get; set; }
     [Inject] private IPedidoService PedidoService { get; set; }
@@ -234,6 +237,7 @@
 
     protected async override Task OnInitializedAsync()
     {
+        sessaoUsuario.IniciaLoading();
         BairroItems = EnumHelper.GetEnumItems<Bairro>();
         FormaEntregaItems = EnumHelper.GetEnumItems<FormaEntrega>();
         FormaPagamentoItems = EnumHelper.GetEnumItems<FormaPagamento>();
@@ -241,6 +245,7 @@
         produtosItens.ToList().ForEach(item => TotalPedido += item.Quantidade * item.Preco);
         TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
         AtualizaTotal();
+        sessaoUsuario.FinalizaLoading();
     }
 
     private void OnQuantidadeChanged(int novaQuantidade, ProdutoItemDTO produtoItem)
@@ -295,22 +300,27 @@
 
         if (!result.Cancelled)
         {
+            sessaoUsuario.IniciaLoading();
             produtosItens.Remove(produtoItem); // Remove o item da listagem
             if (!produtosItens.Any())
             {
+                sessaoUsuario.FinalizaLoading();
                 ToastService.ShowSuccess("Seu carrinho não possui mais itens.");
                 _navigationManager.NavigateTo("/");
             }
             else
             {
+                sessaoUsuario.FinalizaLoading();
                 ToastService.ShowSuccess("Item excluído com sucesso.");
             }
+
         }
     }
 
 
     async Task OnFinishedAsync()
     {
+        sessaoUsuario.IniciaLoading();
         ValidationResult validationResult = await Validator.ValidateAsync(Pedido);
         if (validationResult.IsValid)
         {
@@ -330,10 +340,12 @@
             Pedido pedidoCriado = await PedidoService.InserirPedido(Pedido);
             if (pedidoCriado is null)
             {
+                sessaoUsuario.FinalizaLoading();
                 await DialogService.ShowErrorAsync("Revise as informações e tente novamente. Caso o erro continue, contate a equipe de suporte", "Erro ao salvar pedido.");
             }
             else
             {
+                sessaoUsuario.FinalizaLoading();
                 bDesabilitaDialogSucesso = false;
                 sessaoUsuario.ProdutosItem.Clear();
             }
@@ -345,7 +357,7 @@
             {
                 erros += $"{error.ErrorMessage}\n";
             }
-
+            sessaoUsuario.FinalizaLoading();
             await DialogService.ShowErrorAsync(erros, "Ops, tem algo errado com seu pedido.");
         }
     }

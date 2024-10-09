@@ -3,6 +3,7 @@
 @using AppAPS.Interfaces
 @using AppAPS.Services.Model
 @rendermode RenderMode.InteractiveServer
+@attribute [StreamRendering]
 
 <style>
     body {
@@ -187,6 +188,8 @@
     </FluentDataGrid>
 </FluentCard>
 
+<Loading ExibeLoading="@sessaoUsuario._loading" />
+
 @code {
     [Inject] private IProdutoService produtoService { get; set; }
     [Inject] private IUploadService uploadService { get; set; }
@@ -204,11 +207,12 @@
 
     protected async override Task OnInitializedAsync()
     {
+        sessaoUsuario.IniciaLoading();
         TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
         var resultadoProdutos = await produtoService.GetAllProdutos();
         produtos = resultadoProdutos.AsQueryable();
-
         ListaIngredientes = Enum.GetValues(typeof(Ingredientes)).Cast<Ingredientes>().AsQueryable();
+        sessaoUsuario.FinalizaLoading();
     }
 
     private void SelectFile(InputFileChangeEventArgs e)
@@ -218,6 +222,7 @@
 
     private async void HandleValidSubmit()
     {
+        sessaoUsuario.IniciaLoading();
         if (ProdutoModel != null)
         {
             if (Arquivo != null)
@@ -257,6 +262,8 @@
             ToastService.ShowError("Falha ao inserir produto.");
             await Task.Delay(3000);
         }
+
+        sessaoUsuario.FinalizaLoading();
     }
 
 

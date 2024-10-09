@@ -1,5 +1,6 @@
 ﻿@page "/acompanhamentoPedidos/"
 @rendermode RenderMode.InteractiveServer
+@attribute [StreamRendering]
 
 <style>
     .fluent-label {
@@ -106,6 +107,7 @@
 </FluentStack>
 
 <PopUpItensPedido IdPedido="@IdPedido" bDesabilitaDialogTrocaVisu="@bDesabilitaDialogTrocaVisu" />
+<Loading ExibeLoading="@sessaoUsuario._loading" />
 
 @code {
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
@@ -169,6 +171,7 @@
 
     private async Task DefineListagemPedidosPorTipoUsuario()
     {
+        sessaoUsuario.IniciaLoading();
         string? tipoUsuarioStorage = await _localStorage.GetItemAsync<string>("TipoUsuario");
         Enum.TryParse(tipoUsuarioStorage, out TipoUsuario tipoUsuario);
         TipoUsuario = tipoUsuario;
@@ -196,6 +199,7 @@
                 }
                 break;
         }
+        sessaoUsuario.FinalizaLoading();
         StateHasChanged();
     }
 

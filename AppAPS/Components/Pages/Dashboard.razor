@@ -1,4 +1,6 @@
 ﻿@page "/dashboard/"
+@rendermode RenderMode.InteractiveServer
+@attribute [StreamRendering]
 
 <PageTitle>Dashboards</PageTitle>
 
@@ -33,8 +35,11 @@
     </FluentStack>
 </FluentStack>
 
+<Loading ExibeLoading="@sessaoUsuario._loading" />
+
 @code {
     [Inject] public IPedidoService pedidoService { get; set; }
+    [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     public int QtdPedidosDiaAtual { get; set; }
     public int QtdPedidosDiaAnterior { get; set; }
     public List<ItemGrafico> DadosGrafico { get; set; } = new();
@@ -50,6 +55,7 @@
 
     protected async override Task OnInitializedAsync()
     {
+        sessaoUsuario.IniciaLoading();
         DadosGrafico = await pedidoService.GetPedidosPorBairroComPeriodo(PeriodoFiltro.Hoje);
         QtdPedidosDiaAtual = await pedidoService.GetQtdPedidosDiaAtual();
         QtdPedidosDiaAnterior = await pedidoService.GetQtdPedidosDiaAnterior();
@@ -60,5 +66,6 @@
         TotalPedidosStatusFinalizado = await pedidoService.GetQtdPedidosDiaAtualPorStatus(StatusPedido.Finalizado);
         VendasDiaAtual = await pedidoService.GetTotalVendasDiaAtual();
         VendasDiaAnterior = await pedidoService.GetTotalVendasDiaAnterior();
+        sessaoUsuario.FinalizaLoading();
     }
 }

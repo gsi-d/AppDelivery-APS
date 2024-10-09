@@ -1,5 +1,6 @@
 ﻿@page "/produtoDetalhes/{Id}"
 @rendermode RenderMode.InteractiveServer
+@attribute [StreamRendering]
 
 <style>
     .fluent-label {
@@ -62,6 +63,8 @@
     <FluentButton BackgroundColor="purple" Color="white" OnClick="() => bDesabilitaDialogTrocaVisu = false">Altera Modo Visualização</FluentButton>
 </FluentStack>
 
+<Loading ExibeLoading="@sessaoUsuario._loading" />
+
 @code {
     [Parameter] public string Id { get; set; }
     [Inject] private IProdutoService ProdutoService { get; set; }
@@ -75,9 +78,11 @@
 
     protected async override Task OnInitializedAsync()
     {
+        sessaoUsuario.IniciaLoading();
         TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
         IdProduto = Convert.ToInt32(Id);
         Produto = await ProdutoService.GetByIdProduto(IdProduto);
+        sessaoUsuario.FinalizaLoading();
     }
 
     private void OnTipoUsuarioChanged(string selectedValue)
