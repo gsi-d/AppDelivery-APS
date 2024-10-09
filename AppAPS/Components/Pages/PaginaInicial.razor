@@ -5,6 +5,7 @@
 @using AppAPS.Services.Model
 @using AutoMapper
 @rendermode RenderMode.InteractiveServer
+@attribute [StreamRendering]
 
 <style>
     .fluent-label {
@@ -152,6 +153,8 @@
     <FluentButton BackgroundColor="purple" Color="white" OnClick="() => bDesabilitaDialogTrocaVisu = false">Altera Modo Visualização</FluentButton>
 </FluentStack>
 
+<Loading ExibeLoading="@sessaoUsuario._loading" />
+
 @code {
     [Inject] private IProdutoService produtoService { get; set; }
     [Inject] private IMapper mapper { get; set; }
@@ -169,17 +172,19 @@
 
     protected async override Task OnInitializedAsync()
     {
+        sessaoUsuario.IniciaLoading();
         produtos = await produtoService.GetAllProdutos();
         var produtosMapeados = mapper.Map<List<ProdutoItemDTO>>(produtos).AsQueryable();
         produtosItem = produtosMapeados.Where(produto => !produto.Bebida);
         bebidasItem = produtosMapeados.Where(produto => produto.Bebida);
+        sessaoUsuario.FinalizaLoading();
     }
 
     protected async override Task OnAfterRenderAsync(bool firstrender)
     {
         string? tipoUsuarioStorage = await _localStorage.GetItemAsync<string>("TipoUsuario");
         string? cpf = await _localStorage.GetItemAsync<string>("CPF");
-        if(tipoUsuarioStorage is null && cpf is null)
+        if (tipoUsuarioStorage is null && cpf is null)
         {
             bDesabilitaDialogTrocaVisu = false;
             PrimeiraDefinicao = true;

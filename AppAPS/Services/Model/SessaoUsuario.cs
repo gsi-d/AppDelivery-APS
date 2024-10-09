@@ -7,6 +7,7 @@ namespace AppAPS.Services.Model
     {
         public int UsuarioId { get; set; }
         public string CpfCliente { get; set; }
+        public bool _loading { get; set; }
         public TipoUsuario TipoUsuario { get; set; }
         public List<Produto> Produtos { get; set; } = new List<Produto>();
         public List<ProdutoItemDTO> ProdutosItem { get; set; } = new List<ProdutoItemDTO>();
@@ -241,6 +242,16 @@ namespace AppAPS.Services.Model
             //        ValorTotal = 0m
             //    });
             //}
+        }
+
+        public void IniciaLoading()
+        {
+            this._loading = true;
+        }
+
+        public void FinalizaLoading()
+        {
+            this._loading = false;
         }
     }
 }

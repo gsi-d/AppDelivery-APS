@@ -1,0 +1,14 @@
+﻿@rendermode RenderMode.InteractiveServer
+
+@{
+    if (ExibeLoading)
+    {
+        <FluentStack Width="100%" Style="position: fixed; top: 0; left: 0; z-index: 99; height: 100vh; background-color: rgba(0, 0, 0, 0.2)" HorizontalAlignment="HorizontalAlignment.Center" VerticalAlignment="VerticalAlignment.Center">
+            <FluentProgressRing Width="10%" Style="z-index: 9999;" />
+        </FluentStack>
+    }
+}
+
+@code {
+    [Parameter] public bool ExibeLoading { get; set; } = false;
+}

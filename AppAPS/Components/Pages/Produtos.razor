@@ -1,5 +1,6 @@
 ﻿@page "/produtos"
 @rendermode InteractiveServer
+@attribute [StreamRendering]
 
 <PageTitle>Produtos</PageTitle>
 
@@ -39,6 +40,7 @@
     <FluentButton BackgroundColor="purple" Color="white" OnClick="() => bDesabilitaDialogTrocaVisu = false">Altera Modo Visualização</FluentButton>
 </FluentStack>
 
+<Loading ExibeLoading="@sessaoUsuario._loading" />
 
 @code {
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
