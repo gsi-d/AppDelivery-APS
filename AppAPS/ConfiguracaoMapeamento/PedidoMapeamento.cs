@@ -86,6 +86,68 @@ namespace AppAPS.ConfiguracaoMapeamento
                 .WithOne(i => i.Pedido)
                 .HasForeignKey(i => i.PedidoId)
                 .OnDelete(DeleteBehavior.Cascade); // Exclui os itens associados quando um pedido é excluído
+
+            builder.HasData(GeneratePedidos(600));
         }
+
+        private List<Pedido> GeneratePedidos(int totalPedidos)
+        {
+            var pedidos = new List<Pedido>();
+            var random = new Random();
+            var hoje = DateTime.Today;
+
+            for (int i = 1; i <= totalPedidos; i++)
+            {
+                var cliente = $"Cliente {i}";
+                var cpf = random.Next(100000000, 999999999).ToString("D11"); // CPF com 11 dígitos
+                var rua = $"Rua {i}";
+                var bairro = (Bairro)random.Next(1, 29); // Enum Bairro de 1 a 28
+                var formaPagamento = (FormaPagamento)random.Next(1, 5); // Enum FormaPagamento de 1 a 4
+                var formaEntrega = (FormaEntrega)random.Next(1, 3); // Enum FormaEntrega de 1 a 2
+                var statusPedido = random.NextDouble() > 0.8 ? (StatusPedido)random.Next(1, 4) : StatusPedido.Finalizado; // Enum StatusPedido
+
+                var complemento = random.NextDouble() > 0.5 ? $"Complemento {i}" : null;
+
+                DateTime dataAbertura;
+                if (i <= 30)
+                {
+                    // Gerar data para o mês atual (outubro)
+                    dataAbertura = hoje.AddDays(-random.Next(hoje.Day - 1));
+                }
+                else
+                {
+                    // Gerar data para o mês anterior (setembro)
+                    dataAbertura = new DateTime(2024, 9, 1).AddDays(random.Next(0, 29));
+                }
+
+                var dataUltimaAtualizacao = dataAbertura.AddDays(-random.Next(1, 11));
+                DateTime? dataFinalizacao = statusPedido == StatusPedido.Finalizado ? dataUltimaAtualizacao.AddDays(random.Next(1, 6)) : (DateTime?)null;
+
+                var valor = Convert.ToDecimal(Math.Round(random.NextDouble() * 500 + 10, 2)); // Valor entre 10 e 510
+                var taxaEntrega = Convert.ToDecimal(Math.Round(random.NextDouble() * 20 + 5, 2)); // Taxa entre 5 e 25
+
+                pedidos.Add(new Pedido
+                {
+                    Id = i, // Certifique-se de que o campo Id seja incluído
+                    Cliente = cliente,
+                    CPF = cpf,
+                    Rua = rua,
+                    Bairro = bairro, // Valor do enum Bairro
+                    FormaPagamento = formaPagamento, // Valor do enum FormaPagamento
+                    FormaEntrega = formaEntrega, // Valor do enum FormaEntrega
+                    Status = statusPedido, // Valor do enum StatusPedido
+                    Complemento = complemento,
+                    DataAbertura = dataAbertura,
+                    DataUltimaAtualizacao = dataUltimaAtualizacao,
+                    DataFinalizacao = dataFinalizacao,
+                    Valor = valor,
+                    TaxaEntrega = taxaEntrega
+                });
+            }
+
+            return pedidos;
+        }
+
+
     }
 }

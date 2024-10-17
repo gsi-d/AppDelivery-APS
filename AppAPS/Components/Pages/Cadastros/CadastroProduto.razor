@@ -174,32 +174,38 @@
 </div>
 
 @* Ficha tecnica *@
-<FluentCard Height="Auto" Style="padding: 10px;">
+ @if (ListaIngredientesFicha != null && ListaIngredientesFicha.Any())
+{
+    <FluentCard Height="Auto" Style="padding: 10px;">
+        <FluentDivider />
 
+        <FluentDataGrid id="defaultGrid" Items="@ListaIngredientesFicha.AsQueryable()" ShowHover="true" TGridItem="IngredienteFichaTecnica">
+            <SelectColumn TGridItem="Ingredientes" SelectMode="DataGridSelectMode.Multiple" SelectFromEntireRow="true"
+                          @bind-SelectedItems="@SelectedItems" />
 
-    <FluentDivider />
+            <PropertyColumn Width="300px" Property="@(p => EnumHelper.GetEnumDescription(p.Ingrediente))" Title="Ingredientes" />
 
-    <FluentDataGrid Items="@ListaIngredientes" ShowHover="true" TGridItem="Ingredientes">
-        <SelectColumn TGridItem="Ingredientes" SelectMode="DataGridSelectMode.Multiple" SelectFromEntireRow="true"
-            @bind-SelectedItems="@SelectedItems" />
+            <TemplateColumn Title="Quantidade">
+                <FluentNumberField @bind-Value="@context.Quantidade" TValue="int" />
+            </TemplateColumn>
 
-        <PropertyColumn Width="300px" Property="@(p => EnumHelper.GetEnumDescription(p))" Title="Ingredientes" />
+        </FluentDataGrid>
+    </FluentCard>
+}
 
-    </FluentDataGrid>
-</FluentCard>
 
 <Loading ExibeLoading="@sessaoUsuario._loading" />
 
-@code {
+ @code {
     [Inject] private IProdutoService produtoService { get; set; }
     [Inject] private IUploadService uploadService { get; set; }
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     [SupplyParameterFromForm]
     private Produto ProdutoModel { get; set; } = new();
     private List<EnumItem<TipoUsuario>> TiposUsuario = new List<EnumItem<TipoUsuario>>();
-    private IQueryable<Ingredientes> ListaIngredientes;
+    private List<IngredienteFichaTecnica> ListaIngredientesFicha = new();
+    private List<Ingredientes> ListaIngredientes = new();
     public IEnumerable<Ingredientes> SelectedItems = new List<Ingredientes>();
-    public IQueryable<Produto>? produtos;
 
     List<string> mensagens = new();
     public IBrowserFile Arquivo { get; set; }
@@ -209,9 +215,11 @@
     {
         sessaoUsuario.IniciaLoading();
         TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
-        var resultadoProdutos = await produtoService.GetAllProdutos();
-        produtos = resultadoProdutos.AsQueryable();
-        ListaIngredientes = Enum.GetValues(typeof(Ingredientes)).Cast<Ingredientes>().AsQueryable();
+        ListaIngredientes = Enum.GetValues(typeof(Ingredientes)).Cast<Ingredientes>().ToList();
+        foreach (var ingrediente in ListaIngredientes)
+        {
+            ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0 });
+        }
         sessaoUsuario.FinalizaLoading();
     }
 
