@@ -9,16 +9,13 @@ namespace AppAPS.Services
     public class ProdutoService : IProdutoService
     {
         private readonly ApplicationDbContext _context;
-        private readonly SessaoUsuario _sessaoUsuario;
-        public ProdutoService(ApplicationDbContext context, SessaoUsuario sessaoUsuario)
+        public ProdutoService(ApplicationDbContext context)
         {
             _context = context;
-            _sessaoUsuario = sessaoUsuario;
         }
 
         public async Task<List<Produto>> GetAllProdutos()
         {
-
             return await _context.Produto.Include(produto => produto.FichaTecnica).ToListAsync();
         }
 

@@ -191,16 +191,16 @@
 
 <Loading ExibeLoading="@sessaoUsuario._loading" />
 
-@code {
+ @code {
     [Inject] private IProdutoService produtoService { get; set; }
     [Inject] private IUploadService uploadService { get; set; }
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     [SupplyParameterFromForm]
     private Produto ProdutoModel { get; set; } = new();
     private List<EnumItem<TipoUsuario>> TiposUsuario = new List<EnumItem<TipoUsuario>>();
-    private IQueryable<Ingredientes> ListaIngredientes;
+    private List<IngredienteFichaTecnica> ListaIngredientesFicha = new();
+    private List<Ingredientes> ListaIngredientes = new();
     public IEnumerable<Ingredientes> SelectedItems = new List<Ingredientes>();
-    public IQueryable<Produto>? produtos;
 
     List<string> mensagens = new();
     public IBrowserFile Arquivo { get; set; }
@@ -210,9 +210,11 @@
     {
         sessaoUsuario.IniciaLoading();
         TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
-        var resultadoProdutos = await produtoService.GetAllProdutos();
-        produtos = resultadoProdutos.AsQueryable();
-        ListaIngredientes = Enum.GetValues(typeof(Ingredientes)).Cast<Ingredientes>().AsQueryable();
+        ListaIngredientes = Enum.GetValues(typeof(Ingredientes)).Cast<Ingredientes>().ToList();
+        foreach (var ingrediente in ListaIngredientes)
+        {
+            ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0 });
+        }
         sessaoUsuario.FinalizaLoading();
     }
 
