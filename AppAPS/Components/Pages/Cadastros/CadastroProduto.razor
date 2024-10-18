@@ -129,29 +129,25 @@
 <div class="container-formulario">
     <div class="cartao-formulario">
         <h1 class="titulo-formulario">Cadastro de Produtos</h1>
-        <EditForm Model="@ProdutoModel" OnValidSubmit="@HandleValidSubmit" FormName="ProdutoModel_fluent_entry"
-            novalidate>
+        <EditForm Model="@ProdutoModel" OnValidSubmit="@HandleValidSubmit" FormName="ProdutoModel_fluent_entry" novalidate>
             <DataAnnotationsValidator />
             <FluentValidationSummary />
 
             <div class="campo-formulario">
                 <label for="Nome">Nome do Produto</label>
-                <FluentTextField Appearance="FluentInputAppearance.Filled" Id="Nome" @bind-Value="ProdutoModel.Nome"
-                    Required />
+                <FluentTextField Appearance="FluentInputAppearance.Filled" Id="Nome" @bind-Value="ProdutoModel.Nome" Required />
                 <FluentValidationMessage For="@(() => ProdutoModel.Nome)" />
             </div>
 
             <div class="campo-formulario">
                 <label for="Descricao">Descrição do Produto</label>
-                <FluentTextArea Appearance="FluentInputAppearance.Filled" Id="Descricao" Rows="4"
-                    @bind-Value="ProdutoModel.Descricao" Required />
+                <FluentTextArea Appearance="FluentInputAppearance.Filled" Id="Descricao" Rows="4" @bind-Value="ProdutoModel.Descricao" Required />
                 <FluentValidationMessage For="@(() => ProdutoModel.Descricao)" />
             </div>
 
             <div class="campo-formulario">
                 <label for="Preco">Preço</label>
-                <FluentNumberField Appearance="FluentInputAppearance.Filled" Id="Preco" Placeholder="R$"
-                    @bind-Value="ProdutoModel.Preco" HideStep="true" Required />
+                <FluentNumberField Appearance="FluentInputAppearance.Filled" Id="Preco" Placeholder="R$" @bind-Value="ProdutoModel.Preco" HideStep="true" Required />
                 <FluentValidationMessage For="@(() => ProdutoModel.Preco)" />
             </div>
 
@@ -173,18 +169,23 @@
     </div>
 </div>
 
-@* Ficha tecnica *@
 <FluentCard Height="Auto" Style="padding: 10px;">
-
-
     <FluentDivider />
 
-    <FluentDataGrid Items="@ListaIngredientes" ShowHover="true" TGridItem="Ingredientes">
-        <SelectColumn TGridItem="Ingredientes" SelectMode="DataGridSelectMode.Multiple" SelectFromEntireRow="true"
-            @bind-SelectedItems="@SelectedItems" />
+    <FluentDataGrid Items="@ListaIngredientes" ShowHover="true" TGridItem="Ingredientes" Editable="true">
+        <SelectColumn TGridItem="Ingredientes" SelectMode="DataGridSelectMode.Multiple" SelectFromEntireRow="true" @bind-SelectedItems="@SelectedItems" />
 
-        <PropertyColumn Width="300px" Property="@(p => EnumHelper.GetEnumDescription(p))" Title="Ingredientes" />
+        <FluentDataGridColumn TGridItem="Ingredientes" Title="Ingredientes">
+            <Template Context="item">
+                <fluent-text-field @bind-Value="item.NomeIngrediente" Appearance="filled" Placeholder="Nome do Ingrediente"></fluent-text-field>
+            </Template>
+        </FluentDataGridColumn>
 
+        <FluentDataGridColumn TGridItem="Ingredientes" Title="Quantidade">
+            <Template Context="item">
+                <fluent-number-field @bind-Value="item.Quantidade" Appearance="filled" Placeholder="Quantidade"></fluent-number-field>
+            </Template>
+        </FluentDataGridColumn>
     </FluentDataGrid>
 </FluentCard>
 
@@ -215,7 +216,7 @@
         sessaoUsuario.FinalizaLoading();
     }
 
-    private void SelectFile(InputFileChangeEventArgs e)
+    private void SelectFile(InputFileChangeEventArgs e) 
     {
         Arquivo = e.File;
     }
@@ -227,8 +228,7 @@
         {
             if (Arquivo != null)
             {
-                (int statusCode, string nomeArquivoMensagem) =
-                await uploadService.ArquivoUploadAsync(Arquivo);
+                (int statusCode, string nomeArquivoMensagem) = await uploadService.ArquivoUploadAsync(Arquivo);
                 if (statusCode == 1)
                 {
                     ProdutoModel.NomeArquivoUpload = nomeArquivoMensagem;
@@ -266,10 +266,8 @@
         sessaoUsuario.FinalizaLoading();
     }
 
-
     private void OnTipoUsuarioChanged(string selectedValue)
     {
-        sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ??
-        sessaoUsuario.TipoUsuario;
+        sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
     }
 }
