@@ -34,7 +34,7 @@ namespace AppAPS.Services
 
         public async Task<List<Pedido>> GetPedidosEntregadorDiaAtual()
         {
-            return await _context.Pedido.Where(pedido => (pedido.Status == StatusPedido.ProntoParaEntrega || pedido.Status == StatusPedido.EmTransito) && pedido.DataAbertura.Date == DateTime.Today).ToListAsync();
+            return await _context.Pedido.Where(pedido => (pedido.Status == StatusPedido.ProntoParaEntrega || pedido.Status == StatusPedido.EmTransito) && pedido.FormaEntrega == FormaEntrega.Entrega && pedido.DataAbertura.Date == DateTime.Today).ToListAsync();
         }
 
         public async Task<List<Pedido>> GetPedidosClienteDiaAtual(string cpf)
