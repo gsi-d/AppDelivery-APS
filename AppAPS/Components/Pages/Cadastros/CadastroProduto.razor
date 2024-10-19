@@ -12,7 +12,9 @@
 
     .container-formulario {
         display: flex;
+        flex-direction: column;
         justify-content: center;
+        gap: 10px;
         align-items: center;
         min-height: 100vh;
         background-color: #f4f4f4;
@@ -39,21 +41,21 @@
         margin-bottom: 20px;
     }
 
-    .campo-formulario label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 5px;
-    }
+        .campo-formulario label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
 
-    .campo-formulario input,
-    .campo-formulario textarea {
-        width: 100%;
-        padding: 12px;
-        font-size: 1.1em;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-sizing: border-box;
-    }
+        .campo-formulario input,
+        .campo-formulario textarea {
+            width: 100%;
+            padding: 12px;
+            font-size: 1.1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
 
     fluent-text-field,
     fluent-text-area,
@@ -85,9 +87,9 @@
         margin-top: 30px;
     }
 
-    .botao-formulario:hover {
-        background-color: #005a9e;
-    }
+        .botao-formulario:hover {
+            background-color: #005a9e;
+        }
 
     .grupo-checkbox {
         gap: 15px;
@@ -108,19 +110,29 @@
         margin-bottom: 30px;
     }
 
-    .rodape-formulario a {
-        color: #0078d4;
-        font-size: 1.1em;
-        text-decoration: none;
-        padding: 10px 20px;
-        border: 2px solid #0078d4;
-        border-radius: 5px;
-        transition: background-color 0.3s ease, color 0.3s ease;
+        .rodape-formulario a {
+            color: #0078d4;
+            font-size: 1.1em;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 2px solid #0078d4;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+            .rodape-formulario a:hover {
+                background-color: #0078d4;
+                color: white;
+            }
+
+    .DataGrid {
+        align-items: center;
     }
 
-    .rodape-formulario a:hover {
-        background-color: #0078d4;
-        color: white;
+    .FT {
+        text-align: center;
+        color: #0078d4;
+        margin-top: 15px;
     }
 </style>
 
@@ -136,63 +148,75 @@
             <div class="campo-formulario">
                 <label for="Nome">Nome do Produto</label>
                 <FluentTextField Appearance="FluentInputAppearance.Filled" Id="Nome" @bind-Value="ProdutoModel.Nome" Required />
-                <FluentValidationMessage For="@(() => ProdutoModel.Nome)" />
-            </div>
+                 <FluentValidationMessage For="@(() => ProdutoModel.Nome)" />
+             </div>
 
-            <div class="campo-formulario">
-                <label for="Descricao">Descrição do Produto</label>
-                <FluentTextArea Appearance="FluentInputAppearance.Filled" Id="Descricao" Rows="4" @bind-Value="ProdutoModel.Descricao" Required />
-                <FluentValidationMessage For="@(() => ProdutoModel.Descricao)" />
-            </div>
+             <div class="campo-formulario">
+                 <label for="Descricao">Descrição do Produto</label>
+                 <FluentTextArea Appearance="FluentInputAppearance.Filled" Id="Descricao" Rows="4" @bind-Value="ProdutoModel.Descricao" Required />
+                 <FluentValidationMessage For="@(() => ProdutoModel.Descricao)" />
+             </div>
 
-            <div class="campo-formulario">
-                <label for="Preco">Preço</label>
-                <FluentNumberField Appearance="FluentInputAppearance.Filled" Id="Preco" Placeholder="R$" @bind-Value="ProdutoModel.Preco" HideStep="true" Required />
-                <FluentValidationMessage For="@(() => ProdutoModel.Preco)" />
-            </div>
+             <div class="campo-formulario">
+                 <label for="Preco">Preço</label>
+                 <FluentNumberField Appearance="FluentInputAppearance.Filled" Id="Preco" Placeholder="R$" @bind-Value="ProdutoModel.Preco" HideStep="true" Required />
+                 <FluentValidationMessage For="@(() => ProdutoModel.Preco)" />
+             </div>
 
-            <div class="grupo-checkbox">
-                <FluentCheckbox @bind-Value="ProdutoModel.Bebida" Label="É uma bebida?" />
-            </div>
+             <div class="grupo-checkbox">
+                 <FluentCheckbox @bind-Value="ProdutoModel.Bebida" Label="É uma bebida?" />
+             </div>
 
-            <div class="campo-formulario">
-                <label for="Imagem">Selecione uma imagem</label>
-                <InputFile OnChange="@SelectFile" />
-            </div>
+             <div class="campo-formulario">
+                 <label for="Imagem">Selecione uma imagem</label>
+                 <InputFile OnChange="@SelectFile" />
+             </div>
+         </EditForm>
 
-            <button type="submit" class="botao-formulario">Salvar</button>
-        </EditForm>
+         <FluentStack Style="display: flex; justify-content: space-between" HorizontalAlignment="HorizontalAlignment.Center">
+             <a href="/produtos">
+                 <FluentButton BackgroundColor="purple" Color="white">Voltar para listagem de produtos</FluentButton>
+             </a>
+             <FluentButton OnClick="@HandleValidSubmit" Appearance="Appearance.Accent">Salvar</FluentButton>
+         </FluentStack>
+     </div>
 
-        <div class="rodape-formulario">
-            <a href="/produtos">Voltar para listagem de produtos</a>
-        </div>
-    </div>
+
+     <h1 class="FT"> Ficha Técnica</h1>
+
+     @* Ficha tecnica *@
+     @{
+        if (ListaIngredientesFicha != null && ListaIngredientesFicha.Any())
+        {
+
+
+            <FluentStack Style="padding: 10px; display: flex;" HorizontalAlignment="HorizontalAlignment.Center" Width="60vw">
+                <FluentCard Height="Auto" Style="padding: 10px;">
+                    <FluentDivider />
+
+                    <FluentDataGrid id="defaultGrid" Items="@ListaIngredientesFicha.AsQueryable()" ShowHover="true" TGridItem="IngredienteFichaTecnica">
+                        <SelectColumn TGridItem="IngredienteFichaTecnica" SelectMode="DataGridSelectMode.Multiple" SelectFromEntireRow="true"
+                                      @bind-SelectedItems="@SelectedItems" />
+
+                        <PropertyColumn Width="300px" Property="@(p => EnumHelper.GetEnumDescription(p.Ingrediente))" Title="Ingredientes" />
+
+                        <TemplateColumn Title="Quantidade" Width="10%">
+                            <FluentNumberField @bind-Value="@context.Quantidade" TValue="int" />
+                        </TemplateColumn>
+
+                    </FluentDataGrid>
+                </FluentCard>
+            </FluentStack>
+
+        }
+    }
 </div>
-
-<FluentCard Height="Auto" Style="padding: 10px;">
-    <FluentDivider />
-
-    <FluentDataGrid Items="@ListaIngredientes" ShowHover="true" TGridItem="Ingredientes" Editable="true">
-        <SelectColumn TGridItem="Ingredientes" SelectMode="DataGridSelectMode.Multiple" SelectFromEntireRow="true" @bind-SelectedItems="@SelectedItems" />
-
-        <FluentDataGridColumn TGridItem="Ingredientes" Title="Ingredientes">
-            <Template Context="item">
-                <fluent-text-field @bind-Value="item.NomeIngrediente" Appearance="filled" Placeholder="Nome do Ingrediente"></fluent-text-field>
-            </Template>
-        </FluentDataGridColumn>
-
-        <FluentDataGridColumn TGridItem="Ingredientes" Title="Quantidade">
-            <Template Context="item">
-                <fluent-number-field @bind-Value="item.Quantidade" Appearance="filled" Placeholder="Quantidade"></fluent-number-field>
-            </Template>
-        </FluentDataGridColumn>
-    </FluentDataGrid>
-</FluentCard>
 
 <Loading ExibeLoading="@sessaoUsuario._loading" />
 
- @code {
+@code {
     [Inject] private IProdutoService produtoService { get; set; }
+    [Inject] private IFichaTecnicaService fichaTecnicaService { get; set; }
     [Inject] private IUploadService uploadService { get; set; }
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
     [SupplyParameterFromForm]
@@ -200,7 +224,7 @@
     private List<EnumItem<TipoUsuario>> TiposUsuario = new List<EnumItem<TipoUsuario>>();
     private List<IngredienteFichaTecnica> ListaIngredientesFicha = new();
     private List<Ingredientes> ListaIngredientes = new();
-    public IEnumerable<Ingredientes> SelectedItems = new List<Ingredientes>();
+    public IEnumerable<IngredienteFichaTecnica> SelectedItems = new List<IngredienteFichaTecnica>();
 
     List<string> mensagens = new();
     public IBrowserFile Arquivo { get; set; }
@@ -208,17 +232,20 @@
 
     protected async override Task OnInitializedAsync()
     {
-        sessaoUsuario.IniciaLoading();
-        TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
-        ListaIngredientes = Enum.GetValues(typeof(Ingredientes)).Cast<Ingredientes>().ToList();
-        foreach (var ingrediente in ListaIngredientes)
+        await Task.Factory.StartNew(() =>
         {
-            ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0 });
-        }
-        sessaoUsuario.FinalizaLoading();
+            sessaoUsuario.IniciaLoading();
+            TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
+            ListaIngredientes = Enum.GetValues(typeof(Ingredientes)).Cast<Ingredientes>().ToList();
+            foreach (var ingrediente in ListaIngredientes)
+            {
+                ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0 });
+            }
+            sessaoUsuario.FinalizaLoading();
+        });
     }
 
-    private void SelectFile(InputFileChangeEventArgs e) 
+    private void SelectFile(InputFileChangeEventArgs e)
     {
         Arquivo = e.File;
     }
@@ -234,6 +261,12 @@
                 if (statusCode == 1)
                 {
                     ProdutoModel.NomeArquivoUpload = nomeArquivoMensagem;
+                    FichaTecnica fichaTecnica = new FichaTecnica()
+                        {
+                            Ingredientes = ListaIngredientesFicha.Where(x => x.Quantidade > 0).ToList()
+                        };
+                    FichaTecnica fichaInserida = await fichaTecnicaService.InserirFichaTecnica(fichaTecnica);
+                    ProdutoModel.FichaTecnicaId = fichaInserida.Id;
                     Produto produtoInserido = await produtoService.InserirProduto(ProdutoModel);
                     if (produtoInserido != null)
                     {

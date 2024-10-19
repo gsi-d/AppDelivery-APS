@@ -26,6 +26,7 @@ builder.Services.AddRadzenComponents();
 
 builder.Services.AddScoped<SessaoUsuario>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IFichaTecnicaService, FichaTecnicaService>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
 builder.Services.AddScoped<IUploadService, UploadService>();
 
