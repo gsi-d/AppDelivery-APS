@@ -41,12 +41,28 @@
                             <FluentStack Style="display: flex; flex-direction: column">
                                 <FluentLabel Style="font-size: 25px" Typo="Typography.Subject">@Produto.Descricao</FluentLabel>
                                 @* Precisa ser substituída pela listagem de ingredientes da ficha *@
-                                <Produtos />
-                            </FluentStack>
-                            <FluentDivider />
+                                @{
+                                if (Produto.FichaTecnica.Ingredientes != null && Produto.FichaTecnica.Ingredientes.Any())
+                                {
+                                    <FluentStack Style="padding: 10px; display: flex;" HorizontalAlignment="HorizontalAlignment.Center" Width="60vw">
+                                        <FluentCard Height="Auto" Style="padding: 10px;">
+                                            <h1 class="FT"> Ficha Técnica</h1>
+                                            <FluentDivider />
 
+                                            <FluentDataGrid id="defaultGrid" Items="@Produto.FichaTecnica.Ingredientes.AsQueryable()" ShowHover="true" TGridItem="IngredienteFichaTecnica">
+                                                <PropertyColumn Width="300px" Property="@(p => EnumHelper.GetEnumDescription(p.Ingrediente))" Title="Ingredientes" />
+                                                <PropertyColumn Width="300px" Property="@(p => p.Quantidade)" Title="Quantidade" />
+                                                <PropertyColumn Width="300px" Property="@(p => EnumHelper.GetEnumDescription(p.Medida))" Title="Medida" />
+                                            </FluentDataGrid>
+                                        </FluentCard>
+                                    </FluentStack>
+                                }
+                            }
                         </FluentStack>
+                        <FluentDivider />
+
                     </FluentStack>
+                </FluentStack>
             }
             else
             {
@@ -89,4 +105,4 @@
     {
         sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
     }
-}
+    }

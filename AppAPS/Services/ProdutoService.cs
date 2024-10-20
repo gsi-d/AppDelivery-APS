@@ -16,12 +16,12 @@ namespace AppAPS.Services
 
         public async Task<List<Produto>> GetAllProdutos()
         {
-            return await _context.Produto.Include(produto => produto.FichaTecnica).ToListAsync();
+            return await _context.Produto.Include(produto => produto.FichaTecnica).ThenInclude(ficha => ficha.Ingredientes).ToListAsync();
         }
 
         public async Task<Produto?> GetByIdProduto(int id)
         {
-            return await _context.Produto.Include(produto => produto.FichaTecnica).FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Produto.Include(produto => produto.FichaTecnica).ThenInclude(ficha => ficha.Ingredientes).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<Produto> InserirProduto(Produto produto)

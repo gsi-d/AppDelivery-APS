@@ -54,10 +54,13 @@
 
     protected async override Task OnAfterRenderAsync(bool firstrender)
     {
-        string? tipoUsuarioStorage = await _localStorage.GetItemAsync<string>("TipoUsuario");
-        Enum.TryParse(tipoUsuarioStorage, out TipoUsuario tipoUsuario);
-        TipoUsuario = tipoUsuario;
-        StateHasChanged();
+        if (firstrender)
+        {
+            string? tipoUsuarioStorage = await _localStorage.GetItemAsync<string>("TipoUsuario");
+            Enum.TryParse(tipoUsuarioStorage, out TipoUsuario tipoUsuario);
+            TipoUsuario = tipoUsuario;
+            StateHasChanged();
+        }
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
