@@ -140,7 +140,7 @@
 
 <div class="container-formulario">
     <div class="cartao-formulario">
-        <h1 class="titulo-formulario">Cadastro de Produtos</h1>
+        <h1 class="FT">Cadastro de Produtos</h1>
         <EditForm Model="@ProdutoModel" OnValidSubmit="@HandleValidSubmit" FormName="ProdutoModel_fluent_entry" novalidate>
             <DataAnnotationsValidator />
             <FluentValidationSummary />
@@ -182,26 +182,26 @@
      </div>
 
 
-     <h1 class="FT"> Ficha Técnica</h1>
+     
 
      @* Ficha tecnica *@
      @{
         if (ListaIngredientesFicha != null && ListaIngredientesFicha.Any())
         {
 
-
             <FluentStack Style="padding: 10px; display: flex;" HorizontalAlignment="HorizontalAlignment.Center" Width="60vw">
                 <FluentCard Height="Auto" Style="padding: 10px;">
+                    <h1 class="FT"> Ficha Técnica</h1>
                     <FluentDivider />
 
-                    <FluentDataGrid id="defaultGrid" Items="@ListaIngredientesFicha.AsQueryable()" ShowHover="true" TGridItem="IngredienteFichaTecnica">
-                        <SelectColumn TGridItem="IngredienteFichaTecnica" SelectMode="DataGridSelectMode.Multiple" SelectFromEntireRow="true"
+                    <FluentDataGrid id="defaultGrid"  Items="@ListaIngredientesFicha.AsQueryable()" ShowHover="true" TGridItem="IngredienteFichaTecnica">
+                        <SelectColumn TGridItem="IngredienteFichaTecnica" SelectMode="DataGridSelectMode.Multiple" SelectFromEntireRow="false"
                                       @bind-SelectedItems="@SelectedItems" />
 
                         <PropertyColumn Width="300px" Property="@(p => EnumHelper.GetEnumDescription(p.Ingrediente))" Title="Ingredientes" />
 
                         <TemplateColumn Title="Quantidade" Width="10%">
-                            <FluentNumberField @bind-Value="@context.Quantidade" TValue="int" />
+                            <FluentNumberField @bind-Value="@context.Quantidade" TValue="int" Disabled="@VerificaIngrediente(context)"/>
                         </TemplateColumn>
 
                     </FluentDataGrid>
@@ -225,6 +225,7 @@
     private List<EnumItem<TipoUsuario>> TiposUsuario = new List<EnumItem<TipoUsuario>>();
     private List<IngredienteFichaTecnica> ListaIngredientesFicha = new();
     private List<Ingredientes> ListaIngredientes = new();
+    private List<Medida> ListaMedidas = new();
     public IEnumerable<IngredienteFichaTecnica> SelectedItems = new List<IngredienteFichaTecnica>();
 
     List<string> mensagens = new();
@@ -238,9 +239,10 @@
             sessaoUsuario.IniciaLoading();
             TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
             ListaIngredientes = Enum.GetValues(typeof(Ingredientes)).Cast<Ingredientes>().ToList();
+            ListaMedidas = Enum.GetValues(typeof(Medida)).Cast<Medida>().ToList();
             foreach (var ingrediente in ListaIngredientes)
             {
-                ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0 });
+                ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0, Medida = Medida.UN });
             }
             sessaoUsuario.FinalizaLoading();
         });
@@ -249,6 +251,24 @@
     private void SelectFile(InputFileChangeEventArgs e)
     {
         Arquivo = e.File;
+    }
+
+    private bool VerificaIngrediente(IngredienteFichaTecnica ingredienteFichaTecnica)
+    {
+        if (SelectedItems.Contains(ingredienteFichaTecnica))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    private bool TrocaMedida(IngredienteFichaTecnica ingredienteFichaTecnica)
+    {
+        if (SelectedItems.Contains(ingredienteFichaTecnica))
+        {
+            return false;
+        }
+        return true;
     }
 
     private async void HandleValidSubmit()
@@ -264,7 +284,7 @@
                     ProdutoModel.NomeArquivoUpload = nomeArquivoMensagem;
                     FichaTecnica fichaTecnica = new FichaTecnica()
                         {
-                            Ingredientes = ListaIngredientesFicha.Where(x => x.Quantidade > 0).ToList()
+                            Ingredientes = SelectedItems.ToList()
                         };
                     FichaTecnica fichaInserida = await fichaTecnicaService.InserirFichaTecnica(fichaTecnica);
                     ProdutoModel.FichaTecnicaId = fichaInserida.Id;
