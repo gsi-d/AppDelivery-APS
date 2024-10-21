@@ -44,15 +44,12 @@
                                 @{
                                 if (Produto.FichaTecnica.Ingredientes != null && Produto.FichaTecnica.Ingredientes.Any())
                                 {
-                                    <FluentStack Style="padding: 10px; display: flex;" HorizontalAlignment="HorizontalAlignment.Center" Width="60vw">
+                                    <FluentStack Style="padding: 10px; display: flex; align-items: center" HorizontalAlignment="HorizontalAlignment.Center" Width="30vw">
                                         <FluentCard Height="Auto" Style="padding: 10px;">
-                                            <h1 class="FT"> Ficha Técnica</h1>
-                                            <FluentDivider />
-
                                             <FluentDataGrid id="defaultGrid" Items="@Produto.FichaTecnica.Ingredientes.AsQueryable()" ShowHover="true" TGridItem="IngredienteFichaTecnica">
-                                                <PropertyColumn Width="300px" Property="@(p => EnumHelper.GetEnumDescription(p.Ingrediente))" Title="Ingredientes" />
-                                                <PropertyColumn Width="300px" Property="@(p => p.Quantidade)" Title="Quantidade" />
-                                                <PropertyColumn Width="300px" Property="@(p => EnumHelper.GetEnumDescription(p.Medida))" Title="Medida" />
+                                                <PropertyColumn Width="200px" Property="@(p => EnumHelper.GetEnumDescription(p.Ingrediente))" Title="Ingredientes" />
+                                                <PropertyColumn Width="120px" Property="@(p => p.Quantidade)" Title="Quantidade" />
+                                                <PropertyColumn Width="100px" Property="@(p => EnumHelper.GetEnumDescription(p.Medida))" Title="Medida" />
                                             </FluentDataGrid>
                                         </FluentCard>
                                     </FluentStack>

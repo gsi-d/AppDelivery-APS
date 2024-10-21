@@ -1,7 +1,6 @@
 ﻿using AppAPS.Data;
 using AppAPS.Entities;
 using AppAPS.Interfaces;
-using AppAPS.Services.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace AppAPS.Services
@@ -27,6 +26,13 @@ namespace AppAPS.Services
         public async Task<Produto> InserirProduto(Produto produto)
         {
             var entityEntry = await _context.Produto.AddAsync(produto);
+            Save();
+            return entityEntry.Entity;
+        }
+
+        public async Task<Produto> AlterarProduto(Produto produto)
+        {
+            var entityEntry = _context.Produto.Update(produto);
             Save();
             return entityEntry.Entity;
         }
