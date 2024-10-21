@@ -12,6 +12,7 @@
             <FluentStack VerticalAlignment="VerticalAlignment.Center" Style="padding-bottom: 4px;">
                 <FluentButton Type="ButtonType.Button" OnClick="InvokeTelaCadastro" Appearance="Appearance.Accent">Novo</FluentButton>
                 <FluentButton Type="ButtonType.Button" OnClick="ExcluirProdutos" Appearance="Appearance.Accent" BackgroundColor="red">Excluir</FluentButton>
+                <FluentButton Type="ButtonType.Button" OnClick="InvokeTelaAlteracao" Disabled="@ValidaBotaoEditar()" BackgroundColor="purple" Color="white">Editar</FluentButton>
             </FluentStack>
 
             <FluentDivider />
@@ -36,7 +37,7 @@
 
 <TrocaVisualizacao PrimeiraDefinicao="false" bDesabilitaDialogTrocaVisu="@bDesabilitaDialogTrocaVisu" />
 
-<FluentStack Style="position: fixed; bottom: 20px; left: 10px;" Width="20%">
+<FluentStack Style="position: fixed; bottom: 20px; left: 10px;" Width="15%">
     <FluentButton BackgroundColor="purple" Color="white" OnClick="() => bDesabilitaDialogTrocaVisu = false">Altera Modo Visualização</FluentButton>
 </FluentStack>
 
@@ -61,6 +62,18 @@
         _navigationManager.NavigateTo("/cadastroProduto");
     }
 
+    private async void InvokeTelaAlteracao()
+    {
+        if (SelectedItems.Count() == 1)
+        {
+            _navigationManager.NavigateTo($"/cadastroProduto/{SelectedItems.FirstOrDefault().Id}");
+        }
+        else
+        {
+            ToastService.ShowError("Você deve selecionar apenas 1 cadastro para ser editado.");
+        }
+    }
+
     private async void ExcluirProdutos()
     {
         bool sucesso = await ProdutoService.DeletarProdutos(SelectedItems.ToList());
@@ -70,6 +83,11 @@
             var resultadoProdutos = await ProdutoService.GetAllProdutos();
             produtos = resultadoProdutos.AsQueryable();
         }
+    }
+
+    private bool ValidaBotaoEditar()
+    {
+        return SelectedItems.Count() != 1;
     }
 
     private List<EnumItem<TipoUsuario>> TiposUsuario;

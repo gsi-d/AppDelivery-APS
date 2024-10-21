@@ -7,6 +7,7 @@ namespace AppAPS.Interfaces
         Task<List<Produto>> GetAllProdutos();
         Task<Produto?> GetByIdProduto(int id);
         Task<Produto> InserirProduto(Produto produto);
+        Task<Produto> AlterarProduto(Produto produto);
         Task<bool> DeletarProdutos(List<Produto> produtos);
     }
 }

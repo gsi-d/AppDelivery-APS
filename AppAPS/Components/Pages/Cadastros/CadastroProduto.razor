@@ -1,4 +1,5 @@
 ﻿@page "/cadastroProduto"
+@page "/cadastroProduto/{Id}"
 @using AppAPS.Entities
 @using AppAPS.Interfaces
 @using AppAPS.Services.Model
@@ -148,60 +149,60 @@
             <div class="campo-formulario">
                 <label for="Nome">Nome do Produto</label>
                 <FluentTextField Appearance="FluentInputAppearance.Filled" Id="Nome" @bind-Value="ProdutoModel.Nome" Required />
-                 <FluentValidationMessage For="@(() => ProdutoModel.Nome)" />
-             </div>
+                <FluentValidationMessage For="@(() => ProdutoModel.Nome)" />
+            </div>
 
-             <div class="campo-formulario">
-                 <label for="Descricao">Descrição do Produto</label>
-                 <FluentTextArea Appearance="FluentInputAppearance.Filled" Id="Descricao" Rows="4" @bind-Value="ProdutoModel.Descricao" Required />
-                 <FluentValidationMessage For="@(() => ProdutoModel.Descricao)" />
-             </div>
+            <div class="campo-formulario">
+                <label for="Descricao">Descrição do Produto</label>
+                <FluentTextArea Appearance="FluentInputAppearance.Filled" Id="Descricao" Rows="4" @bind-Value="ProdutoModel.Descricao" Required />
+                <FluentValidationMessage For="@(() => ProdutoModel.Descricao)" />
+            </div>
 
-             <div class="campo-formulario">
-                 <label for="Preco">Preço</label>
-                 <FluentNumberField Appearance="FluentInputAppearance.Filled" Id="Preco" Placeholder="R$" @bind-Value="ProdutoModel.Preco" HideStep="true" Required />
-                 <FluentValidationMessage For="@(() => ProdutoModel.Preco)" />
-             </div>
+            <div class="campo-formulario">
+                <label for="Preco">Preço</label>
+                <FluentNumberField Appearance="FluentInputAppearance.Filled" Id="Preco" Placeholder="R$" @bind-Value="ProdutoModel.Preco" HideStep="true" Required />
+                <FluentValidationMessage For="@(() => ProdutoModel.Preco)" />
+            </div>
 
-             <div class="grupo-checkbox">
-                 <FluentCheckbox @bind-Value="ProdutoModel.Bebida" Label="É uma bebida?" />
-             </div>
+            <div class="grupo-checkbox">
+                <FluentCheckbox @bind-Value="ProdutoModel.Bebida" Label="É uma bebida?" />
+            </div>
 
-             <div class="campo-formulario">
-                 <label for="Imagem">Selecione uma imagem</label>
-                 <InputFile OnChange="@SelectFile" />
-             </div>
-         </EditForm>
+            <div class="campo-formulario">
+                <label for="Imagem">Selecione uma imagem</label>
+                <InputFile OnChange="@SelectFile" />
+            </div>
+        </EditForm>
 
-         <FluentStack Style="display: flex; justify-content: space-between" HorizontalAlignment="HorizontalAlignment.Center">
-             <a href="/produtos">
-                 <FluentButton BackgroundColor="purple" Color="white">Voltar para listagem de produtos</FluentButton>
-             </a>
-             <FluentButton OnClick="@HandleValidSubmit" Appearance="Appearance.Accent">Salvar</FluentButton>
-         </FluentStack>
-     </div>
+        <FluentStack Style="display: flex; justify-content: space-between" HorizontalAlignment="HorizontalAlignment.Center">
+            <a href="/produtos">
+                <FluentButton BackgroundColor="purple" Color="white">Voltar para listagem de produtos</FluentButton>
+            </a>
+            <FluentButton OnClick="@HandleValidSubmit" Appearance="Appearance.Accent">Salvar</FluentButton>
+        </FluentStack>
+    </div>
 
 
-     
 
-     @* Ficha tecnica *@
-     @{
-        if (ListaIngredientesFicha != null && ListaIngredientesFicha.Any())
+
+    @* Ficha tecnica *@
+    @{
+        if (ListaIngredientesFicha != null)
         {
 
-            <FluentStack Style="padding: 10px; display: flex;" HorizontalAlignment="HorizontalAlignment.Center" Width="60vw">
+            <FluentStack Style="padding: 10px; display: flex;" HorizontalAlignment="HorizontalAlignment.Center" Width="61vw">
                 <FluentCard Height="Auto" Style="padding: 10px;">
                     <h1 class="FT"> Ficha Técnica</h1>
                     <FluentDivider />
 
-                    <FluentDataGrid id="defaultGrid"  Items="@ListaIngredientesFicha.AsQueryable()" ShowHover="true" TGridItem="IngredienteFichaTecnica">
+                    <FluentDataGrid id="defaultGrid" Items="@ListaIngredientesFicha.AsQueryable()" ShowHover="true" TGridItem="IngredienteFichaTecnica">
                         <SelectColumn TGridItem="IngredienteFichaTecnica" SelectMode="DataGridSelectMode.Multiple" SelectFromEntireRow="false"
                                       @bind-SelectedItems="@SelectedItems" />
 
                         <PropertyColumn Width="300px" Property="@(p => EnumHelper.GetEnumDescription(p.Ingrediente))" Title="Ingredientes" />
 
                         <TemplateColumn Title="Quantidade" Width="10%">
-                            <FluentNumberField @bind-Value="@context.Quantidade" TValue="int" Disabled="@VerificaIngrediente(context)"/>
+                            <FluentNumberField @bind-Value="@context.Quantidade" TValue="int" Disabled="@VerificaIngrediente(context)" />
                         </TemplateColumn>
 
                     </FluentDataGrid>
@@ -215,18 +216,20 @@
 
 <Loading ExibeLoading="@sessaoUsuario._loading" />
 
+
 @code {
     [Inject] private IProdutoService produtoService { get; set; }
     [Inject] private IFichaTecnicaService fichaTecnicaService { get; set; }
     [Inject] private IUploadService uploadService { get; set; }
     [Inject] private SessaoUsuario sessaoUsuario { get; set; }
+    [Parameter] public string Id { get; set; }
     [SupplyParameterFromForm]
     private Produto ProdutoModel { get; set; } = new();
     private List<EnumItem<TipoUsuario>> TiposUsuario = new List<EnumItem<TipoUsuario>>();
     private List<IngredienteFichaTecnica> ListaIngredientesFicha = new();
     private List<Ingredientes> ListaIngredientes = new();
     private List<Medida> ListaMedidas = new();
-    public IEnumerable<IngredienteFichaTecnica> SelectedItems = new List<IngredienteFichaTecnica>();
+    public IEnumerable<IngredienteFichaTecnica> SelectedItems { get; set; } = new List<IngredienteFichaTecnica>();
 
     List<string> mensagens = new();
     public IBrowserFile Arquivo { get; set; }
@@ -234,9 +237,40 @@
 
     protected async override Task OnInitializedAsync()
     {
-        await Task.Factory.StartNew(() =>
+        sessaoUsuario.IniciaLoading();
+        if (Id != null)
         {
-            sessaoUsuario.IniciaLoading();
+            TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
+            ListaIngredientes = Enum.GetValues(typeof(Ingredientes)).Cast<Ingredientes>().ToList();
+            ListaMedidas = Enum.GetValues(typeof(Medida)).Cast<Medida>().ToList();
+            ProdutoModel = await produtoService.GetByIdProduto(Convert.ToInt32(Id));
+            if (ProdutoModel!.FichaTecnica != null && ListaIngredientesFicha.Count() == 0)
+            {
+                foreach (var ingrediente in ListaIngredientes)
+                {
+                    if (ProdutoModel.FichaTecnica.Ingredientes.Select(x => x.Ingrediente).Contains(ingrediente))
+                    {
+                        var item = ProdutoModel.FichaTecnica.Ingredientes.FirstOrDefault(x => x.Ingrediente == ingrediente);
+                        ListaIngredientesFicha.Add(item);
+                    }
+                    else
+                    {
+                        ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0, Medida = Medida.UN });
+                    }
+                }
+                SelectedItems = ProdutoModel.FichaTecnica.Ingredientes.ToList();
+            }
+            else
+            {
+                foreach (var ingrediente in ListaIngredientes)
+                {
+                    ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0, Medida = Medida.UN });
+                }
+            }
+            sessaoUsuario.FinalizaLoading();
+        }
+        else
+        {
             TiposUsuario = EnumHelper.GetEnumItems<TipoUsuario>();
             ListaIngredientes = Enum.GetValues(typeof(Ingredientes)).Cast<Ingredientes>().ToList();
             ListaMedidas = Enum.GetValues(typeof(Medida)).Cast<Medida>().ToList();
@@ -245,7 +279,7 @@
                 ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0, Medida = Medida.UN });
             }
             sessaoUsuario.FinalizaLoading();
-        });
+        }
     }
 
     private void SelectFile(InputFileChangeEventArgs e)
@@ -274,7 +308,63 @@
     private async void HandleValidSubmit()
     {
         sessaoUsuario.IniciaLoading();
-        if (ProdutoModel != null)
+        if (Id == null)
+        {
+            if (ProdutoModel != null)
+            {
+                if (Arquivo != null)
+                {
+                    (int statusCode, string nomeArquivoMensagem) = await uploadService.ArquivoUploadAsync(Arquivo);
+                    if (statusCode == 1)
+                    {
+                        ProdutoModel.NomeArquivoUpload = nomeArquivoMensagem;
+                        if (SelectedItems.Count() > 0)
+                        {
+                            FichaTecnica fichaTecnica = new FichaTecnica()
+                                {
+                                    Ingredientes = SelectedItems.ToList()
+                                };
+                            FichaTecnica fichaInserida = await fichaTecnicaService.InserirFichaTecnica(fichaTecnica);
+                            ProdutoModel.FichaTecnicaId = fichaInserida.Id;
+                        }
+
+                        Produto produtoInserido = await produtoService.InserirProduto(ProdutoModel);
+                        if (produtoInserido != null)
+                        {
+                            sessaoUsuario.FinalizaLoading();
+                            ToastService.ShowSuccess("Produto inserido com sucesso.");
+                            _navigationManager.NavigateTo("/produtos");
+                            await Task.Delay(3000);
+                        }
+                        else
+                        {
+                            sessaoUsuario.FinalizaLoading();
+                            ToastService.ShowError("Falha ao inserir produto.");
+                            await Task.Delay(3000);
+                        }
+                    }
+                    else
+                    {
+                        sessaoUsuario.FinalizaLoading();
+                        ToastService.ShowError("Falha ao carregar imagem. Erro: " + nomeArquivoMensagem);
+                        await Task.Delay(3000);
+                    }
+                }
+                else
+                {
+                    sessaoUsuario.FinalizaLoading();
+                    ToastService.ShowError("Você precisa selecionar uma imagem.");
+                    await Task.Delay(3000);
+                }
+            }
+            else
+            {
+                sessaoUsuario.FinalizaLoading();
+                ToastService.ShowError("Falha ao inserir produto.");
+                await Task.Delay(3000);
+            }
+        }
+        else
         {
             if (Arquivo != null)
             {
@@ -282,42 +372,42 @@
                 if (statusCode == 1)
                 {
                     ProdutoModel.NomeArquivoUpload = nomeArquivoMensagem;
+                }
+            }
+
+            if (SelectedItems.Count() > 0)
+            {
+                if (ProdutoModel.FichaTecnica == null)
+                {
                     FichaTecnica fichaTecnica = new FichaTecnica()
                         {
                             Ingredientes = SelectedItems.ToList()
                         };
+
                     FichaTecnica fichaInserida = await fichaTecnicaService.InserirFichaTecnica(fichaTecnica);
                     ProdutoModel.FichaTecnicaId = fichaInserida.Id;
-                    Produto produtoInserido = await produtoService.InserirProduto(ProdutoModel);
-                    if (produtoInserido != null)
-                    {
-                        ToastService.ShowSuccess("Produto inserido com sucesso.");
-                        _navigationManager.NavigateTo("/produtos");
-                        await Task.Delay(3000);
-                    }
-                    else
-                    {
-                        ToastService.ShowError("Falha ao inserir produto.");
-                        await Task.Delay(3000);
-                    }
                 }
                 else
                 {
-                    ToastService.ShowError("Falha ao carregar imagem. Erro: " + nomeArquivoMensagem);
-                    await Task.Delay(3000);
+                    ProdutoModel.FichaTecnica.Ingredientes = SelectedItems.ToList();
                 }
+            }
+            Produto produtoInserido = await produtoService.AlterarProduto(ProdutoModel);
+            if (produtoInserido != null)
+            {
+                sessaoUsuario.FinalizaLoading();
+                ToastService.ShowSuccess("Produto inserido com sucesso.");
+                _navigationManager.NavigateTo("/produtos");
+                await Task.Delay(3000);
             }
             else
             {
-                ToastService.ShowError("Você precisa selecionar uma imagem.");
+                sessaoUsuario.FinalizaLoading();
+                ToastService.ShowError("Falha ao inserir produto.");
                 await Task.Delay(3000);
             }
         }
-        else
-        {
-            ToastService.ShowError("Falha ao inserir produto.");
-            await Task.Delay(3000);
-        }
+
 
         sessaoUsuario.FinalizaLoading();
     }
