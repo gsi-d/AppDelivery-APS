@@ -149,44 +149,44 @@
             <div class="campo-formulario">
                 <label for="Nome">Nome do Produto</label>
                 <FluentTextField Appearance="FluentInputAppearance.Filled" Id="Nome" @bind-Value="ProdutoModel.Nome" Required />
-                <FluentValidationMessage For="@(() => ProdutoModel.Nome)" />
-            </div>
+                 <FluentValidationMessage For="@(() => ProdutoModel.Nome)" />
+             </div>
 
-            <div class="campo-formulario">
-                <label for="Descricao">Descrição do Produto</label>
-                <FluentTextArea Appearance="FluentInputAppearance.Filled" Id="Descricao" Rows="4" @bind-Value="ProdutoModel.Descricao" Required />
-                <FluentValidationMessage For="@(() => ProdutoModel.Descricao)" />
-            </div>
+             <div class="campo-formulario">
+                 <label for="Descricao">Descrição do Produto</label>
+                 <FluentTextArea Appearance="FluentInputAppearance.Filled" Id="Descricao" Rows="4" @bind-Value="ProdutoModel.Descricao" Required />
+                 <FluentValidationMessage For="@(() => ProdutoModel.Descricao)" />
+             </div>
 
-            <div class="campo-formulario">
-                <label for="Preco">Preço</label>
-                <FluentNumberField Appearance="FluentInputAppearance.Filled" Id="Preco" Placeholder="R$" @bind-Value="ProdutoModel.Preco" HideStep="true" Required />
-                <FluentValidationMessage For="@(() => ProdutoModel.Preco)" />
-            </div>
+             <div class="campo-formulario">
+                 <label for="Preco">Preço</label>
+                 <FluentNumberField Appearance="FluentInputAppearance.Filled" Id="Preco" Placeholder="R$" @bind-Value="ProdutoModel.Preco" HideStep="true" Required />
+                 <FluentValidationMessage For="@(() => ProdutoModel.Preco)" />
+             </div>
 
-            <div class="grupo-checkbox">
-                <FluentCheckbox @bind-Value="ProdutoModel.Bebida" Label="É uma bebida?" />
-            </div>
+             <div class="grupo-checkbox">
+                 <FluentCheckbox @bind-Value="ProdutoModel.Bebida" Label="É uma bebida?" />
+             </div>
 
-            <div class="campo-formulario">
-                <label for="Imagem">Selecione uma imagem</label>
-                <InputFile OnChange="@SelectFile" />
-            </div>
-        </EditForm>
+             <div class="campo-formulario">
+                 <label for="Imagem">Selecione uma imagem</label>
+                 <InputFile OnChange="@SelectFile" />
+             </div>
+         </EditForm>
 
-        <FluentStack Style="display: flex; justify-content: space-between" HorizontalAlignment="HorizontalAlignment.Center">
-            <a href="/produtos">
-                <FluentButton BackgroundColor="purple" Color="white">Voltar para listagem de produtos</FluentButton>
-            </a>
-            <FluentButton OnClick="@HandleValidSubmit" Appearance="Appearance.Accent">Salvar</FluentButton>
-        </FluentStack>
-    </div>
-
-
+         <FluentStack Style="display: flex; justify-content: space-between" HorizontalAlignment="HorizontalAlignment.Center">
+             <a href="/produtos">
+                 <FluentButton BackgroundColor="purple" Color="white">Voltar para listagem de produtos</FluentButton>
+             </a>
+             <FluentButton OnClick="@HandleValidSubmit" Appearance="Appearance.Accent">Salvar</FluentButton>
+         </FluentStack>
+     </div>
 
 
-    @* Ficha tecnica *@
-    @{
+
+
+     @* Ficha tecnica *@
+     @{
         if (ListaIngredientesFicha != null)
         {
 
@@ -203,6 +203,18 @@
 
                         <TemplateColumn Title="Quantidade" Width="10%">
                             <FluentNumberField @bind-Value="@context.Quantidade" TValue="int" Disabled="@VerificaIngrediente(context)" />
+                        </TemplateColumn>
+
+                        <TemplateColumn Width="15%">
+                            <FluentCheckbox Value="context.isUnidade" Label="Unidade" ValueChanged="(value) => AtualizaMedidaUN(context, value)" Disabled="@VerificaIngrediente(context)" />
+                        </TemplateColumn>
+
+                        <TemplateColumn Width="15%">
+                            <FluentCheckbox Value="context.isGrama" Label="Grama" ValueChanged="(value) => AtualizaMedidaGR(context, value)" Disabled="@VerificaIngrediente(context)" />
+                        </TemplateColumn>
+
+                        <TemplateColumn Width="15%">
+                            <FluentCheckbox Value="context.isML" Label="ML" ValueChanged="(value) => AtualizaMedidaML(context, value)" Disabled="@VerificaIngrediente(context)" />
                         </TemplateColumn>
 
                     </FluentDataGrid>
@@ -251,11 +263,12 @@
                     if (ProdutoModel.FichaTecnica.Ingredientes.Select(x => x.Ingrediente).Contains(ingrediente))
                     {
                         var item = ProdutoModel.FichaTecnica.Ingredientes.FirstOrDefault(x => x.Ingrediente == ingrediente);
+                        item = AtualizaMedidaEdicao(item, item.Medida);
                         ListaIngredientesFicha.Add(item);
                     }
                     else
                     {
-                        ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0, Medida = Medida.UN });
+                        ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0 });
                     }
                 }
                 SelectedItems = ProdutoModel.FichaTecnica.Ingredientes.ToList();
@@ -264,7 +277,7 @@
             {
                 foreach (var ingrediente in ListaIngredientes)
                 {
-                    ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0, Medida = Medida.UN });
+                    ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0 });
                 }
             }
             sessaoUsuario.FinalizaLoading();
@@ -276,9 +289,79 @@
             ListaMedidas = Enum.GetValues(typeof(Medida)).Cast<Medida>().ToList();
             foreach (var ingrediente in ListaIngredientes)
             {
-                ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0, Medida = Medida.UN });
+                ListaIngredientesFicha.Add(new IngredienteFichaTecnica { Ingrediente = ingrediente, Quantidade = 0 });
             }
             sessaoUsuario.FinalizaLoading();
+        }
+    }
+
+    private IngredienteFichaTecnica AtualizaMedidaEdicao(IngredienteFichaTecnica item, Medida medida)
+    {
+        switch (medida)
+        {
+            case Medida.UN:
+                item.isUnidade = true;
+                item.isGrama = false;
+                item.isML = false;
+                break;
+            case Medida.GR:
+                item.isGrama = true;
+                item.isUnidade = false;
+                item.isML = false;
+                break;
+            case Medida.ML:
+                item.isML = true;
+                item.isUnidade = false;
+                item.isGrama = false;
+                break;
+        }
+
+        return item;
+    }
+
+    private void AtualizaMedidaUN(IngredienteFichaTecnica context, bool isUnidade)
+    {
+        if (isUnidade)
+        {
+            context.Medida = Medida.UN;
+            //SelectedItems.Where(x => x == context).ToList().ForEach(x => x.Medida = Medida.UN);
+            context.isUnidade = true;
+            context.isGrama = false;
+            context.isML = false;
+        }
+        else
+        {
+            context.isUnidade = false;
+        }
+    }
+
+    private void AtualizaMedidaGR(IngredienteFichaTecnica context, bool isGrama)
+    {
+        if (isGrama)
+        {
+            context.Medida = Medida.GR;
+            context.isGrama = true;
+            context.isUnidade = false;
+            context.isML = false;
+        }
+        else
+        {
+            context.isGrama = false;
+        }
+    }
+
+    private void AtualizaMedidaML(IngredienteFichaTecnica context, bool isML)
+    {
+        if (isML)
+        {
+            context.Medida = Medida.ML;
+            context.isML = true;
+            context.isGrama = false;
+            context.isUnidade = false;
+        }
+        else
+        {
+            context.isML = false;
         }
     }
 

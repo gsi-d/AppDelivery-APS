@@ -34,22 +34,23 @@
                             <img src="@Produto.NomeArquivoUpload" style="object-fit: cover; height: 70vh; width: 100%" />
                         </FluentCard>
                     </FluentStack>
-                    <FluentStack Style="display: flex; flex-direction: column; padding: 10px">
+                    <FluentStack Style="display: flex; flex-direction: column; padding: 10px; gap: 30px">
                         <FluentStack HorizontalAlignment="HorizontalAlignment.Center">
                             <FluentLabel Typo="Typography.H1">@Produto.Nome</FluentLabel>
                             </FluentStack>
-                            <FluentStack Style="display: flex; flex-direction: column">
-                                <FluentLabel Style="font-size: 25px" Typo="Typography.Subject">@Produto.Descricao</FluentLabel>
+                            <FluentStack Style="display: flex; flex-direction: column; gap: 40px">
+                                <FluentLabel Style="font-size: 24px;" Typo="Typography.Subject">@Produto.Descricao</FluentLabel>
                                 @* Precisa ser substituída pela listagem de ingredientes da ficha *@
                                 @{
-                                if (Produto.FichaTecnica.Ingredientes != null && Produto.FichaTecnica.Ingredientes.Any())
+                                if (Produto.FichaTecnica != null && Produto.FichaTecnica.Ingredientes != null && Produto.FichaTecnica.Ingredientes.Any())
                                 {
-                                    <FluentStack Style="padding: 10px; display: flex; align-items: center" HorizontalAlignment="HorizontalAlignment.Center" Width="30vw">
-                                        <FluentCard Height="Auto" Style="padding: 10px;">
-                                            <FluentDataGrid id="defaultGrid" Items="@Produto.FichaTecnica.Ingredientes.AsQueryable()" ShowHover="true" TGridItem="IngredienteFichaTecnica">
+                                    <FluentStack Style="padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 30px" HorizontalAlignment="HorizontalAlignment.Center" Width="30vw">
+                                        <FluentLabel Typo="Typography.H1">Ficha Técnica</FluentLabel>
+                                        <FluentCard Height="Auto" Style="padding: 10px; background-color: whitesmoke">
+                                            <FluentDataGrid id="defaultGrid" Style="max-height: 37vh; overflow-y: auto; overflow-x: hidden" Items="@Produto.FichaTecnica.Ingredientes.AsQueryable()" ShowHover="false" TGridItem="IngredienteFichaTecnica">
                                                 <PropertyColumn Width="200px" Property="@(p => EnumHelper.GetEnumDescription(p.Ingrediente))" Title="Ingredientes" />
-                                                <PropertyColumn Width="120px" Property="@(p => p.Quantidade)" Title="Quantidade" />
-                                                <PropertyColumn Width="100px" Property="@(p => EnumHelper.GetEnumDescription(p.Medida))" Title="Medida" />
+                                                <PropertyColumn Width="120px" Align="Align.Center" Property="@(p => p.Quantidade)" Title="Quantidade" />
+                                                <PropertyColumn Width="100px" Align="Align.Center" Property="@(p => EnumHelper.GetEnumDescription(p.Medida))" Title="Medida" />
                                             </FluentDataGrid>
                                         </FluentCard>
                                     </FluentStack>
@@ -102,4 +103,4 @@
     {
         sessaoUsuario.TipoUsuario = TiposUsuario.FirstOrDefault(item => item.Description == selectedValue)?.Value ?? sessaoUsuario.TipoUsuario;
     }
-    }
+}
