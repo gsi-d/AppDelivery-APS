@@ -221,7 +221,65 @@ namespace AppAPS.Entities
         AzeitonasPretas,
 
         [Description("Molho Ranch")]
-        MolhoRanch
+        MolhoRanch,
+
+        // Ingredientes de bebidas
+        [Description("Gelo")]
+        Gelo,
+
+        [Description("Açúcar")]
+        Acucar,
+
+        [Description("Suco de Limão")]
+        SucoLimao,
+
+        [Description("Suco de Laranja")]
+        SucoLaranja,
+
+        [Description("Polpa de Morango")]
+        PolpaMorango,
+
+        [Description("Polpa de Maracujá")]
+        PolpaMaracuja,
+
+        [Description("Leite")]
+        Leite,
+
+        [Description("Sorvete de Baunilha")]
+        SorveteBaunilha,
+
+        [Description("Sorvete de Chocolate")]
+        SorveteChocolate,
+
+        [Description("Creme de Leite")]
+        CremeLeite,
+
+        [Description("Leite Condensado")]
+        LeiteCondensado,
+
+        [Description("Hortelã")]
+        Hortela,
+
+        [Description("Rum Branco")]
+        RumBranco,
+
+        [Description("Tequila")]
+        Tequila,
+
+        [Description("Vodka")]
+        Vodka,
+
+        [Description("Cachaça")]
+        Cachaca,
+
+        [Description("Licor de Laranja")]
+        LicorLaranja,
+
+        [Description("Xarope de Groselha")]
+        XaropeGroselha,
+
+        [Description("Xarope de Açúcar")]
+        XaropeAcucar
     }
 
     public enum Medida : byte
@@ -229,7 +287,9 @@ namespace AppAPS.Entities
         [Description("UN")]
         UN = 1,
         [Description("GR")]
-        GR = 1,
+        GR = 2,
+        [Description("ML")]
+        ML = 3,
     }
 
     public enum PeriodoFiltro : byte

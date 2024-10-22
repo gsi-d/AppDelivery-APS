@@ -8,7 +8,7 @@
     if (produtos is not null && produtos.Any())
     {
         <h1>Listagem de Produtos</h1>
-        <FluentCard Height="Auto" Style="padding: 10px;">
+        <FluentCard Style="padding: 10px; margin-bottom: 30px;" Height="Auto">
             <FluentStack VerticalAlignment="VerticalAlignment.Center" Style="padding-bottom: 4px;">
                 <FluentButton Type="ButtonType.Button" OnClick="InvokeTelaCadastro" Appearance="Appearance.Accent">Novo</FluentButton>
                 <FluentButton Type="ButtonType.Button" OnClick="ExcluirProdutos" Appearance="Appearance.Accent" BackgroundColor="red">Excluir</FluentButton>
@@ -17,7 +17,7 @@
 
             <FluentDivider />
 
-            <FluentDataGrid Items="@produtos" ShowHover="true" TGridItem="Produto">
+            <FluentDataGrid Items="@produtos" ShowHover="true" Style="max-height: 80vh; overflow-y: auto" TGridItem="Produto">
                 <SelectColumn TGridItem="Produto"
                               SelectMode="DataGridSelectMode.Multiple"
                               SelectFromEntireRow="true"
