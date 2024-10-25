@@ -28,10 +28,12 @@ namespace AppAPS.Entities
 
         public void DadosInclusao(string cpf)
         {
+            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
+            DateTime localTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
             this.CPF = cpf;
             this.Status = StatusPedido.Confirmado;
-            this.DataAbertura = DateTime.Now;
-            this.DataUltimaAtualizacao = DateTime.Now;
+            this.DataAbertura = localTime;
+            this.DataUltimaAtualizacao = localTime;
         }
     }
 }

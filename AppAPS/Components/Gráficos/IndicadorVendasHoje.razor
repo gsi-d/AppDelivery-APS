@@ -23,9 +23,9 @@
             </FluentStack>
             <RadzenStack Gap="0">
                 <FluentLabel Typo="Typography.Subject" class="rz-display-flex rz-mt-0 rz-my-0">TOTAL HOJE </FluentLabel>
-                <FluentLabel Typo="Typography.H2"><b>@VendasDiaAtual.ToString("C")</b></FluentLabel>
+                <FluentLabel Typo="Typography.H2"><b>@VendasDiaAtual.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</b></FluentLabel>
                 <FluentLabel Typo="Typography.Subject" class="rz-display-flex rz-mt-4 rz-mb-0">TOTAL ONTEM</FluentLabel>
-                <FluentLabel Typo="Typography.H2"><b>@VendasDiaAnterior.ToString("C")</b></FluentLabel>
+                <FluentLabel Typo="Typography.H2"><b>@VendasDiaAnterior.ToString("C", new System.Globalization.CultureInfo("pt-BR"))</b></FluentLabel>
             </RadzenStack>
         </RadzenStack>
     </RadzenCard>
