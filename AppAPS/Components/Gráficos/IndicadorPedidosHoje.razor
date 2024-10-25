@@ -10,7 +10,7 @@
         <RadzenStack Orientation="Radzen.Orientation.Horizontal" JustifyContent="Radzen.JustifyContent.Left" Gap="1rem" class="rz-p-4">
             <FluentStack Width="50%" VerticalAlignment="VerticalAlignment.Center" Style="display: flex; flex-direction: row; height: 90%">
                 @{
-                    if (PorcentagemComparacao > 0)
+                    if (DiferenciaDias > 0)
                     {
                         <FluentIcon Width="20%" Color="Color.Success" Value="@(new Icons.Regular.Size20.ArrowTrendingLines())" />
                     }
@@ -60,5 +60,29 @@
         {
             StyleProgressBar = ProgressBarStyle.Success;
         }
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstrender)
+    {
+        if (QtdPedidosDiaAnterior != 0)
+        {
+            PorcentagemComparacao = (double)(QtdPedidosDiaAtual - QtdPedidosDiaAnterior) / QtdPedidosDiaAnterior * 100;
+            PorcentagemComparacao = PorcentagemComparacao < 0 ? -PorcentagemComparacao : PorcentagemComparacao;
+            PorcentagemComparacao = Math.Round(PorcentagemComparacao, 2);
+        }
+        else
+        {
+            PorcentagemComparacao = 100;
+        }
+        DiferenciaDias = QtdPedidosDiaAtual - QtdPedidosDiaAnterior;
+        if (DiferenciaDias < 0)
+        {
+            StyleProgressBar = ProgressBarStyle.Danger;
+        }
+        else
+        {
+            StyleProgressBar = ProgressBarStyle.Success;
+        }
+        StateHasChanged();
     }
 }
